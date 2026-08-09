@@ -1,13 +1,11 @@
 ---
 name: durable-knowledge
-description: >
-  Build, query, and curate a durable Markdown/Obsidian knowledge base shared by coding agents.
-  Use for explicit requests to preserve portable knowledge, rare agent-initiated capture of
-  reusable mechanisms or scoped invariants, grounded academic-paper notes, retrieval of prior
-  knowledge, and human-selectable promotion or merging of candidates. Route user-, session-, repo-,
-  project-, organization-, and machine-bound facts to their contextual owner instead. Prefer
-  durable, decision-relevant, nontrivial knowledge over local trivia, transient status, or raw chat
-  summaries.
+description: >-
+  Maintain a portable Markdown/Obsidian knowledge base for coding agents. Use when preserving
+  origin-independent mechanisms, constraints, methods, distinctions, syntheses, or scoped
+  hypotheses; ingesting grounded paper notes; recalling prior knowledge; or curating human-selected
+  candidates. Route user-, session-, repo-, project-, organization-, and machine-bound facts to
+  contextual memory or documentation instead.
 ---
 
 # Durable Knowledge
