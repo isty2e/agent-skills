@@ -1,0 +1,76 @@
+filters:
+  and:
+    - 'file.inFolder("Knowledge/Candidates")'
+    - 'record_type == "candidate"'
+properties:
+  status:
+    displayName: Status
+  knowledge_kind:
+    displayName: Kind
+  evidence_state:
+    displayName: Evidence
+  canonical_id:
+    displayName: Canonical owner
+  updated:
+    displayName: Updated
+views:
+  - type: table
+    name: Inbox
+    filters:
+      and:
+        - 'status == "pending"'
+    order:
+      - file.name
+      - status
+      - knowledge_kind
+      - evidence_state
+      - updated
+  - type: table
+    name: Ready
+    filters:
+      and:
+        - 'status == "ready"'
+    order:
+      - file.name
+      - knowledge_kind
+      - evidence_state
+      - updated
+  - type: table
+    name: Deferred
+    filters:
+      and:
+        - 'status == "deferred"'
+    order:
+      - file.name
+      - knowledge_kind
+      - evidence_state
+      - updated
+  - type: table
+    name: Rejected
+    filters:
+      and:
+        - 'status == "rejected"'
+    order:
+      - file.name
+      - knowledge_kind
+      - updated
+  - type: table
+    name: Integrated
+    filters:
+      and:
+        - 'status == "integrated"'
+    order:
+      - file.name
+      - status
+      - canonical_id
+      - updated
+  - type: table
+    name: Contested
+    filters:
+      and:
+        - 'status == "contested"'
+    order:
+      - file.name
+      - status
+      - canonical_id
+      - updated
