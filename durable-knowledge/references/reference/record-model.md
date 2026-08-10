@@ -7,12 +7,14 @@ frontmatter subset defined by the vault contract.
 ## Contents
 
 - [Record types](#record-types)
+- [Display titles](#display-titles)
 - [Knowledge kinds](#knowledge-kinds)
 - [Candidate status](#candidate-status)
 - [Evidence state](#evidence-state)
 - [Canonical lifecycle](#canonical-lifecycle)
 - [Candidate lifecycle relationships](#candidate-lifecycle-relationships)
 - [Claim shape](#claim-shape)
+- [Formal notation](#formal-notation)
 - [Paper identity](#paper-identity)
 - [Proposal decisions](#proposal-decisions)
 - [Conflict representation](#conflict-representation)
@@ -27,6 +29,22 @@ frontmatter subset defined by the vault contract.
 | `proposal` | `.llm-wiki/Proposals/` | Optional preview or delayed/high-risk change artifact |
 
 The synthesis template is a specialized `canonical` record with `knowledge_kind: synthesis`.
+
+## Display titles
+
+New candidate and canonical records use a non-empty `title` scalar as their canonical human-readable
+label. The first H1 heading must exactly mirror `title` so plain Markdown readers and Obsidian Bases
+show the same name. Stable identity remains in `id`; changing a canonical title must not change its
+ID or filename.
+
+A candidate title describes the proposed claim and remains provenance after capture. A canonical
+title names the long-lived semantic owner and may therefore be narrower, broader, or otherwise
+refined during authorized curation. Preserve useful prior canonical names in `aliases`.
+
+Legacy candidate and canonical records without `title` remain structurally valid. The validator
+warns, and Obsidian views fall back to the filename until the record is deliberately migrated. A
+mechanical migration may copy the existing first H1 into a missing `title`; this does not authorize
+rewriting candidate prose or choosing a new candidate label.
 
 ## Knowledge kinds
 
@@ -78,7 +96,7 @@ The original body, observation, source references, and evidence qualifiers remai
 | State | Meaning |
 |---|---|
 | `unverified` | Preserved by request or inference without a recorded direct check |
-| `observed` | Seen in a local experiment, runtime, derivation attempt, or session artifact |
+| `observed` | Directly seen or derived, with the material setup and result preserved in a portable evidence capsule |
 | `source-backed` | Supported by one identifiable external source or a complete formal derivation |
 | `corroborated` | Supported by materially independent sources or replicated evidence |
 | `contested` | Materially conflicting evidence or incompatible scoped claims remain |
@@ -124,13 +142,31 @@ claim = (
   assumptions,
   mechanism_or_rationale,
   evidence_state,
-  source_locators,
+  evidence_summary,
+  portable_source_refs,
   invalidation_conditions,
 )
 ```
 
 Missing components require a provisional canonical note or a candidate rather than an overstated
 stable claim.
+
+The evidence summary is part of the durable claim and must remain understandable on any synced
+replica. `portable_source_refs` add auditability and retrieval but cannot carry the claim's meaning or
+support alone. Local paths, bare filenames, local ticket or issue names, session IDs, and
+machine-scoped artifact labels are contextual provenance, not portable source references.
+
+## Formal notation
+
+Use equations or symbolic notation when they make a quantitative, logical, probabilistic,
+algorithmic, or constraint relationship more precise, compact, or falsifiable than prose alone.
+Prefer standard MathJax/LaTeX notation that survives ordinary Markdown and Obsidian sync; avoid
+vault-local macros or plugin-dependent syntax unless the vault policy explicitly standardizes them.
+
+Define every non-obvious symbol, domain, index set, unit, and material assumption near the expression.
+Follow the expression with a concise prose interpretation, including the regime in which it applies.
+Do not introduce decorative equations, unexplained symbols, or mathematical restatements that add no
+semantic precision.
 
 ## Paper identity
 
@@ -140,7 +176,9 @@ Resolve paper identity in this order:
 DOI → arXiv ID → PMID → stable citation key → source-file SHA-256 prefix
 ```
 
-A paper note uses `status: source`; paper status is not candidate lifecycle state.
+A paper note uses `status: source`; paper status is not candidate lifecycle state. A source-file hash
+may provide stable identity or integrity checking, but it is not a portable locator. Do not store the
+originating machine's file path.
 
 ## Proposal decisions
 

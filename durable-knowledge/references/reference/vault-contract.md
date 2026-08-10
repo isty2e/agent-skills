@@ -22,6 +22,7 @@
 │   ├── Candidates/
 │   ├── Papers/
 │   ├── Canonical/
+│   ├── knowledge-browser.base
 │   └── candidate-review.base
 └── .llm-wiki/
     ├── ROOT
@@ -41,6 +42,7 @@ the managed roots is human-owned by default.
 | `Knowledge/Candidates/**` | Shared review queue | Append pending candidates; curation updates lifecycle fields |
 | `Knowledge/Papers/**` | Source-grounded notes | Create or update from the identified source |
 | `Knowledge/Canonical/**` | Reviewed knowledge layer | Read; write only for `ready` candidates |
+| `Knowledge/knowledge-browser.base` | Obsidian projection | Create if absent; users may customize |
 | `Knowledge/candidate-review.base` | Obsidian projection | Create if absent; users may customize |
 | `.llm-wiki/Proposals/**` | Optional review artifacts | Create when preview, delay, retirement, or risk justifies one |
 | Everything else | Human or external owner | Read and link only unless the user names the exact target |
@@ -67,7 +69,10 @@ repository.
 
 ## Naming and IDs
 
-Use lowercase kebab-case filenames. Keep the visible title in frontmatter and the H1 heading.
+Use lowercase kebab-case filenames. For new candidate and canonical records, store the canonical
+human-readable label in the `title` frontmatter field and mirror it exactly in the first H1 heading.
+Obsidian Bases use `title` for display while IDs and filenames remain machine-oriented identity and
+collision-control artifacts.
 
 Recommended IDs:
 
@@ -87,6 +92,12 @@ Frontmatter timestamps remain ISO-8601 UTC values. Existing IDs without the rand
 valid; the validator preserves that compatibility and checks completed records for duplicate IDs.
 IDs are stable after creation. Renaming a file must not change its ID.
 
+Candidate titles are immutable provenance after capture. Canonical titles may change during
+authorized curation without changing the canonical ID; retain useful former names in `aliases`.
+Legacy records without `title` remain valid and fall back to their filenames in bundled Bases. A
+deliberate schema migration may copy an existing first H1 into a missing `title` without otherwise
+changing candidate provenance.
+
 ## Frontmatter subset
 
 Managed contract fields use top-level scalars or flat sequences:
@@ -105,26 +116,66 @@ or placeholder sequence items. Candidate and canonical `scope`, `assumptions`,
 `invalidation_conditions`, and `source_refs` must contain at least one item. Proposal `source_refs`
 must also contain at least one item.
 
+New candidate and canonical records must provide a non-empty scalar `title`. The validator keeps
+legacy title-less records compatible by reporting a warning rather than an error. When `title` is
+present, a missing or different first H1 is an error because it would create two conflicting human
+labels.
+
+Paper `source_uri` and `source_sha256` are optional managed scalars for legacy compatibility. When
+present, `source_uri` must be `null` or a resolvable HTTPS URI, and `source_sha256` must be `null` or
+64 lowercase hexadecimal characters.
+
 Additional metadata may use richer YAML, but the validator does not interpret its nested meaning.
 Do not move a managed contract field into nested metadata or rely on unvalidated metadata to satisfy
 a record invariant.
 
 ## Source references
 
+`source_refs` are portable audit and retrieval pointers. The record body must still contain the
+claim-supporting evidence summary needed to interpret and evaluate the claim. A reference is portable
+only when another synced replica can resolve it from the vault itself or through a stable external
+identifier or URI. Validation warns when a reference uses a local-only form, an unknown form, or a
+recognized prefix without the required identifier, anchor, or HTTPS host.
+
 Recommended forms:
 
 ```text
-paper:doi:10.xxxx/...
-paper:arxiv:2605.12341
-paper:pmid:12345678
-file:sha256:<hex>
-session:<harness>:<session-id>
-artifact:<repository-or-project>:<relative-path>@<commit-or-hash>
-user-instruction:<UTC timestamp>
+embedded:<evidence-anchor>
+vault:record:<stable-record-id>#<anchor>
+paper:doi:10.xxxx/...#<page-section-equation-figure-or-table>
+paper:arxiv:2605.12341#<page-section-equation-figure-or-table>
+paper:pmid:12345678#<page-section-equation-figure-or-table>
+https://<stable-or-versioned-resource>#<exact-locator>
+urn:<namespace>:<identifier>
 ```
 
+Use immutable or version-pinned HTTPS URLs when practical. Reference repository evidence through a
+remotely resolvable URL pinned to a commit and exact lines, not through a repository nickname and
+local relative path. Reference another managed note by stable record ID rather than filename so file
+moves and renames do not break the locator.
+
+For a local observation or derivation, include an evidence capsule in the current record with:
+
+- the directly observed or derived claim;
+- portable setup, data shape, versions, parameters, and operating conditions that materially affect
+  the result;
+- the result and its qualification or uncertainty;
+- reproduction details when practical;
+- omissions or redactions that limit independent checking.
+
+Point to that capsule with `embedded:<anchor>`. Do not put local paths, bare filenames, local ticket
+or issue names, harness session IDs, machine-scoped artifact labels, or `user-instruction` timestamps
+in `source_refs`. A file hash may identify bytes or check integrity, but it is not a resolvable source
+locator by itself.
+
 Paper claims require exact page, section, equation, figure, or table locators where available. Do not
-copy complete transcripts into the vault.
+copy complete transcripts, hidden reasoning, secrets, unnecessary personal data, or proprietary
+source content into the vault.
+
+Existing records may retain legacy local references as immutable provenance. Validation warns about
+these references without invalidating the vault. Do not copy them into a new or updated canonical
+record; preserve the useful support as an embedded capsule or replace the pointer with a portable
+locator.
 
 ## Template resolution
 
@@ -151,7 +202,8 @@ python <skill>/scripts/bootstrap.py \
 ```
 
 Bootstrap is idempotent. It does not modify existing notes, policy copies, template overrides, or an
-existing `Knowledge/candidate-review.base`.
+existing bundled Base. It installs `Knowledge/knowledge-browser.base` for candidate and canonical
+navigation and retains `Knowledge/candidate-review.base` as the focused candidate queue.
 
 ## Validation interface
 
@@ -173,6 +225,10 @@ headless Sync and Publish transport.
 
 Every client must use a separate local vault directory. Run one sync engine per local path; do not run
 desktop Sync and Headless Sync against the same directory.
+
+The `.base` definitions sync as vault files and automatically query newly arrived records. Whether a
+Base is pinned in a sidebar belongs to each desktop client's workspace state and may require local
+setup. Headless clients synchronize `.base` files but do not render them.
 
 ## Concurrency and recovery
 

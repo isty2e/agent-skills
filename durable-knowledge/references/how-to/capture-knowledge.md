@@ -26,18 +26,22 @@ owner. Continue only when the proposed claim is plausibly origin-independent.
 5. For `CAPTURE`, instantiate the vault override of `candidate.md` or
    `assets/templates/candidate.md`. Generate the candidate ID using the vault contract's random-suffix
    format and use the full ID as the filename stem.
-6. Separate the actual observation or source claim from the proposed generalization.
-7. Record scope, assumptions, mechanism or rationale, evidence, source references, and invalidation
-   conditions.
-8. Record the likely semantic owner or the search terms used when none was found.
-9. Write the note under `Knowledge/Candidates/` with:
+6. Write one concise semantic `title` and mirror it exactly in the first H1 heading. Do not expose the
+   timestamp, random suffix, ticket name, or activity-log wording in the title.
+7. Separate the actual observation or source claim from the proposed generalization.
+8. Record scope, assumptions, mechanism or rationale, a self-contained evidence summary, portable
+   source references, and invalidation conditions. When equations or symbolic notation make a
+   relationship more precise, use them and define their symbols, domains, assumptions, and prose
+   interpretation nearby.
+9. Record the likely semantic owner or the search terms used when none was found.
+10. Write the note under `Knowledge/Candidates/` with:
 
    ```yaml
    status: pending
    canonical_id: null
    ```
 
-10. Run structural validation.
+11. Run structural validation.
 
 Capture must not set `ready`, merge canonical notes, or broaden the task into curation.
 
@@ -71,9 +75,23 @@ Do not use a central candidate as a fallback when the correct contextual owner i
 
 ## Preserve sources
 
-For session-derived knowledge, record a session ID or artifact locator. Do not copy complete
-conversations or hidden reasoning. Cite a result file, test, commit, benchmark, paper locator, or
-other checkable artifact when the claim relies on one.
+Do not record a session ID, local path, bare filename, local ticket or issue name, or machine-scoped
+artifact label as evidence. These identifiers do not resolve on another synced replica.
+
+For a local observation or derivation, add an evidence capsule under `## Evidence` with:
+
+- a stable anchor such as `### evidence-1`;
+- the directly observed or derived claim;
+- portable setup, data shape, versions, parameters, and operating conditions that affect the result;
+- the result, qualification, uncertainty, and reproduction details when practical.
+
+Set `source_refs` to `embedded:evidence-1`. When an external source exists, add a stable DOI, arXiv,
+PMID, URN, or immutable HTTPS locator. When another synced managed note owns the source material, use
+`vault:record:<stable-record-id>#<anchor>` instead of its filename.
+
+Do not copy complete conversations, hidden reasoning, secrets, unnecessary personal data, or
+proprietary source content. If the useful support cannot be made portable safely, keep the candidate
+unverified or defer and route it to the contextual owner.
 
 ## Report the result
 

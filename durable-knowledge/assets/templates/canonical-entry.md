@@ -1,5 +1,6 @@
 ---
 id: knowledge-<kind>-<slug>
+title: <Canonical title>
 record_type: canonical
 knowledge_kind: <mechanism|constraint|method|decision-rule|distinction|synthesis|hypothesis>
 lifecycle: <provisional|reviewed|stable|contested|retired>
@@ -13,7 +14,7 @@ assumptions:
 invalidation_conditions:
   - <condition that limits, falsifies, or supersedes the claim>
 source_refs:
-  - <paper, session, artifact, derivation, or other source reference>
+  - <embedded:evidence-1 | vault:record:<stable-id>#<anchor> | stable external locator>
 created: <ISO-8601 UTC timestamp>
 updated: <ISO-8601 UTC timestamp>
 ---
@@ -26,7 +27,8 @@ updated: <ISO-8601 UTC timestamp>
 
 ## Mechanism or rationale
 
-<Why the claim holds or why the method is preferred.>
+<Why the claim holds or why the method is preferred. Use equations or symbolic notation when they
+improve precision; define symbols and assumptions and explain the result in prose.>
 
 ## Applicability
 
@@ -42,7 +44,15 @@ updated: <ISO-8601 UTC timestamp>
 
 ## Evidence
 
-<Source-linked evidence with locators and evidence-state qualifiers.>
+### evidence-1
+
+- **Direct support:** <Compact claim-supporting evidence copied or restated for this canonical owner.>
+- **Portable context:** <Material setup, source scope, versions, parameters, and operating conditions.>
+- **Result and qualification:** <Result, uncertainty, limitations, and evidence-state qualifier.>
+- **Audit locator:** <Stable external URI or synced-vault record ID when available.>
+
+<The canonical note must remain evaluable without the candidate file or an originating machine's
+paths, local tickets, session history, or artifact labels.>
 
 ## Counterexamples, conflicts, and invalidation
 

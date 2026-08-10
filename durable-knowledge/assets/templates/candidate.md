@@ -1,5 +1,6 @@
 ---
 id: candidate-<utc>-<slug>-<random16hex>
+title: <Candidate title>
 record_type: candidate
 knowledge_kind: <mechanism|constraint|method|decision-rule|distinction|synthesis|hypothesis>
 status: pending
@@ -12,7 +13,7 @@ assumptions:
 invalidation_conditions:
   - <condition that would limit, falsify, or supersede the claim>
 source_refs:
-  - <session, paper, artifact, derivation, or other source reference>
+  - <embedded:evidence-1 | vault:record:<stable-id>#<anchor> | stable external locator>
 created: <ISO-8601 UTC timestamp>
 updated: <ISO-8601 UTC timestamp>
 ---
@@ -29,7 +30,9 @@ updated: <ISO-8601 UTC timestamp>
 
 ## Why it may generalize
 
-<Mechanism or rationale. Mark unsupported extension explicitly as inference.>
+<Mechanism or rationale. Mark unsupported extension explicitly as inference. Use equations or
+symbolic notation when they improve precision; define symbols and assumptions and explain the result
+in prose.>
 
 ## Scope and assumptions
 
@@ -37,7 +40,16 @@ updated: <ISO-8601 UTC timestamp>
 
 ## Evidence
 
-<List checkable artifacts or source locators and the current evidence state.>
+### evidence-1
+
+- **Kind:** <observation | derivation | source claim>
+- **Direct support:** <What was observed, derived, or stated.>
+- **Portable context:** <Material setup, data shape, versions, parameters, and operating conditions.>
+- **Result and qualification:** <Result, uncertainty, limitations, and evidence-state qualifier.>
+- **Reproduction:** <Portable steps or `not practical`, with the reason.>
+
+<Add stable external or synced-vault locators when available. Do not use local paths, bare filenames,
+local ticket or issue names, session IDs, or machine-scoped artifact labels.>
 
 ## Invalidation conditions
 

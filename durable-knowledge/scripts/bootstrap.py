@@ -20,6 +20,7 @@ This subtree is managed by the `durable-knowledge` Agent Skill.
 - `Candidates/`: captured claims with human-readable review status.
 - `Papers/`: grounded notes about individual academic papers.
 - `Canonical/`: reviewed semantic owners.
+- `knowledge-browser.base`: optional Obsidian browser for candidates and canonical knowledge.
 - `candidate-review.base`: optional Obsidian view over candidate properties.
 
 Candidate review is file-based: set `status` to `ready`, `deferred`, or `rejected` in Obsidian or
@@ -72,11 +73,12 @@ def bootstrap(vault: Path, install_policy_copy: bool) -> list[Path]:
     if write_if_missing(runtime_readme, RUNTIME_README):
         created.append(runtime_readme)
 
-    base_source = skill_root / "assets/candidate-review.base"
-    base_destination = vault / "Knowledge/candidate-review.base"
-    if not base_destination.exists():
-        shutil.copyfile(base_source, base_destination)
-        created.append(base_destination)
+    for base_name in ("knowledge-browser.base", "candidate-review.base"):
+        base_source = skill_root / "assets" / base_name
+        base_destination = vault / "Knowledge" / base_name
+        if not base_destination.exists():
+            shutil.copyfile(base_source, base_destination)
+            created.append(base_destination)
 
     if install_policy_copy:
         source = skill_root / "references/reference/admission-policy.md"

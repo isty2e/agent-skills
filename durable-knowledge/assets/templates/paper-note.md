@@ -6,8 +6,9 @@ citation_key: <author-year-short-title>
 doi: <DOI or null>
 arxiv: <arXiv identifier or null>
 pmid: <PMID or null>
-source_ref: <paper:doi:<DOI> | paper:arxiv:<identifier> | paper:pmid:<identifier> | file:sha256:<hex>>
-source_file: <path or URL reference>
+source_ref: <paper:doi:<DOI> | paper:arxiv:<identifier> | paper:pmid:<identifier> | stable HTTPS URI | embedded:claim-ledger>
+source_uri: <stable external URI or null>
+source_sha256: <64 lowercase hex characters or null; identity and integrity only>
 tags:
   - <topic>
 created: <ISO-8601 UTC timestamp>
@@ -30,11 +31,13 @@ updated: <ISO-8601 UTC timestamp>
 
 ## Method
 
-<Core method, objective, architecture, derivation, or experimental design.>
+<Core method, objective, architecture, derivation, or experimental design. Preserve or restate
+important equations when they clarify the method; define symbols and assumptions nearby.>
 
 ## Main results
 
-<Results with uncertainty and exact locators.>
+<Results with uncertainty and exact locators. Use equations or symbolic notation when they express
+the result more precisely than prose, followed by a concise interpretation.>
 
 ## Claim ledger
 
@@ -42,6 +45,9 @@ updated: <ISO-8601 UTC timestamp>
 |---|---|---|---|
 | <claim> | p. X, §Y, Eq. Z / Fig. A / Table B | author claim | <qualification> |
 | <interpretation> | based on <locators> | agent interpretation | inferred; explain why |
+
+<Keep the ledger sufficient to understand the cited support on another replica. Never record the
+originating local file path.>
 
 ## Limitations and failure regimes
 

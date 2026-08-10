@@ -3,9 +3,9 @@ name: durable-knowledge
 description: >-
   Maintain a portable Markdown/Obsidian knowledge base for coding agents. Use when preserving
   origin-independent mechanisms, constraints, methods, distinctions, syntheses, or scoped
-  hypotheses; ingesting grounded paper notes; recalling prior knowledge; or curating human-selected
-  candidates. Route user-, session-, repo-, project-, organization-, and machine-bound facts to
-  contextual memory or documentation instead.
+  hypotheses with self-contained or replica-resolvable evidence; ingesting grounded paper notes;
+  recalling prior knowledge; or curating human-selected candidates. Route user-, session-, repo-,
+  project-, organization-, and machine-bound facts to contextual memory or documentation instead.
 ---
 
 # Durable Knowledge
@@ -68,8 +68,10 @@ emit candidates but must not rewrite canonical knowledge.
    application authority remains uncertain.
 5. **Do not generalize local observations silently.** State mechanism, scope, evidence, and
    invalidation conditions.
-6. **Preserve provenance.** Keep exact source locators; store session or artifact references rather
-   than copied transcripts.
+6. **Keep evidence replica-portable.** Put the claim-supporting evidence summary in the record itself,
+   and use only synced-vault record IDs or stable external locators in `source_refs`. Never depend on
+   local paths, bare filenames, local ticket or issue names, session IDs, or machine-scoped artifact
+   labels.
 7. **Preserve conflicts.** Compare scope and assumptions before declaring conflict, then retain both
    sides when genuine disagreement remains.
 8. **Search before create.** Resolve semantic ownership by meaning, not title similarity.
@@ -85,6 +87,18 @@ emit candidates but must not rewrite canonical knowledge.
     optional projections.
 14. **Write canonical state first.** Set a candidate to `integrated` or `contested` only after the
     canonical write succeeds.
+15. **Separate identity from display.** Candidate and canonical IDs remain stable machine identity.
+    New records use `title` as the human-readable label and mirror it exactly in the first H1.
+16. **Formalize when it improves precision.** Actively use equations or symbolic notation when they
+    express quantitative, logical, probabilistic, algorithmic, or constraint relationships more
+    clearly than prose. Define symbols, domains, and assumptions nearby, and explain the expression
+    in concise prose. Do not add decorative mathematics or force qualitative claims into formulas.
+
+Treat `source_refs` as audit and retrieval pointers, not as substitutes for evidence. For a local
+observation or derivation, write a compact evidence capsule in the note with the observed claim,
+portable setup and conditions, result, qualification, and reproduction details when practical; point
+to it with `embedded:<anchor>`. Preserve exact paper locators and immutable external URLs when
+available. Read `references/reference/vault-contract.md` before writing source references.
 
 Read `references/explanation/knowledge-boundary.md` and
 `references/explanation/routing-examples.md` when routing or abstraction remains ambiguous.
@@ -114,11 +128,12 @@ Knowledge/Candidates/**
 Knowledge/Papers/**
 Knowledge/Canonical/**
 Knowledge/candidate-review.base
+Knowledge/knowledge-browser.base
 .llm-wiki/Proposals/**
 ```
 
 Bootstrap is the only scaffolding exception. It may create missing managed directories plus
-`Knowledge/README.md`, `Knowledge/candidate-review.base`, `.llm-wiki/ROOT`,
+`Knowledge/README.md`, `Knowledge/knowledge-browser.base`, `Knowledge/candidate-review.base`, `.llm-wiki/ROOT`,
 `.llm-wiki/README.md`, and, when requested, `.llm-wiki/POLICY.md`. It must not modify existing
 copies.
 
@@ -137,8 +152,10 @@ Never expand the write surface merely because filesystem access is available.
 
 ## Capability failures
 
-- If a source cannot be read with reliable locators, record the limitation and do not promote its
-  claims.
+- If a source lacks a reliable portable locator and cannot be summarized safely into a self-contained
+  evidence capsule, record the limitation and do not promote its claims.
+- If portable evidence would require secrets, unnecessary personal data, proprietary source content,
+  or a copied transcript, route or defer the claim instead of weakening the portability boundary.
 - If a proposal target hash changed, stop and regenerate the proposal.
 - If validation cannot run, keep the result as a candidate or unapplied proposal.
 - If canonical write succeeds but candidate metadata fails, leave or restore the candidate as
@@ -152,8 +169,12 @@ Before reporting a write as complete:
 1. confirm the file is inside an allowed root;
 2. confirm it follows the resolved template;
 3. confirm the ID is unique;
-4. confirm required source locators are present;
-5. run `scripts/validate.py --vault <vault>` when Python is available;
-6. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
+4. confirm a new candidate or canonical record has a concise `title` matching its first H1;
+5. confirm the evidence summary is self-contained and every source reference is replica-resolvable;
+6. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
+   name, session ID, or machine-scoped artifact label;
+7. run `scripts/validate.py --vault <vault>` when Python is available and resolve portability
+   warnings for new or modified records;
+8. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
 
 Do not claim integration when only a candidate, review transition, or proposal exists.
