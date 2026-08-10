@@ -13,6 +13,10 @@ Bootstrap creates missing managed directories, marker files, explanatory README 
 template directories, `Knowledge/knowledge-browser.base`, and `Knowledge/candidate-review.base`. It
 leaves existing notes and customized files unchanged.
 
+The `_durable-knowledge/` control directory is deliberately visible so Obsidian Sync and ordinary
+file replication include it. Obsidian Sync excludes dot-prefixed directories other than its
+configuration directory.
+
 To install an editable vault-local admission policy:
 
 ```bash
@@ -21,8 +25,22 @@ python <skill>/scripts/bootstrap.py \
   --install-policy-copy
 ```
 
-The policy is copied to `.llm-wiki/POLICY.md` only when that file does not already exist. Customize
-admission and routing there; keep the record model's `knowledge_kind` values unchanged.
+The policy is copied to `_durable-knowledge/POLICY.md` only when that file does not already exist.
+Customize admission and routing there; keep the record model's `knowledge_kind` values unchanged.
+
+## Migrate a legacy control directory
+
+Vaults created by earlier drafts may contain `.llm-wiki/`. Run the current bootstrap command on the
+replica that contains the complete legacy control state:
+
+```bash
+python <skill>/scripts/bootstrap.py --vault <vault>
+```
+
+When `.llm-wiki/` exists and `_durable-knowledge/` does not, bootstrap renames the directory without
+rewriting its files. If both directories exist, bootstrap exits with an error. Compare the two
+directories, preserve the intended policy, proposals, and template overrides under
+`_durable-knowledge/`, then remove the legacy directory and rerun bootstrap.
 
 ## Configure agent discovery
 
@@ -33,7 +51,7 @@ export DK_VAULT_PATH="<vault>"
 ```
 
 An explicit path in a user request overrides the environment variable. Agents running inside the
-vault may also discover the nearest ancestor containing `.llm-wiki/ROOT` and `Knowledge/`.
+vault may also discover the nearest ancestor containing `_durable-knowledge/ROOT` and `Knowledge/`.
 
 ## Enable Obsidian review
 

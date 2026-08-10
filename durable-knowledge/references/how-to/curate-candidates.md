@@ -77,7 +77,7 @@ These review transitions leave `canonical_id: null` and do not rewrite candidate
 
 ## Prepare a proposal when needed
 
-Use `.llm-wiki/Proposals/` instead of direct application when:
+Use `_durable-knowledge/Proposals/` instead of direct application when:
 
 - the user requests a preview or diff;
 - application will be delayed;

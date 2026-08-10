@@ -24,19 +24,23 @@ Resolve the target in this order:
 
 1. explicit user-supplied path;
 2. `DK_VAULT_PATH`;
-3. nearest ancestor containing both `.llm-wiki/ROOT` and `Knowledge/`.
+3. nearest ancestor containing both `_durable-knowledge/ROOT` and `Knowledge/`.
 
 Otherwise, do not guess. Explain that the vault must be initialized with
 `scripts/bootstrap.py --vault <path>`.
 
+`_durable-knowledge/` is visible by design so file-based transports, including Obsidian Sync,
+replicate the marker and control artifacts. Treat a remaining `.llm-wiki/` directory as legacy state
+that must be migrated with bootstrap before normal operations.
+
 Before a write, read in order:
 
-1. `<vault>/.llm-wiki/POLICY.md`, when present;
+1. `<vault>/_durable-knowledge/POLICY.md`, when present;
 2. `references/reference/admission-policy.md`;
 3. `references/reference/vault-contract.md`;
 4. `references/reference/record-model.md` when lifecycle or fields will change.
 
-Use `<vault>/.llm-wiki/templates/<name>.md` when present; otherwise use
+Use `<vault>/_durable-knowledge/templates/<name>.md` when present; otherwise use
 `assets/templates/<name>.md`. A vault-local policy may refine admission and routing, but it must not
 add or rename the `knowledge_kind` values defined by the record model.
 
@@ -147,13 +151,16 @@ Knowledge/Papers/**
 Knowledge/Canonical/**
 Knowledge/candidate-review.base
 Knowledge/knowledge-browser.base
-.llm-wiki/Proposals/**
+_durable-knowledge/Proposals/**
 ```
 
 Bootstrap is the only scaffolding exception. It may create missing managed directories plus
-`Knowledge/README.md`, `Knowledge/knowledge-browser.base`, `Knowledge/candidate-review.base`, `.llm-wiki/ROOT`,
-`.llm-wiki/README.md`, and, when requested, `.llm-wiki/POLICY.md`. It must not modify existing
-copies.
+`Knowledge/README.md`, `Knowledge/knowledge-browser.base`, `Knowledge/candidate-review.base`,
+`_durable-knowledge/ROOT`, `_durable-knowledge/README.md`, and, when requested,
+`_durable-knowledge/POLICY.md`. It must not modify existing copies. When only the legacy
+`.llm-wiki/` control directory exists, bootstrap may rename it to `_durable-knowledge/`. If both
+paths exist, bootstrap must stop for manual reconciliation rather than merge or overwrite either
+one.
 
 Operation permissions:
 

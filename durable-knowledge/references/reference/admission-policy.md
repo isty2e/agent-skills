@@ -1,7 +1,7 @@
 # Knowledge admission policy
 
 This policy defines what may enter the central knowledge base. A vault-local
-`.llm-wiki/POLICY.md`, when present, may override admission and routing rules within the fixed record
+`_durable-knowledge/POLICY.md`, when present, may override admission and routing rules within the fixed record
 model. It cannot add or rename `knowledge_kind` values.
 
 ## Contents

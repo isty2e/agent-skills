@@ -26,7 +26,7 @@ frontmatter subset defined by the vault contract.
 | `candidate` | `Knowledge/Candidates/` | Atomic proposed knowledge plus review state |
 | `paper` | `Knowledge/Papers/` | Source-grounded note for one academic paper |
 | `canonical` | `Knowledge/Canonical/` | Current semantic owner for one durable topic |
-| `proposal` | `.llm-wiki/Proposals/` | Optional preview or delayed/high-risk change artifact |
+| `proposal` | `_durable-knowledge/Proposals/` | Optional preview or delayed/high-risk change artifact |
 
 The synthesis template is a specialized `canonical` record with `knowledge_kind: synthesis`.
 

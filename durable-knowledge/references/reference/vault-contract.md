@@ -10,6 +10,7 @@
 - [Source references](#source-references)
 - [Template resolution](#template-resolution)
 - [Bootstrap interface](#bootstrap-interface)
+- [Legacy control-directory migration](#legacy-control-directory-migration)
 - [Validation interface](#validation-interface)
 - [Replication model](#replication-model)
 - [Concurrency and recovery](#concurrency-and-recovery)
@@ -24,7 +25,7 @@
 │   ├── Canonical/
 │   ├── knowledge-browser.base
 │   └── candidate-review.base
-└── .llm-wiki/
+└── _durable-knowledge/
     ├── ROOT
     ├── POLICY.md
     ├── Proposals/
@@ -35,6 +36,10 @@
 routing, but they must preserve the record model's closed `knowledge_kind` set. Everything outside
 the managed roots is human-owned by default.
 
+`_durable-knowledge/` is intentionally visible. Obsidian Sync excludes dot-prefixed directories
+other than its configuration directory, so a hidden control root would not replicate with the
+knowledge records it governs.
+
 ## Ownership and write permissions
 
 | Root | Owner | Default agent permission |
@@ -44,7 +49,7 @@ the managed roots is human-owned by default.
 | `Knowledge/Canonical/**` | Reviewed knowledge layer | Read; write only for `ready` candidates |
 | `Knowledge/knowledge-browser.base` | Obsidian projection | Create if absent; users may customize |
 | `Knowledge/candidate-review.base` | Obsidian projection | Create if absent; users may customize |
-| `.llm-wiki/Proposals/**` | Optional review artifacts | Create when preview, delay, retirement, or risk justifies one |
+| `_durable-knowledge/Proposals/**` | Review artifacts | Create for preview, delay, retirement, or risk |
 | Everything else | Human or external owner | Read and link only unless the user names the exact target |
 
 For an existing candidate, review or authorized curation may change only `status`, `canonical_id`, and
@@ -62,9 +67,9 @@ Resolve a target in this order:
 
 1. explicit user-supplied path;
 2. `DK_VAULT_PATH`;
-3. nearest ancestor containing both `.llm-wiki/ROOT` and `Knowledge/`.
+3. nearest ancestor containing both `_durable-knowledge/ROOT` and `Knowledge/`.
 
-Do not guess a destination. The `.llm-wiki/ROOT` marker prevents accidental writes to an arbitrary
+Do not guess a destination. The `_durable-knowledge/ROOT` marker prevents accidental writes to an arbitrary
 repository.
 
 ## Naming and IDs
@@ -182,7 +187,7 @@ locator.
 
 For `<name>.md`:
 
-1. use `<vault>/.llm-wiki/templates/<name>.md` when present;
+1. use `<vault>/_durable-knowledge/templates/<name>.md` when present;
 2. otherwise use `assets/templates/<name>.md` from the skill package.
 
 A vault override must preserve fields required by `scripts/validate.py` unless the validator and
@@ -205,6 +210,23 @@ python <skill>/scripts/bootstrap.py \
 Bootstrap is idempotent. It does not modify existing notes, policy copies, template overrides, or an
 existing bundled Base. It installs `Knowledge/knowledge-browser.base` for candidate and canonical
 navigation and retains `Knowledge/candidate-review.base` as the focused candidate queue.
+
+## Legacy control-directory migration
+
+Earlier drafts used `.llm-wiki/`, which Obsidian Sync does not replicate. Bootstrap applies this
+migration contract:
+
+| Existing state | Result |
+|---|---|
+| Neither directory exists | Create `_durable-knowledge/` scaffolding |
+| Only `.llm-wiki/` exists | Rename it to `_durable-knowledge/`, then create missing scaffolding |
+| Only `_durable-knowledge/` exists | Preserve it and create only missing scaffolding |
+| Both directories exist | Stop without merging or overwriting either directory |
+
+Run migration first on the replica containing the complete legacy policy, proposals, and template
+overrides, then let the new visible directory synchronize. If another replica contains both paths,
+reconcile them manually before running bootstrap there. Validation rejects a remaining
+`.llm-wiki/` directory so split control authority cannot pass unnoticed.
 
 ## Validation interface
 
@@ -230,6 +252,9 @@ desktop Sync and Headless Sync against the same directory.
 The `.base` definitions sync as vault files and automatically query newly arrived records. Whether a
 Base is pinned in a sidebar belongs to each desktop client's workspace state and may require local
 setup. Headless clients synchronize `.base` files but do not render them.
+
+The `_durable-knowledge/` directory also syncs as ordinary vault content. The marker, policy,
+proposals, and template overrides therefore share the same replication boundary as managed records.
 
 ## Concurrency and recovery
 

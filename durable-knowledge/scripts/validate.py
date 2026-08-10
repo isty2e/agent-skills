@@ -140,7 +140,7 @@ _EXPECTED_ROOT: dict[str, Path] = {
     "candidate": Path("Knowledge/Candidates"),
     "paper": Path("Knowledge/Papers"),
     "canonical": Path("Knowledge/Canonical"),
-    "proposal": Path(".llm-wiki/Proposals"),
+    "proposal": Path("_durable-knowledge/Proposals"),
 }
 
 _PORTABLE_SOURCE_PREFIXES = (
@@ -723,9 +723,21 @@ def iter_managed_markdown(vault: Path) -> list[Path]:
 
 def validate_vault(vault: Path) -> list[Finding]:
     findings: list[Finding] = []
-    marker = vault / ".llm-wiki/ROOT"
-    if not marker.exists():
-        findings.append(Finding("error", ".llm-wiki/ROOT", "vault marker is missing"))
+    legacy_control_directory = vault / ".llm-wiki"
+    marker = vault / "_durable-knowledge/ROOT"
+    if legacy_control_directory.exists():
+        findings.append(
+            Finding(
+                "error",
+                ".llm-wiki",
+                "legacy control directory remains; run bootstrap to migrate it to _durable-knowledge, "
+                "or reconcile both directories manually if the new directory already exists",
+            )
+        )
+    if not marker.exists() and not legacy_control_directory.exists():
+        findings.append(
+            Finding("error", "_durable-knowledge/ROOT", "vault marker is missing")
+        )
 
     ids: dict[str, list[str]] = {}
     records: list[tuple[Path, dict[str, str | tuple[str, ...]]]] = []

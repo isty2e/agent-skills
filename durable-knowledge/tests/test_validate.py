@@ -12,8 +12,8 @@ class ValidateFrontmatterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.vault = Path(self.temporary_directory.name)
-        (self.vault / ".llm-wiki").mkdir()
-        (self.vault / ".llm-wiki/ROOT").write_text(
+        (self.vault / "_durable-knowledge").mkdir()
+        (self.vault / "_durable-knowledge/ROOT").write_text(
             "durable-knowledge-vault-v1\n", encoding="utf-8"
         )
         (self.vault / "Knowledge/Candidates").mkdir(parents=True)
@@ -95,7 +95,7 @@ updated: 2026-03-13T14:22:33Z
         title_line: str = 'title: "Proposal: Create example owner"\n',
         heading: str = "Proposal: Create example owner",
     ) -> subprocess.CompletedProcess[str]:
-        proposals = self.vault / ".llm-wiki/Proposals"
+        proposals = self.vault / "_durable-knowledge/Proposals"
         proposals.mkdir(parents=True, exist_ok=True)
         (proposals / "proposal-example.md").write_text(
             f"""---
@@ -298,6 +298,17 @@ created: 2026-03-13T14:22:33Z
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("duplicate top-level field: id", result.stdout)
+
+    def test_legacy_control_directory_requires_migration(self) -> None:
+        control = self.vault / "_durable-knowledge"
+        legacy = self.vault / ".llm-wiki"
+        control.rename(legacy)
+
+        result = self.run_validator()
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("legacy control directory remains", result.stdout)
+        self.assertIn("run bootstrap to migrate", result.stdout)
 
 
 if __name__ == "__main__":

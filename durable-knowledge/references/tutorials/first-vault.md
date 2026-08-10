@@ -42,11 +42,13 @@ Knowledge/
 ├── Canonical/
 ├── knowledge-browser.base
 └── candidate-review.base
-.llm-wiki/
+_durable-knowledge/
 ├── Proposals/
 ├── templates/
 └── ROOT
 ```
+
+The control directory uses an underscore rather than a dot prefix so Obsidian Sync includes it.
 
 Point agents at the vault:
 
