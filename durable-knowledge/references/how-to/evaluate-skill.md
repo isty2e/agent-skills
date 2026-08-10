@@ -60,6 +60,13 @@ universal claims as false positives.
 Check whether the system produces zero candidates when appropriate and defers rather than inventing
 scope or evidence.
 
+### Activation precision
+
+Test substantive tasks with and without relevant prior knowledge or a genuinely durable finding.
+Check whether the system recalls or considers capture at useful decision points without waiting for
+an explicit request. Count mechanical vault searches, no-op check reports, blocked primary work, and
+weak candidates created merely to demonstrate activation as failures.
+
 ### Scope preservation
 
 Check assumptions, benchmark, target quantity, operating regime, and failure conditions for each

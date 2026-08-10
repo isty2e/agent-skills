@@ -1,8 +1,8 @@
 1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685  ./LICENSE
-b238130d044ed9f9d99c9323013f1489cc84475709170d2082947da4f4a127b7  ./README.md
-959597a9f91e4250e637603d959acf3193d34eaabf24814e6c1fe4f4e64938b9  ./SKILL.md
-c6428828bb949b036c36c101e43c062af2e7207de3ed39fa288f98df3903f82e  ./VERSION
-40a50a566ba433848176ebd2ee37c71bcc5f09bc2737110525e86a85d1f2bcbf  ./assets/AGENTS-snippet.md
+ee99882a965f5dcabe65275a1267d5f366c62c2ca41707448b370315fb8e2f73  ./README.md
+4460526e7c391121f399d8c81c6b0a67f34a29bb27f58ed36e7c5a6a208063aa  ./SKILL.md
+6affeb42e62b34a0bbbaf37990a1506bd0b079c3b648218ff91db81e6e7dee07  ./VERSION
+8e3bf5f60a620aa690c51e2a6b5fd9f4fc93277fc8c4489ca61d0d1f0b26a5e2  ./assets/AGENTS-snippet.md
 4320da5a57d1c58d275978171c01dbcb036f1e9cdb7362d7c909c8c272e4bd35  ./assets/candidate-review.base
 98d1c40f6a8d70e377308f64bca04961f7b4c855defc9fab341c29bd64861033  ./assets/knowledge-browser.base
 58943dd76f016dcf17961f07a46f30e075102f71e0d7a22c19e500127222c8c8  ./assets/templates/candidate.md
@@ -14,7 +14,7 @@ c6428828bb949b036c36c101e43c062af2e7207de3ed39fa288f98df3903f82e  ./VERSION
 1c87708bb238a7fb3b9b910f99611e6fe353ce8091a2ae2a84958e84c5206e6a  ./references/explanation/routing-examples.md
 86b5944d09e6569630290f3e52164e93c4a0070431d4c0f9fbf63538e69a8c16  ./references/how-to/capture-knowledge.md
 39b6e9a63e274cd47a5bd70d4560d2771570b7c2eae51663eee2d7a3787c3348  ./references/how-to/curate-candidates.md
-bc8d99e0ef41cdb8043033489c94e0653ec30ee3b2f1d7157d22e10a8d7dd98a  ./references/how-to/evaluate-skill.md
+7cb455bd657664f2b4ed52207cf38da5b9c19f533f18538cd188f1b1ccf14e28  ./references/how-to/evaluate-skill.md
 3ecf698db31282bec7b1c8916c104a1ba648eb9f49b02075ec2b30fc801615da  ./references/how-to/ingest-paper.md
 412a09a9d102626bbc43ed09eb52e1198f6a18f26d52ab4364800b19dcdba410  ./references/how-to/recall-knowledge.md
 e02dd89c95edbd5c244d7b9e3a4fde306f1cf2e0f3bb0ea499a2e865ce69f542  ./references/how-to/set-up-vault.md
