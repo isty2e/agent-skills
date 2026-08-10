@@ -1,5 +1,6 @@
 ---
 id: proposal-<utc>-<slug>-<random16hex>
+title: "Proposal: <short action>"
 record_type: proposal
 decision: <create|merge|conflict|reject|defer|retire>
 target_id: <canonical ID or null>
@@ -8,7 +9,7 @@ base_sha256: <64 lowercase hex chars, or null for create, reject, or defer>
 candidate_ids:
   - <candidate ID>
 source_refs:
-  - <source reference>
+  - <embedded evidence, synced-vault record ID, or stable external locator>
 created: <ISO-8601 UTC timestamp>
 ---
 
@@ -28,7 +29,9 @@ created: <ISO-8601 UTC timestamp>
 
 ## Evidence assessment
 
-<Source locators, independence, conflicts, and proposed evidence state.>
+<Self-contained support, portable source locators, independence, conflicts, and proposed evidence
+state. Do not propagate local paths, bare filenames, local ticket names, session IDs, or
+machine-scoped artifact labels.>
 
 ## Proposed canonical result
 

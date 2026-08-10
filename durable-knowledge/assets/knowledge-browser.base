@@ -1,7 +1,7 @@
 filters:
-  and:
+  or:
     - 'file.inFolder("Knowledge/Candidates")'
-    - 'record_type == "candidate"'
+    - 'file.inFolder("Knowledge/Canonical")'
 formulas:
   title_link: 'file.asLink(if(title.isEmpty(), file.name, title))'
 properties:
@@ -9,6 +9,8 @@ properties:
     displayName: Title
   status:
     displayName: Status
+  lifecycle:
+    displayName: Lifecycle
   knowledge_kind:
     displayName: Kind
   evidence_state:
@@ -19,9 +21,10 @@ properties:
     displayName: Updated
 views:
   - type: table
-    name: Inbox
+    name: Candidate inbox
     filters:
       and:
+        - 'record_type == "candidate"'
         - 'status == "pending"'
     order:
       - formula.title_link
@@ -30,9 +33,10 @@ views:
       - evidence_state
       - updated
   - type: table
-    name: Ready
+    name: Ready for curation
     filters:
       and:
+        - 'record_type == "candidate"'
         - 'status == "ready"'
     order:
       - formula.title_link
@@ -40,9 +44,10 @@ views:
       - evidence_state
       - updated
   - type: table
-    name: Deferred
+    name: Deferred candidates
     filters:
       and:
+        - 'record_type == "candidate"'
         - 'status == "deferred"'
     order:
       - formula.title_link
@@ -50,31 +55,52 @@ views:
       - evidence_state
       - updated
   - type: table
-    name: Rejected
+    name: Canonical knowledge
     filters:
       and:
-        - 'status == "rejected"'
+        - 'record_type == "canonical"'
+        - 'lifecycle != "retired"'
+    order:
+      - formula.title_link
+      - lifecycle
+      - knowledge_kind
+      - evidence_state
+      - updated
+  - type: table
+    name: Contested knowledge
+    filters:
+      and:
+        - 'record_type == "canonical"'
+        - or:
+            - 'lifecycle == "contested"'
+            - 'evidence_state == "contested"'
+    order:
+      - formula.title_link
+      - lifecycle
+      - knowledge_kind
+      - evidence_state
+      - updated
+  - type: table
+    name: Integrated candidates
+    filters:
+      and:
+        - 'record_type == "candidate"'
+        - or:
+            - 'status == "integrated"'
+            - 'status == "contested"'
+    order:
+      - formula.title_link
+      - status
+      - canonical_id
+      - updated
+  - type: table
+    name: Retired knowledge
+    filters:
+      and:
+        - 'record_type == "canonical"'
+        - 'lifecycle == "retired"'
     order:
       - formula.title_link
       - knowledge_kind
-      - updated
-  - type: table
-    name: Integrated
-    filters:
-      and:
-        - 'status == "integrated"'
-    order:
-      - formula.title_link
-      - status
-      - canonical_id
-      - updated
-  - type: table
-    name: Contested
-    filters:
-      and:
-        - 'status == "contested"'
-    order:
-      - formula.title_link
-      - status
-      - canonical_id
+      - evidence_state
       - updated

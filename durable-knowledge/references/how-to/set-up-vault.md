@@ -10,8 +10,8 @@ python <skill>/scripts/bootstrap.py --vault <vault>
 ```
 
 Bootstrap creates missing managed directories, marker files, explanatory README files, default
-template directories, and `Knowledge/candidate-review.base`. It leaves existing notes and customized
-files unchanged.
+template directories, `Knowledge/knowledge-browser.base`, and `Knowledge/candidate-review.base`. It
+leaves existing notes and customized files unchanged.
 
 To install an editable vault-local admission policy:
 
@@ -40,10 +40,24 @@ vault may also discover the nearest ancestor containing `.llm-wiki/ROOT` and `Kn
 Open the directory as an Obsidian vault and enable the Bases core plugin. Then open:
 
 ```text
-Knowledge/candidate-review.base
+Knowledge/knowledge-browser.base
 ```
 
-The Base is optional. Any Markdown editor or script can review the same YAML properties.
+The browser provides candidate inbox, ready, deferred, canonical, contested, integrated, and retired
+views. It displays the frontmatter `title` as a clickable note link and falls back to the filename for
+legacy records. Move the open Base tab into the left sidebar when a persistent knowledge-navigation
+surface is useful. Sidebar placement is client-local workspace state.
+
+`Knowledge/candidate-review.base` remains available as a smaller candidate-only queue. Both Bases are
+optional projections; any Markdown editor or script can review the same YAML properties.
+
+To show the same `title` in Obsidian's ordinary File Explorer, optionally install the community
+plugin [Front Matter Title](https://github.com/snezhig/obsidian-front-matter-title) and enable its
+Explorer surface. Each desktop or mobile client must install and enable the plugin independently.
+The plugin can also replace Obsidian's inline title, but the skill already preserves the first H1 as
+the portable document title; enabling both may show two title surfaces depending on client settings.
+The knowledge contract does not depend on the plugin: without it, the first H1 remains authoritative
+for the open document and bundled Bases continue to display candidate and canonical titles.
 
 ## Validate the setup
 

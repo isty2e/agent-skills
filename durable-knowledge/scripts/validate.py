@@ -7,6 +7,7 @@ import re
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from urllib.parse import urlsplit
 
 _TOP_LEVEL_KEY = re.compile(r"^([A-Za-z_][A-Za-z0-9_-]*):(?:\s*(.*))?$")
 _LOWER_KEBAB = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -92,6 +93,16 @@ _OPTIONAL_SEQUENCE_FIELDS: dict[str, frozenset[str]] = {
     "canonical": frozenset({"aliases"}),
 }
 
+_TITLED_RECORD_TYPES = frozenset({"candidate", "paper", "canonical", "proposal"})
+_OPTIONAL_SCALAR_FIELDS: dict[str, frozenset[str]] = {
+    "candidate": frozenset({"title"}),
+    "paper": frozenset(
+        {"title", "doi", "arxiv", "pmid", "source_uri", "source_sha256"}
+    ),
+    "canonical": frozenset({"title"}),
+    "proposal": frozenset({"title"}),
+}
+
 _NON_EMPTY_SEQUENCE_FIELDS: dict[str, frozenset[str]] = {
     "candidate": _SEQUENCE_FIELDS["candidate"],
     "canonical": _SEQUENCE_FIELDS["canonical"],
@@ -131,6 +142,30 @@ _EXPECTED_ROOT: dict[str, Path] = {
     "canonical": Path("Knowledge/Canonical"),
     "proposal": Path(".llm-wiki/Proposals"),
 }
+
+_PORTABLE_SOURCE_PREFIXES = (
+    "embedded:",
+    "vault:record:",
+    "paper:doi:",
+    "paper:arxiv:",
+    "paper:pmid:",
+    "https://",
+    "urn:",
+    "doi:",
+    "arxiv:",
+    "pmid:",
+    "isbn:",
+    "rfc:",
+    "swh:",
+)
+_LOCAL_ONLY_SOURCE_PREFIXES = (
+    "file:",
+    "session:",
+    "artifact:",
+    "ticket:",
+    "issue:",
+    "user-instruction:",
+)
 
 
 @dataclass(frozen=True)
@@ -241,6 +276,89 @@ def _scalar_field(fields: Mapping[str, str | tuple[str, ...]], key: str) -> str:
     return value if isinstance(value, str) else ""
 
 
+def _is_resolvable_https_uri(value: str) -> bool:
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return False
+    return parsed.scheme.lower() == "https" and bool(parsed.netloc)
+
+
+def _portable_source_reference_is_well_formed(source_reference: str) -> bool:
+    normalized = source_reference.strip().lower()
+    if normalized.startswith("https://"):
+        return _is_resolvable_https_uri(source_reference.strip())
+
+    prefix = next(
+        (
+            candidate
+            for candidate in _PORTABLE_SOURCE_PREFIXES
+            if normalized.startswith(candidate)
+        ),
+        None,
+    )
+    if prefix is None:
+        return False
+
+    locator = source_reference.strip()[len(prefix) :]
+    if not locator or any(character.isspace() for character in locator):
+        return False
+    if prefix == "embedded:":
+        return "#" not in locator
+    if prefix == "vault:record:":
+        record_id, separator, anchor = locator.partition("#")
+        return bool(record_id and separator and anchor)
+    if prefix == "urn:":
+        namespace, separator, identifier = locator.partition(":")
+        return bool(namespace and separator and identifier)
+    if "#" in locator:
+        target, anchor = locator.rsplit("#", maxsplit=1)
+        return bool(target and anchor)
+    return True
+
+
+def _source_reference_portability_message(source_reference: str) -> str | None:
+    normalized = source_reference.strip().lower()
+    if normalized.startswith(_LOCAL_ONLY_SOURCE_PREFIXES):
+        return (
+            f"source reference is local-only: {source_reference!r}; use embedded "
+            "evidence, a synced-vault record ID, or a stable external locator"
+        )
+    if _portable_source_reference_is_well_formed(source_reference):
+        return None
+    if normalized.startswith(_PORTABLE_SOURCE_PREFIXES):
+        return (
+            f"source reference is malformed: {source_reference!r}; provide a non-empty "
+            "resolvable identifier, anchor, or HTTPS host"
+        )
+    return (
+        f"source reference is not recognized as replica-portable: {source_reference!r}; "
+        "use embedded evidence, a synced-vault record ID, or a stable external locator"
+    )
+
+
+def _first_h1(path: Path) -> str | None:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    closing_delimiter = next(
+        (
+            index
+            for index, line in enumerate(lines[1:], start=1)
+            if line.strip() == "---"
+        ),
+        None,
+    )
+    if closing_delimiter is None:
+        return None
+    return next(
+        (
+            line[2:].strip()
+            for line in lines[closing_delimiter + 1 :]
+            if line.startswith("# ")
+        ),
+        None,
+    )
+
+
 def is_under(relative: Path, root: Path) -> bool:
     try:
         relative.relative_to(root)
@@ -297,12 +415,15 @@ def validate_file(
             )
         )
 
+    expected_scalar_fields = _SCALAR_FIELDS[record_type] | _OPTIONAL_SCALAR_FIELDS.get(
+        record_type, frozenset()
+    )
     expected_sequence_fields = _SEQUENCE_FIELDS[
         record_type
     ] | _OPTIONAL_SEQUENCE_FIELDS.get(record_type, frozenset())
     wrong_scalar_types = sorted(
         key
-        for key in _SCALAR_FIELDS[record_type]
+        for key in expected_scalar_fields
         if key in fields and not isinstance(fields[key], str)
     )
     wrong_sequence_types = sorted(
@@ -343,6 +464,36 @@ def validate_file(
             )
         )
 
+    if record_type in _TITLED_RECORD_TYPES:
+        title = fields.get("title")
+        if title is None:
+            findings.append(
+                Finding(
+                    "warning",
+                    str(relative),
+                    "record has no human-readable title; Obsidian views fall back to the filename",
+                )
+            )
+        elif isinstance(title, str):
+            if not title or "<" in title or ">" in title:
+                findings.append(
+                    Finding(
+                        "error",
+                        str(relative),
+                        "title is empty or still contains placeholders",
+                    )
+                )
+            else:
+                first_h1 = _first_h1(path)
+                if first_h1 != title:
+                    findings.append(
+                        Finding(
+                            "error",
+                            str(relative),
+                            "frontmatter title must exactly match the first H1 heading",
+                        )
+                    )
+
     empty_sequences = sorted(
         key
         for key in _NON_EMPTY_SEQUENCE_FIELDS.get(record_type, frozenset())
@@ -373,6 +524,48 @@ def validate_file(
                 + ", ".join(placeholder_sequences),
             )
         )
+
+    source_references: list[str] = []
+    source_refs = fields.get("source_refs")
+    if isinstance(source_refs, tuple):
+        source_references.extend(source_refs)
+    source_ref = _scalar_field(fields, "source_ref")
+    if source_ref:
+        source_references.append(source_ref)
+
+    for source_reference in source_references:
+        portability_message = _source_reference_portability_message(source_reference)
+        if portability_message is not None:
+            findings.append(Finding("warning", str(relative), portability_message))
+
+    if record_type == "paper":
+        source_uri = fields.get("source_uri")
+        if (
+            isinstance(source_uri, str)
+            and source_uri != "null"
+            and not _is_resolvable_https_uri(source_uri)
+        ):
+            findings.append(
+                Finding(
+                    "error",
+                    str(relative),
+                    "paper source_uri must be null or a resolvable HTTPS URI",
+                )
+            )
+
+        source_sha256 = fields.get("source_sha256")
+        if (
+            isinstance(source_sha256, str)
+            and source_sha256 != "null"
+            and not _SHA256.fullmatch(source_sha256)
+        ):
+            findings.append(
+                Finding(
+                    "error",
+                    str(relative),
+                    "paper source_sha256 must be null or 64 lowercase hexadecimal characters",
+                )
+            )
 
     expected_root = _EXPECTED_ROOT[record_type]
     if not is_under(relative, expected_root):

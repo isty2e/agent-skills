@@ -30,6 +30,8 @@ Include:
 - three papers with overlapping but nonidentical scopes;
 - substantive sessions containing zero, one, and multiple durable findings;
 - repository-local facts that should be routed away from central knowledge;
+- local experiment output and bare ticket identifiers that must be converted into embedded evidence
+  or routed away rather than cited directly;
 - a user preference that belongs in native memory;
 - near-duplicate canonical owners;
 - an apparent contradiction resolved by scope;
@@ -65,8 +67,16 @@ paper or experiment claim.
 
 ### Provenance accuracy
 
-Verify important claims against cited pages, sections, equations, figures, tables, session artifacts,
-or repository artifacts.
+Verify important claims against cited pages, sections, equations, figures, tables, embedded evidence
+capsules, synced-vault records, or stable external resources.
+
+### Replica portability
+
+Open generated records from a fixture replica that lacks the originating working tree, local ticket
+store, and harness session history. Confirm that each claim remains interpretable and its evidence can
+be evaluated from the record itself plus synced-vault IDs or stable external locators. Count local
+paths, bare filenames, local ticket or issue names, session IDs, machine-scoped artifact labels, and
+hash-only source references as failures.
 
 ### Semantic owner resolution
 
@@ -120,8 +130,11 @@ An initial pilot is acceptable when:
 - no canonical writes occur during capture, paper ingest, or recall;
 - conflicts and partial failures preserve recoverable state;
 - notes remain interoperable across tested models and clients;
+- no accepted record depends on an originating machine's paths, local tickets, session history, or
+  machine-scoped artifact labels;
 - structural validation rejects duplicate fields, scalar/sequence shape errors, and empty or
-  placeholder knowledge-bearing sequences without manual schema repair.
+  placeholder knowledge-bearing sequences without manual schema repair, and reports known
+  non-portable source references.
 
 Report failures by axis and include the exact fixture, generated paths, validator output, and required
 human corrections.

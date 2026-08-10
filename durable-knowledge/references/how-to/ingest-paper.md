@@ -19,7 +19,8 @@ Resolve identity in this order:
 5. SHA-256 prefix of the source file.
 
 Search existing paper IDs and aliases before creating a note. Different filenames or URLs for the
-same paper do not justify duplicate records.
+same paper do not justify duplicate records. A file hash may establish identity or integrity, but a
+local file path is never durable source metadata.
 
 ## Read the source
 
@@ -35,16 +36,24 @@ Read enough of the original paper to preserve:
 Use a physical PDF page plus section, equation, figure, or table identifiers where available. If
 reliable locators cannot be obtained, state the limitation and do not emit durable candidates.
 
+If the source exists only as a local file, do not store its path. Record its hash only as identity or
+integrity metadata, make the claim ledger self-contained, and use `embedded:claim-ledger` as the paper
+note's source reference. Do not emit a durable candidate unless another replica can evaluate the
+support through a stable external URI, a synced managed record, or sufficient safely embedded
+evidence.
+
 ## Create the paper note
 
 1. Resolve the vault and stable paper identity.
 2. Search `Knowledge/Papers/` for the identity and aliases.
 3. Instantiate the vault override of `paper-note.md` or the bundled template.
-4. Separate author claims from agent interpretation.
-5. Build a claim ledger with exact locators.
-6. Record limitations, failure regimes, and open questions.
-7. Relate the source to existing paper and canonical notes without mutating canonical state.
-8. Write the note under `Knowledge/Papers/`.
+4. Use the paper title as the frontmatter `title` and mirror it exactly in the first H1.
+5. Separate author claims from agent interpretation.
+6. Build a claim ledger with exact locators.
+7. Record a stable external source URI when available; never record the originating local path.
+8. Record limitations, failure regimes, and open questions.
+9. Relate the source to existing paper and canonical notes without mutating canonical state.
+10. Write the note under `Knowledge/Papers/`.
 
 ## Assess durable candidates
 

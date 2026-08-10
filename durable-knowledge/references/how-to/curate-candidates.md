@@ -45,7 +45,7 @@ These review transitions leave `canonical_id: null` and do not rewrite candidate
 2. Select authorized candidates.
 3. Search canonical IDs, titles, aliases, summaries, body text, and backlinks.
 4. Identify the semantic owner by meaning, scope, assumptions, definitions, and target quantity.
-5. Read the source notes and locators needed to support the change.
+5. Read the evidence capsules and portable source locators needed to support the change.
 6. Choose one decision:
    - `create` — no semantic owner exists;
    - `merge` — an existing owner covers the compatible claim;
@@ -57,10 +57,15 @@ These review transitions leave `canonical_id: null` and do not rewrite candidate
    operation is modifying the same canonical owner.
 8. For create, resolve `canonical-entry.md`, except that `knowledge_kind: synthesis` resolves
    `synthesis.md`. For merge, retain the existing canonical owner's record shape.
-9. For create or merge, write the canonical result and inspect the diff.
-10. For conflict, preserve each competing claim and set canonical `lifecycle: contested` or
+9. Give a new canonical owner a concise semantic `title` and mirror it exactly in the first H1. The
+   canonical title names the durable topic and need not copy the candidate title. A title change on
+   an existing canonical owner preserves its stable ID and records useful former names in `aliases`.
+10. For create or merge, write the canonical result and inspect the diff. Restate the minimum
+   claim-supporting evidence in the canonical note so it does not depend on the candidate file or an
+   originating local source.
+11. For conflict, preserve each competing claim and set canonical `lifecycle: contested` or
    `evidence_state: contested`.
-11. After the canonical write succeeds, update each applied candidate:
+12. After the canonical write succeeds, update each applied candidate:
 
     ```yaml
     status: integrated  # or contested
@@ -68,7 +73,7 @@ These review transitions leave `canonical_id: null` and do not rewrite candidate
     updated: <current UTC timestamp>
     ```
 
-12. Run structural validation.
+13. Run structural validation.
 
 ## Prepare a proposal when needed
 
@@ -87,10 +92,12 @@ To prepare a proposal:
 2. Instantiate the vault override of `merge-proposal.md` or the bundled template. Generate the
    proposal ID using the vault contract's random-suffix format and use the full ID as the filename
    stem.
-3. Record the proposed canonical body or patch, candidate IDs, source references, and unresolved
+3. Give the proposal a concise `Proposal: <short action>` title and mirror it exactly in the first
+   H1.
+4. Record the proposed canonical body or patch, candidate IDs, source references, and unresolved
    questions.
-4. Leave candidate status unchanged while the proposal is only under review.
-5. Before delayed application, require the current target hash to match `base_sha256`.
+5. Leave candidate status unchanged while the proposal is only under review.
+6. Before delayed application, require the current target hash to match `base_sha256`.
 
 A proposal records a possible action. It does not authorize application.
 
@@ -99,9 +106,15 @@ A proposal records a possible action. It does not authorize application.
 - Merge only claims with compatible semantic ownership.
 - Preserve narrower scopes instead of flattening them into a universal statement.
 - Add evidence without automatically increasing lifecycle or evidence state.
+- Preserve candidate IDs as provenance when useful, but never propagate a local path, bare filename,
+  local ticket or issue name, session ID, or machine-scoped artifact label into canonical
+  `source_refs`.
 - State what changed and why when evidence revises a claim.
 - Rewrite the canonical page into a coherent current model rather than appending disconnected
   fragments.
+- Preserve or improve equations and symbolic notation when they make the canonical relationship
+  more precise. Define symbols, domains, and assumptions nearby, and retain a concise prose
+  interpretation.
 - Preserve important dissent in evidence and conflict sections.
 
 ## Handle human-owned notes

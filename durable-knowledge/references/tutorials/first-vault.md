@@ -23,7 +23,7 @@ You need:
 - an agent harness that can load the skill.
 
 Obsidian is optional. If you use it, enable the Bases core plugin before opening the generated
-candidate review view.
+knowledge browser.
 
 ## 1. Create the vault
 
@@ -40,6 +40,7 @@ Knowledge/
 ├── Candidates/
 ├── Papers/
 ├── Canonical/
+├── knowledge-browser.base
 └── candidate-review.base
 .llm-wiki/
 ├── Proposals/
@@ -74,17 +75,21 @@ The agent creates one file under `Knowledge/Candidates/`. Its ID and filename st
 
 ```yaml
 record_type: candidate
+title: Durable intent should precede non-atomic external side effects
 status: pending
 canonical_id: null
 ```
 
 The note should separate the observed or sourced claim from the proposed generalization and state its
-scope, assumptions, evidence, and invalidation conditions.
+scope, assumptions, evidence, and invalidation conditions. Its evidence must be understandable from
+the note itself, and `source_refs` must use `embedded:<anchor>`, a synced-vault record ID, or a stable
+external locator rather than a local path, ticket name, or session ID.
 
 ## 3. Review the candidate
 
-In Obsidian, open `Knowledge/candidate-review.base` and select the **Inbox** view. In another Markdown
-editor, open the candidate file directly.
+In Obsidian, open `Knowledge/knowledge-browser.base` and select the **Candidate inbox** view. The
+human-readable `title` is a clickable link even though the filename remains the machine-oriented
+candidate ID. In another Markdown editor, open the candidate file directly.
 
 Change only the review status:
 
@@ -122,11 +127,12 @@ Open the canonical note and check that it contains:
 - scope and assumptions;
 - a mechanism or rationale;
 - decision implications;
-- evidence and source references;
+- self-contained evidence and replica-resolvable source references;
 - counterexamples or invalidation conditions.
 
-In Obsidian, an integrated candidate now appears in the **Integrated** view; a conflict-preserving
-candidate appears in **Contested**. In a headless environment, the same states are visible in YAML.
+In Obsidian, an integrated or conflict-preserving candidate now appears in the **Integrated
+candidates** view with its resulting status. The canonical owner appears automatically in the
+**Canonical knowledge** view. In a headless environment, the same states are visible in YAML.
 
 Run validation again:
 

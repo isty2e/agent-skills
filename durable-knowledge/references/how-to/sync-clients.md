@@ -30,17 +30,18 @@ On each desktop machine:
 
 1. Open or create a local vault.
 2. Connect it to the intended Obsidian Sync remote vault.
-3. Enable the Bases core plugin if you want to use `Knowledge/candidate-review.base`.
+3. Enable the Bases core plugin if you want to use `Knowledge/knowledge-browser.base` or the focused
+   `Knowledge/candidate-review.base`.
 4. Let the initial sync finish before editing shared files.
 
-The optional desktop CLI can open or query the review Base while Obsidian is running:
+The optional desktop CLI can open or query the knowledge browser while Obsidian is running:
 
 ```bash
 cd "$DK_VAULT_PATH"
-obsidian open path="Knowledge/candidate-review.base"
+obsidian open path="Knowledge/knowledge-browser.base"
 obsidian base:query \
-  path="Knowledge/candidate-review.base" \
-  view="Ready" \
+  path="Knowledge/knowledge-browser.base" \
+  view="Ready for curation" \
   format=paths
 ```
 
@@ -99,6 +100,8 @@ Apply these constraints:
 - Run one sync engine for a given local vault path.
 - Do not run desktop Sync and Headless Sync against the same local directory.
 - Let initial sync complete before enabling writes on a new replica.
+- Keep claim support inside the synced record or behind a synced-vault ID or stable external URI;
+  never cite an originating machine's path, bare filename, local ticket name, or session ID.
 - Use the random-suffixed candidate and proposal IDs from the vault contract, with each full ID as
   the filename stem.
 - Serialize edits to the same canonical note.

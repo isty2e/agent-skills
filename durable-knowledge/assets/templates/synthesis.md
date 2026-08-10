@@ -1,5 +1,6 @@
 ---
 id: knowledge-synthesis-<slug>
+title: <Synthesis title>
 record_type: canonical
 knowledge_kind: synthesis
 lifecycle: provisional
@@ -12,7 +13,7 @@ assumptions:
 invalidation_conditions:
   - <what evidence would break the synthesis>
 source_refs:
-  - <at least two independent source references unless explicitly excepted>
+  - <at least two independent portable source references unless explicitly excepted>
 created: <ISO-8601 UTC timestamp>
 updated: <ISO-8601 UTC timestamp>
 ---
@@ -21,17 +22,20 @@ updated: <ISO-8601 UTC timestamp>
 
 ## Synthesis
 
-<The cross-source relation or model.>
+<The cross-source relation or model. Use equations or symbolic notation when they improve precision;
+define symbols and assumptions and explain the result in prose.>
 
 ## Source claims
 
 ### <Source A>
 
-<Claim, scope, locator.>
+<Claim, scope, qualification, and portable locator. Include enough support to understand the claim
+without resolving an originating local source.>
 
 ### <Source B>
 
-<Claim, scope, locator.>
+<Claim, scope, qualification, and portable locator. Include enough support to understand the claim
+without resolving an originating local source.>
 
 ## Reconciliation or tension
 

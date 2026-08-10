@@ -69,7 +69,9 @@ value ≈ reuse probability × rediscovery cost × decision impact × stability
 | Raw transcript or long source excerpt | Source system |
 
 A project-local finding may seed central knowledge only when the abstraction has a credible mechanism,
-clear scope, value outside the originating repository, and a locator back to the local evidence.
+clear scope, value outside the originating repository, and a self-contained evidence capsule or
+replica-resolvable source reference. A local path, bare filename, ticket name, session ID, or
+machine-scoped artifact label does not satisfy this requirement.
 
 ## Default exclusions
 
@@ -105,7 +107,7 @@ A candidate may become canonical when it has:
 - a clear semantic owner and no unresolved near-duplicate identity;
 - explicit scope and assumptions;
 - a mechanism or rationale adequate for its intended use;
-- preserved evidence and source locators;
+- a self-contained evidence summary plus portable source locators when available;
 - explicit invalidation conditions or known limits;
 - lifecycle and evidence state that do not overstate certainty;
 - `status: ready`.
