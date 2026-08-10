@@ -62,6 +62,8 @@ updated: 2026-03-13T14:22:33Z
         *,
         source_uri: str | None = "https://example.org/paper",
         source_sha256: str | None = "a" * 64,
+        title_line: str = "title: Example paper\n",
+        heading: str = "Example paper",
     ) -> subprocess.CompletedProcess[str]:
         papers = self.vault / "Knowledge/Papers"
         papers.mkdir(parents=True, exist_ok=True)
@@ -73,7 +75,7 @@ updated: 2026-03-13T14:22:33Z
         (papers / "paper-example.md").write_text(
             f"""---
 id: paper-example
-record_type: paper
+{title_line}record_type: paper
 status: source
 citation_key: example-2026-paper
 source_ref: embedded:claim-ledger
@@ -81,7 +83,36 @@ source_ref: embedded:claim-ledger
 updated: 2026-03-13T14:22:33Z
 ---
 
-# Example paper
+# {heading}
+""",
+            encoding="utf-8",
+        )
+        return self.run_validator()
+
+    def validate_proposal(
+        self,
+        *,
+        title_line: str = 'title: "Proposal: Create example owner"\n',
+        heading: str = "Proposal: Create example owner",
+    ) -> subprocess.CompletedProcess[str]:
+        proposals = self.vault / ".llm-wiki/Proposals"
+        proposals.mkdir(parents=True, exist_ok=True)
+        (proposals / "proposal-example.md").write_text(
+            f"""---
+id: proposal-20260313t142233123456z-example
+{title_line}record_type: proposal
+decision: create
+target_id: null
+target_path: null
+base_sha256: null
+candidate_ids:
+  - candidate-20260313t142233123456z-example
+source_refs:
+  - embedded:proposed-canonical-result
+created: 2026-03-13T14:22:33Z
+---
+
+# {heading}
 """,
             encoding="utf-8",
         )
@@ -180,6 +211,35 @@ updated: 2026-03-13T14:22:33Z
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("source_sha256 must be null or 64 lowercase", result.stdout)
+
+    def test_legacy_paper_without_title_warns(self) -> None:
+        result = self.validate_paper(title_line="")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("has no human-readable title", result.stdout)
+
+    def test_paper_title_must_match_first_h1(self) -> None:
+        result = self.validate_paper(heading="Different paper")
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("title must exactly match the first H1", result.stdout)
+
+    def test_valid_proposal_title_passes(self) -> None:
+        result = self.validate_proposal()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_legacy_proposal_without_title_warns(self) -> None:
+        result = self.validate_proposal(title_line="")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("has no human-readable title", result.stdout)
+
+    def test_proposal_title_must_match_first_h1(self) -> None:
+        result = self.validate_proposal(heading="Proposal: Different action")
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("title must exactly match the first H1", result.stdout)
 
     def test_missing_title_warns_and_uses_legacy_fallback(self) -> None:
         result = self.validate_candidate("\n  - example scope", title_line="")

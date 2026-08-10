@@ -51,6 +51,14 @@ surface is useful. Sidebar placement is client-local workspace state.
 `Knowledge/candidate-review.base` remains available as a smaller candidate-only queue. Both Bases are
 optional projections; any Markdown editor or script can review the same YAML properties.
 
+To show the same `title` in Obsidian's ordinary File Explorer, optionally install the community
+plugin [Front Matter Title](https://github.com/snezhig/obsidian-front-matter-title) and enable its
+Explorer surface. Each desktop or mobile client must install and enable the plugin independently.
+The plugin can also replace Obsidian's inline title, but the skill already preserves the first H1 as
+the portable document title; enabling both may show two title surfaces depending on client settings.
+The knowledge contract does not depend on the plugin: without it, the first H1 remains authoritative
+for the open document and bundled Bases continue to display candidate and canonical titles.
+
 ## Validate the setup
 
 ```bash

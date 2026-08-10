@@ -69,10 +69,10 @@ repository.
 
 ## Naming and IDs
 
-Use lowercase kebab-case filenames. For new candidate and canonical records, store the canonical
-human-readable label in the `title` frontmatter field and mirror it exactly in the first H1 heading.
-Obsidian Bases use `title` for display while IDs and filenames remain machine-oriented identity and
-collision-control artifacts.
+Use lowercase kebab-case filenames. For new candidate, paper, canonical, and proposal records, store
+the canonical human-readable label in the `title` frontmatter field and mirror it exactly in the
+first H1 heading. Metadata-aware Obsidian surfaces may use `title` for display while IDs and filenames
+remain machine-oriented identity and collision-control artifacts.
 
 Recommended IDs:
 
@@ -94,7 +94,8 @@ IDs are stable after creation. Renaming a file must not change its ID.
 
 Candidate titles are immutable provenance after capture. Canonical titles may change during
 authorized curation without changing the canonical ID; retain useful former names in `aliases`.
-Legacy records without `title` remain valid and fall back to their filenames in bundled Bases. A
+Paper titles identify their source, and proposal titles describe their proposed action. Legacy
+records without `title` remain valid and fall back to their filenames in metadata-aware views. A
 deliberate schema migration may copy an existing first H1 into a missing `title` without otherwise
 changing candidate provenance.
 
@@ -116,10 +117,10 @@ or placeholder sequence items. Candidate and canonical `scope`, `assumptions`,
 `invalidation_conditions`, and `source_refs` must contain at least one item. Proposal `source_refs`
 must also contain at least one item.
 
-New candidate and canonical records must provide a non-empty scalar `title`. The validator keeps
-legacy title-less records compatible by reporting a warning rather than an error. When `title` is
-present, a missing or different first H1 is an error because it would create two conflicting human
-labels.
+New candidate, paper, canonical, and proposal records must provide a non-empty scalar `title`. The
+validator keeps legacy title-less records compatible by reporting a warning rather than an error.
+When `title` is present, a missing or different first H1 is an error because it would create two
+conflicting human labels.
 
 Paper `source_uri` and `source_sha256` are optional managed scalars for legacy compatibility. When
 present, `source_uri` must be `null` or a resolvable HTTPS URI, and `source_sha256` must be `null` or

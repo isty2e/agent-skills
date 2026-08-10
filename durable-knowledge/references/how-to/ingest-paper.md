@@ -47,12 +47,13 @@ evidence.
 1. Resolve the vault and stable paper identity.
 2. Search `Knowledge/Papers/` for the identity and aliases.
 3. Instantiate the vault override of `paper-note.md` or the bundled template.
-4. Separate author claims from agent interpretation.
-5. Build a claim ledger with exact locators.
-6. Record a stable external source URI when available; never record the originating local path.
-7. Record limitations, failure regimes, and open questions.
-8. Relate the source to existing paper and canonical notes without mutating canonical state.
-9. Write the note under `Knowledge/Papers/`.
+4. Use the paper title as the frontmatter `title` and mirror it exactly in the first H1.
+5. Separate author claims from agent interpretation.
+6. Build a claim ledger with exact locators.
+7. Record a stable external source URI when available; never record the originating local path.
+8. Record limitations, failure regimes, and open questions.
+9. Relate the source to existing paper and canonical notes without mutating canonical state.
+10. Write the note under `Knowledge/Papers/`.
 
 ## Assess durable candidates
 

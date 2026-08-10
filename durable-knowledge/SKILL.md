@@ -87,8 +87,9 @@ emit candidates but must not rewrite canonical knowledge.
     optional projections.
 14. **Write canonical state first.** Set a candidate to `integrated` or `contested` only after the
     canonical write succeeds.
-15. **Separate identity from display.** Candidate and canonical IDs remain stable machine identity.
-    New records use `title` as the human-readable label and mirror it exactly in the first H1.
+15. **Separate identity from display.** Managed-record IDs remain stable machine identity. New
+    candidate, paper, canonical, and proposal records use `title` as the human-readable label and
+    mirror it exactly in the first H1.
 16. **Formalize when it improves precision.** Actively use equations or symbolic notation when they
     express quantitative, logical, probabilistic, algorithmic, or constraint relationships more
     clearly than prose. Define symbols, domains, and assumptions nearby, and explain the expression
@@ -110,7 +111,10 @@ Treat integrations as optional adapters:
 - `obsidian` controls a running desktop app. Use it to open or query the review Base when useful.
 - `ob` is the headless Sync and Publish client. Do not expect it to execute Bases or desktop
   commands.
-- Agents operate on the local Markdown/YAML replica; neither CLI is a semantic authority.
+- The community plugin Front Matter Title may project `title` into File Explorer and inline-title
+  surfaces, but it is an optional client-local adapter. Do not make a knowledge operation depend on
+  its installation or configuration.
+- Agents operate on the local Markdown/YAML replica; neither CLI nor plugin is a semantic authority.
 - Multiple desktop and headless clients may replicate the same remote vault. Give each client a
   separate local directory and run one sync engine per local path.
 - Serialize writes to the same canonical note. Different canonical owners may be curated in
@@ -169,7 +173,8 @@ Before reporting a write as complete:
 1. confirm the file is inside an allowed root;
 2. confirm it follows the resolved template;
 3. confirm the ID is unique;
-4. confirm a new candidate or canonical record has a concise `title` matching its first H1;
+4. confirm a new candidate, paper, canonical, or proposal record has a concise `title` matching its
+   first H1;
 5. confirm the evidence summary is self-contained and every source reference is replica-resolvable;
 6. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
    name, session ID, or machine-scoped artifact label;

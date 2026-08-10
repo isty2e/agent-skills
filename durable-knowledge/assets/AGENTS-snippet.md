@@ -17,9 +17,9 @@ explicit. Make that evidence self-contained in the record or reference it throug
 or stable external URI. Never use a local path, bare filename, local ticket or issue name, session ID,
 or machine-scoped artifact label as claim support.
 
-For every new candidate or canonical record, use `title` as the concise human-readable label and
-mirror it exactly in the first H1. Keep machine identity in `id`; never derive a new ID from a title
-change.
+For every new candidate, paper, canonical, or proposal record, use `title` as the concise
+human-readable label and mirror it exactly in the first H1. Keep machine identity in `id`; never
+derive a new ID from a title change.
 
 When the user explicitly asks to remember or save something, first identify the context that owns
 its meaning. Route user preferences and other user-, session-, repository-, project-, organization-,

@@ -93,11 +93,14 @@ _OPTIONAL_SEQUENCE_FIELDS: dict[str, frozenset[str]] = {
     "canonical": frozenset({"aliases"}),
 }
 
-_TITLED_RECORD_TYPES = frozenset({"candidate", "canonical"})
+_TITLED_RECORD_TYPES = frozenset({"candidate", "paper", "canonical", "proposal"})
 _OPTIONAL_SCALAR_FIELDS: dict[str, frozenset[str]] = {
     "candidate": frozenset({"title"}),
-    "paper": frozenset({"doi", "arxiv", "pmid", "source_uri", "source_sha256"}),
+    "paper": frozenset(
+        {"title", "doi", "arxiv", "pmid", "source_uri", "source_sha256"}
+    ),
     "canonical": frozenset({"title"}),
+    "proposal": frozenset({"title"}),
 }
 
 _NON_EMPTY_SEQUENCE_FIELDS: dict[str, frozenset[str]] = {

@@ -1,5 +1,6 @@
 ---
 id: paper-<stable-source-identifier>
+title: <Paper title>
 record_type: paper
 status: source
 citation_key: <author-year-short-title>

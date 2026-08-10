@@ -1,5 +1,6 @@
 ---
 id: proposal-<utc>-<slug>-<random16hex>
+title: "Proposal: <short action>"
 record_type: proposal
 decision: <create|merge|conflict|reject|defer|retire>
 target_id: <canonical ID or null>

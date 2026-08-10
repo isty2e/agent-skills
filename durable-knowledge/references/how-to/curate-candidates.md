@@ -92,10 +92,12 @@ To prepare a proposal:
 2. Instantiate the vault override of `merge-proposal.md` or the bundled template. Generate the
    proposal ID using the vault contract's random-suffix format and use the full ID as the filename
    stem.
-3. Record the proposed canonical body or patch, candidate IDs, source references, and unresolved
+3. Give the proposal a concise `Proposal: <short action>` title and mirror it exactly in the first
+   H1.
+4. Record the proposed canonical body or patch, candidate IDs, source references, and unresolved
    questions.
-4. Leave candidate status unchanged while the proposal is only under review.
-5. Before delayed application, require the current target hash to match `base_sha256`.
+5. Leave candidate status unchanged while the proposal is only under review.
+6. Before delayed application, require the current target hash to match `base_sha256`.
 
 A proposal records a possible action. It does not authorize application.
 

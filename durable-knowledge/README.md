@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.2.1
+# durable-knowledge skill — draft 0.2.2
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
@@ -102,14 +102,22 @@ owners. The Base shows a clickable human-readable `title` while machine-oriented
 remain stable. It updates automatically when matching Markdown records arrive or their lifecycle
 properties change. `Knowledge/candidate-review.base` remains available as a candidate-only view.
 
-New candidate and canonical records store their human label in frontmatter and mirror it in the
-first H1:
+New candidate, paper, canonical, and proposal records store their human label in frontmatter and
+mirror it in the first H1:
 
 ```yaml
 title: Variance limits of residual calibration
 ```
 
-Legacy title-less records remain valid and fall back to the filename in bundled Bases.
+Legacy title-less records remain valid and fall back to the filename in metadata-aware views.
+
+The optional community plugin
+[Front Matter Title](https://github.com/snezhig/obsidian-front-matter-title) can project the same
+frontmatter title into Obsidian's File Explorer. Enable its Explorer surface when that display is
+wanted. Its inline-title surface is separate and may create a second visible title alongside the
+required H1, depending on client settings. The plugin is a client-local presentation adapter, not
+part of the knowledge contract; each client enables it separately, and plain Markdown readers use
+the matching first H1.
 
 Reviewers normally change only `status`:
 

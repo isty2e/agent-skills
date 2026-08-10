@@ -32,17 +32,20 @@ The synthesis template is a specialized `canonical` record with `knowledge_kind:
 
 ## Display titles
 
-New candidate and canonical records use a non-empty `title` scalar as their canonical human-readable
-label. The first H1 heading must exactly mirror `title` so plain Markdown readers and Obsidian Bases
-show the same name. Stable identity remains in `id`; changing a canonical title must not change its
-ID or filename.
+New candidate, paper, canonical, and proposal records use a non-empty `title` scalar as their
+canonical human-readable label. The first H1 heading must exactly mirror `title` so plain Markdown
+readers and metadata-aware Obsidian surfaces show the same name. Stable identity remains in `id`;
+changing a title must not change its ID or filename.
 
 A candidate title describes the proposed claim and remains provenance after capture. A canonical
 title names the long-lived semantic owner and may therefore be narrower, broader, or otherwise
 refined during authorized curation. Preserve useful prior canonical names in `aliases`.
 
-Legacy candidate and canonical records without `title` remain structurally valid. The validator
-warns, and Obsidian views fall back to the filename until the record is deliberately migrated. A
+Paper titles identify the cited work. Proposal titles describe the proposed action and conventionally
+start with `Proposal:`.
+
+Legacy managed records without `title` remain structurally valid. The validator warns, and
+metadata-aware views fall back to the filename until the record is deliberately migrated. A
 mechanical migration may copy the existing first H1 into a missing `title`; this does not authorize
 rewriting candidate prose or choosing a new candidate label.
 
