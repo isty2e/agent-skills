@@ -1,13 +1,11 @@
 ---
 name: durable-knowledge
 description: >-
-  Maintain a portable Markdown/Obsidian knowledge base for coding agents. Use opportunistically,
-  without requiring an explicit request, when prior origin-independent knowledge could materially
-  improve substantive work; when work yields a durable mechanism, constraint, method, distinction,
-  synthesis, or scoped hypothesis worth preserving with self-contained or replica-resolvable
-  evidence; when ingesting grounded paper notes; or when curating human-selected candidates. Route
-  user-, session-, repo-, project-, organization-, and machine-bound facts to contextual memory or
-  documentation instead.
+  Maintain a portable Markdown/Obsidian knowledge base for coding agents. Activate opportunistically
+  when prior origin-independent knowledge could materially improve substantive work; when work yields
+  a durable mechanism, constraint, method, distinction, synthesis, or scoped hypothesis worth
+  preserving with resolvable evidence; when ingesting grounded paper notes; or when curating selected
+  candidates. Route context-bound facts to native memory or repository/project documentation.
 ---
 
 # Durable Knowledge
