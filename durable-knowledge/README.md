@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.2.2
+# durable-knowledge skill — draft 0.2.3
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
@@ -164,12 +164,16 @@ machine-scoped artifact labels as claim support. Existing legacy references rema
 validator reports portability warnings and curation must not propagate them into new canonical
 state.
 
-## Enable rare agent-initiated capture
+## Enable an always-on soft reminder
 
-Append `assets/AGENTS-snippet.md` to the always-on agent instructions used by each harness. Keep one
-shared copy so capture policy does not drift between models.
+The skill metadata supports opportunistic recall and selective capture without an explicit request.
+For harnesses that need a stronger reminder at natural decision points, append
+`assets/AGENTS-snippet.md` to their always-on agent instructions. Keep one shared copy so activation
+and capture policy do not drift between models.
 
-Zero agent-initiated captures is normal. Candidate count has no numeric quota, but every candidate
+The reminder is not a completion gate: it must not block the primary task, report no-op checks, or
+create weak candidates merely to prove that knowledge was considered. Zero retrieved records and
+zero agent-initiated captures are normal. Candidate count has no numeric quota, but every candidate
 must independently satisfy admission.
 
 ## Validate a vault

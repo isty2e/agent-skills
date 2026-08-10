@@ -1,11 +1,13 @@
 ---
 name: durable-knowledge
 description: >-
-  Maintain a portable Markdown/Obsidian knowledge base for coding agents. Use when preserving
-  origin-independent mechanisms, constraints, methods, distinctions, syntheses, or scoped
-  hypotheses with self-contained or replica-resolvable evidence; ingesting grounded paper notes;
-  recalling prior knowledge; or curating human-selected candidates. Route user-, session-, repo-,
-  project-, organization-, and machine-bound facts to contextual memory or documentation instead.
+  Maintain a portable Markdown/Obsidian knowledge base for coding agents. Use opportunistically,
+  without requiring an explicit request, when prior origin-independent knowledge could materially
+  improve substantive work; when work yields a durable mechanism, constraint, method, distinction,
+  synthesis, or scoped hypothesis worth preserving with self-contained or replica-resolvable
+  evidence; when ingesting grounded paper notes; or when curating human-selected candidates. Route
+  user-, session-, repo-, project-, organization-, and machine-bound facts to contextual memory or
+  documentation instead.
 ---
 
 # Durable Knowledge
@@ -55,6 +57,20 @@ add or rename the `knowledge_kind` values defined by the record model.
 
 Do not combine operations merely because several are available. Recall is read-only. Paper ingest may
 emit candidates but must not rewrite canonical knowledge.
+
+## Opportunistic activation
+
+Do not run a mandatory knowledge pass for every task. Without waiting for an explicit request:
+
+- perform bounded read-only recall before redoing expensive work when the task materially overlaps
+  prior research or a known mechanism and retrieved knowledge could improve reasoning or efficiency;
+- after the primary task produces a clear origin-independent finding, consider capture when that
+  finding is likely to remain useful beyond the current context and independently passes admission.
+
+Treat these as relevance-triggered reminders, not completion gates. Do not delay or block the primary
+task, report no-op checks, or create weak candidates merely to demonstrate that the skill was
+considered. Keep recall and capture as separate operations with their existing permissions. Zero
+retrieved records and zero new candidates are normal.
 
 ## Global invariants
 
