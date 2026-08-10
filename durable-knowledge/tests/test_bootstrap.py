@@ -48,6 +48,106 @@ class BootstrapTest(unittest.TestCase):
                 knowledge_browser.read_text(encoding="utf-8"), "customized base\n"
             )
 
+    def test_bootstrap_migrates_legacy_control_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            vault = Path(temporary_directory)
+            legacy = vault / ".llm-wiki"
+            legacy.mkdir()
+            (legacy / "ROOT").write_text(
+                "durable-knowledge-vault-v1\n", encoding="utf-8"
+            )
+            (legacy / "POLICY.md").write_text("custom policy\n", encoding="utf-8")
+            (legacy / "Proposals").mkdir()
+            (legacy / "Proposals/example.md").write_text(
+                "legacy proposal\n", encoding="utf-8"
+            )
+
+            result = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("Migrated: .llm-wiki -> _durable-knowledge", result.stdout)
+            self.assertNotIn("No changes", result.stdout)
+            self.assertFalse(legacy.exists())
+            self.assertEqual(
+                (vault / "_durable-knowledge/POLICY.md").read_text(encoding="utf-8"),
+                "custom policy\n",
+            )
+            self.assertEqual(
+                (vault / "_durable-knowledge/Proposals/example.md").read_text(
+                    encoding="utf-8"
+                ),
+                "legacy proposal\n",
+            )
+
+    def test_bootstrap_recovers_after_post_migration_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            vault = Path(temporary_directory)
+            legacy = vault / ".llm-wiki"
+            legacy.mkdir()
+            (legacy / "ROOT").write_text(
+                "durable-knowledge-vault-v1\n", encoding="utf-8"
+            )
+            (legacy / "POLICY.md").write_text("custom policy\n", encoding="utf-8")
+            knowledge_blocker = vault / "Knowledge"
+            knowledge_blocker.write_text(
+                "blocks directory creation\n", encoding="utf-8"
+            )
+
+            failed = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertNotEqual(failed.returncode, 0)
+            self.assertFalse(legacy.exists())
+            self.assertEqual(
+                (vault / "_durable-knowledge/POLICY.md").read_text(encoding="utf-8"),
+                "custom policy\n",
+            )
+
+            knowledge_blocker.unlink()
+            recovered = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(
+                recovered.returncode, 0, recovered.stdout + recovered.stderr
+            )
+            self.assertTrue((vault / "Knowledge/Candidates").is_dir())
+            self.assertTrue((vault / "_durable-knowledge/ROOT").is_file())
+
+    def test_bootstrap_rejects_ambiguous_control_directories(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            vault = Path(temporary_directory)
+            legacy = vault / ".llm-wiki"
+            control = vault / "_durable-knowledge"
+            legacy.mkdir()
+            control.mkdir()
+            (legacy / "legacy.txt").write_text("legacy\n", encoding="utf-8")
+            (control / "current.txt").write_text("current\n", encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("reconcile their contents manually", result.stderr)
+            self.assertTrue((legacy / "legacy.txt").is_file())
+            self.assertTrue((control / "current.txt").is_file())
+
 
 if __name__ == "__main__":
     unittest.main()
