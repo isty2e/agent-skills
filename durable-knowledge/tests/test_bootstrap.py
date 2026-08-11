@@ -23,6 +23,8 @@ class BootstrapTest(unittest.TestCase):
             candidate_review = vault / "Knowledge/candidate-review.base"
 
             self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
+            self.assertTrue((vault / "_durable-knowledge/ROOT.md").is_file())
+            self.assertFalse((vault / "_durable-knowledge/ROOT").exists())
             self.assertTrue(knowledge_browser.is_file())
             self.assertTrue(candidate_review.is_file())
             self.assertIn(
@@ -80,6 +82,11 @@ class BootstrapTest(unittest.TestCase):
             self.assertIn("Migrated: .llm-wiki -> _durable-knowledge", result.stdout)
             self.assertNotIn("No changes", result.stdout)
             self.assertFalse(legacy.exists())
+            self.assertFalse((vault / "_durable-knowledge/ROOT").exists())
+            self.assertEqual(
+                (vault / "_durable-knowledge/ROOT.md").read_text(encoding="utf-8"),
+                "durable-knowledge-vault-v1\n",
+            )
             self.assertEqual(
                 (vault / "_durable-knowledge/POLICY.md").read_text(encoding="utf-8"),
                 "custom policy\n",
@@ -131,7 +138,98 @@ class BootstrapTest(unittest.TestCase):
                 recovered.returncode, 0, recovered.stdout + recovered.stderr
             )
             self.assertTrue((vault / "Knowledge/Candidates").is_dir())
-            self.assertTrue((vault / "_durable-knowledge/ROOT").is_file())
+            self.assertTrue((vault / "_durable-knowledge/ROOT.md").is_file())
+
+    def test_bootstrap_migrates_legacy_marker(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            vault = Path(temporary_directory)
+            control = vault / "_durable-knowledge"
+            control.mkdir()
+            legacy_marker = control / "ROOT"
+            legacy_marker.write_text("durable-knowledge-vault-v1\n", encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn(
+                "Migrated: _durable-knowledge/ROOT -> _durable-knowledge/ROOT.md",
+                result.stdout,
+            )
+            self.assertFalse(legacy_marker.exists())
+            self.assertEqual(
+                (control / "ROOT.md").read_text(encoding="utf-8"),
+                "durable-knowledge-vault-v1\n",
+            )
+
+    def test_bootstrap_removes_matching_legacy_marker_duplicate(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            vault = Path(temporary_directory)
+            control = vault / "_durable-knowledge"
+            control.mkdir()
+            legacy_marker = control / "ROOT"
+            marker = control / "ROOT.md"
+            marker_content = "durable-knowledge-vault-v1\n"
+            legacy_marker.write_text(marker_content, encoding="utf-8")
+            marker.write_text(marker_content, encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertFalse(legacy_marker.exists())
+            self.assertEqual(marker.read_text(encoding="utf-8"), marker_content)
+
+    def test_bootstrap_rejects_conflicting_markers(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            vault = Path(temporary_directory)
+            control = vault / "_durable-knowledge"
+            control.mkdir()
+            legacy_marker = control / "ROOT"
+            marker = control / "ROOT.md"
+            legacy_marker.write_text("legacy marker\n", encoding="utf-8")
+            marker.write_text("current marker\n", encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("marker files differ", result.stderr)
+            self.assertEqual(
+                legacy_marker.read_text(encoding="utf-8"), "legacy marker\n"
+            )
+            self.assertEqual(marker.read_text(encoding="utf-8"), "current marker\n")
+            self.assertFalse((vault / "Knowledge").exists())
+
+    def test_bootstrap_rejects_non_file_marker(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            vault = Path(temporary_directory)
+            control = vault / "_durable-knowledge"
+            control.mkdir()
+            (control / "ROOT.md").mkdir()
+
+            result = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("ROOT.md is not a regular marker file", result.stderr)
+            self.assertFalse((vault / "Knowledge").exists())
 
     def test_bootstrap_rejects_ambiguous_control_directories(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

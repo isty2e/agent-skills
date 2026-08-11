@@ -13,7 +13,7 @@ class ValidateFrontmatterTest(unittest.TestCase):
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.vault = Path(self.temporary_directory.name)
         (self.vault / "_durable-knowledge").mkdir()
-        (self.vault / "_durable-knowledge/ROOT").write_text(
+        (self.vault / "_durable-knowledge/ROOT.md").write_text(
             "durable-knowledge-vault-v1\n", encoding="utf-8"
         )
         (self.vault / "Knowledge/Candidates").mkdir(parents=True)
@@ -415,6 +415,27 @@ created: 2026-03-13T14:22:33Z
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("legacy control directory remains", result.stdout)
+        self.assertIn("run bootstrap to migrate", result.stdout)
+
+    def test_non_file_marker_fails(self) -> None:
+        marker = self.vault / "_durable-knowledge/ROOT.md"
+        marker.unlink()
+        marker.mkdir()
+
+        result = self.run_validator()
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("vault marker is not a regular file", result.stdout)
+
+    def test_legacy_marker_requires_migration(self) -> None:
+        marker = self.vault / "_durable-knowledge/ROOT.md"
+        legacy_marker = self.vault / "_durable-knowledge/ROOT"
+        marker.rename(legacy_marker)
+
+        result = self.run_validator()
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("legacy vault marker remains", result.stdout)
         self.assertIn("run bootstrap to migrate", result.stdout)
 
 

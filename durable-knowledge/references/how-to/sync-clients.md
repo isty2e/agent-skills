@@ -26,7 +26,8 @@ work directly with the synced Markdown and YAML files.
 
 The `_durable-knowledge/` control directory is visible by design because Obsidian Sync excludes
 dot-prefixed directories other than its configuration directory. This keeps the vault marker,
-policy, proposals, and template overrides synchronized with `Knowledge/`.
+policy, proposals, and template overrides synchronized with `Knowledge/`. The marker is `ROOT.md`,
+so it syncs as Markdown without enabling **Sync all other types** on every client.
 
 ## Connect the desktop client
 
@@ -104,7 +105,7 @@ Apply these constraints:
 - Run one sync engine for a given local vault path.
 - Do not run desktop Sync and Headless Sync against the same local directory.
 - Let initial sync complete before enabling writes on a new replica.
-- Confirm that `_durable-knowledge/ROOT` arrived before allowing agent writes.
+- Confirm that `_durable-knowledge/ROOT.md` arrived before allowing agent writes.
 - Keep claim support inside the synced record or behind a synced-vault ID or stable external URI;
   never cite an originating machine's path, bare filename, local ticket name, or session ID.
 - Use the random-suffixed candidate and proposal IDs from the vault contract, with each full ID as
@@ -129,7 +130,7 @@ python <skill>/scripts/validate.py --vault ~/vaults/knowledge
 
 On a desktop client, confirm that:
 
-- `_durable-knowledge/ROOT` and any shared policy or template overrides are present;
+- `_durable-knowledge/ROOT.md` and any shared policy or template overrides are present;
 - newly captured candidates appear in the Inbox view;
 - a `ready` edit reaches the headless replica;
 - integrated candidates move to the Integrated view;
@@ -142,4 +143,4 @@ Use Git or another backup layer in addition to Sync when rollback and diff revie
 
 - [Obsidian CLI](https://obsidian.md/cli)
 - [Obsidian Headless](https://github.com/obsidianmd/obsidian-headless)
-- [Obsidian Sync settings](https://help.obsidian.md/sync/settings#Hidden-files-and-folders)
+- [Obsidian Sync settings and selective syncing](https://obsidian.md/help/sync/settings)

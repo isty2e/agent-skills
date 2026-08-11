@@ -45,7 +45,7 @@ Knowledge/
 _durable-knowledge/
 ├── Proposals/
 ├── templates/
-└── ROOT
+└── ROOT.md
 ```
 
 The control directory uses an underscore rather than a dot prefix so Obsidian Sync includes it.

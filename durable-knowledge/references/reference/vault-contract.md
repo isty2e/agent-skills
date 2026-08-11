@@ -26,7 +26,7 @@
 │   ├── knowledge-browser.base
 │   └── candidate-review.base
 └── _durable-knowledge/
-    ├── ROOT
+    ├── ROOT.md
     ├── POLICY.md
     ├── Proposals/
     └── templates/
@@ -38,7 +38,8 @@ the managed roots is human-owned by default.
 
 `_durable-knowledge/` is intentionally visible. Obsidian Sync excludes dot-prefixed directories
 other than its configuration directory, so a hidden control root would not replicate with the
-knowledge records it governs.
+knowledge records it governs. The marker uses Markdown so default note synchronization transports it
+without requiring unsupported-file syncing on every replica.
 
 ## Ownership and write permissions
 
@@ -68,10 +69,10 @@ Resolve a target in this order:
 
 1. explicit user-supplied path;
 2. `DK_VAULT_PATH`;
-3. nearest ancestor containing both `_durable-knowledge/ROOT` and `Knowledge/`.
+3. nearest ancestor containing both `_durable-knowledge/ROOT.md` and `Knowledge/`.
 
-Do not guess a destination. The `_durable-knowledge/ROOT` marker prevents accidental writes to an arbitrary
-repository.
+Do not guess a destination. The `_durable-knowledge/ROOT.md` marker prevents accidental writes to an
+arbitrary repository.
 
 ## Naming and IDs
 
@@ -236,6 +237,21 @@ overrides, then let the new visible directory synchronize. If another replica co
 reconcile them manually before running bootstrap there. Validation rejects a remaining
 `.llm-wiki/` directory so split control authority cannot pass unnoticed.
 
+Earlier visible control directories used an extensionless `_durable-knowledge/ROOT` marker, which
+Obsidian Sync omits unless every client enables unsupported file types. Bootstrap applies this marker
+migration contract:
+
+| Existing marker state | Result |
+|---|---|
+| Neither marker exists | Create `ROOT.md` |
+| Only `ROOT` exists | Rename it to `ROOT.md` |
+| Only `ROOT.md` exists | Preserve it |
+| Both exist with identical contents | Preserve `ROOT.md` and remove the extensionless duplicate |
+| Both exist with different contents | Stop without overwriting either file |
+
+Marker paths must be regular files. A directory or other non-file entry at either marker path fails
+bootstrap and validation.
+
 ## Validation interface
 
 ```bash
@@ -261,8 +277,9 @@ The `.base` definitions sync as vault files and automatically query newly arrive
 Base is pinned in a sidebar belongs to each desktop client's workspace state and may require local
 setup. Headless clients synchronize `.base` files but do not render them.
 
-The `_durable-knowledge/` directory also syncs as ordinary vault content. The marker, policy,
-proposals, and template overrides therefore share the same replication boundary as managed records.
+The `_durable-knowledge/` directory also syncs as ordinary vault content. Its Markdown marker,
+policy, proposals, and template overrides therefore share the same replication boundary as managed
+records without a per-device unsupported-file setting.
 
 ## Concurrency and recovery
 

@@ -753,7 +753,8 @@ def iter_managed_markdown(vault: Path) -> list[Path]:
 def validate_vault(vault: Path) -> list[Finding]:
     findings: list[Finding] = []
     legacy_control_directory = vault / ".llm-wiki"
-    marker = vault / "_durable-knowledge/ROOT"
+    legacy_marker = vault / "_durable-knowledge/ROOT"
+    marker = vault / "_durable-knowledge/ROOT.md"
     if legacy_control_directory.exists():
         findings.append(
             Finding(
@@ -763,9 +764,29 @@ def validate_vault(vault: Path) -> list[Finding]:
                 "or reconcile both directories manually if the new directory already exists",
             )
         )
-    if not marker.exists() and not legacy_control_directory.exists():
+    if legacy_marker.exists():
         findings.append(
-            Finding("error", "_durable-knowledge/ROOT", "vault marker is missing")
+            Finding(
+                "error",
+                "_durable-knowledge/ROOT",
+                "legacy vault marker remains; run bootstrap to migrate it to ROOT.md",
+            )
+        )
+    if marker.exists() and not marker.is_file():
+        findings.append(
+            Finding(
+                "error",
+                "_durable-knowledge/ROOT.md",
+                "vault marker is not a regular file",
+            )
+        )
+    if (
+        not marker.exists()
+        and not legacy_control_directory.exists()
+        and not legacy_marker.exists()
+    ):
+        findings.append(
+            Finding("error", "_durable-knowledge/ROOT.md", "vault marker is missing")
         )
 
     ids: dict[str, list[str]] = {}

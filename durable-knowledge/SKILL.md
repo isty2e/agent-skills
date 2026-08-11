@@ -24,14 +24,15 @@ Resolve the target in this order:
 
 1. explicit user-supplied path;
 2. `DK_VAULT_PATH`;
-3. nearest ancestor containing both `_durable-knowledge/ROOT` and `Knowledge/`.
+3. nearest ancestor containing both `_durable-knowledge/ROOT.md` and `Knowledge/`.
 
 Otherwise, do not guess. Explain that the vault must be initialized with
 `scripts/bootstrap.py --vault <path>`.
 
 `_durable-knowledge/` is visible by design so file-based transports, including Obsidian Sync,
-replicate the marker and control artifacts. Treat a remaining `.llm-wiki/` directory as legacy state
-that must be migrated with bootstrap before normal operations.
+replicate the marker and control artifacts. The marker is Markdown so Sync does not depend on the
+per-device **Sync all other types** setting. Treat a remaining `.llm-wiki/` directory or extensionless
+`_durable-knowledge/ROOT` marker as legacy state that bootstrap must migrate before normal operations.
 
 Before a write, read in order:
 
@@ -160,11 +161,12 @@ _durable-knowledge/Proposals/**
 
 Bootstrap is the only scaffolding exception. It may create missing managed directories plus
 `Knowledge/README.md`, `Knowledge/knowledge-browser.base`, `Knowledge/candidate-review.base`,
-`_durable-knowledge/ROOT`, `_durable-knowledge/README.md`, and, when requested,
+`_durable-knowledge/ROOT.md`, `_durable-knowledge/README.md`, and, when requested,
 `_durable-knowledge/POLICY.md`. It must not modify existing copies. When only the legacy
 `.llm-wiki/` control directory exists, bootstrap may rename it to `_durable-knowledge/`. If both
 paths exist, bootstrap must stop for manual reconciliation rather than merge or overwrite either
-one.
+one. Bootstrap may rename the legacy extensionless marker to `ROOT.md`; if both markers exist with
+different contents, it must stop without overwriting either file.
 
 Operation permissions:
 
