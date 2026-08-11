@@ -137,7 +137,10 @@ Route by material:
 
 Do not use `theorem` or `empirical-result` as `knowledge_kind` values. A theorem's semantic role may
 be a `constraint`, `mechanism`, `distinction`, or `method`; an experiment describes its evidence, not
-a separate semantic axis.
+a separate semantic axis. A finite observation is not a `constraint` merely because it limits what
+can be inferred. Use `distinction` when the reusable proposition separates non-observation from
+impossibility, or `hypothesis` when the experiment motivates a genuinely unproved explanatory claim.
+Use `evidence_state: observed` for the direct empirical support.
 
 ## Capture selected propositions
 
@@ -145,9 +148,11 @@ For each admitted proposition, follow
 [Capture a durable knowledge candidate](capture-knowledge.md). Its search, lifecycle, template,
 portable-source, and validation requirements remain authoritative.
 
-Capture creates only `pending` candidates. If a theorem statement or scientific conclusion is still
-changing, use `knowledge_kind: hypothesis` or keep the candidate pending rather than presenting it as
-settled canonical knowledge.
+Capture creates only `pending` candidates. Keep semantic role and maturity separate: a proved
+theorem whose wording or scope is still being refined retains its appropriate kind, such as
+`mechanism` or `constraint`, and remains `pending`. Use `knowledge_kind: hypothesis` only for a
+proposition that is genuinely unproved. If a statement is not yet stable enough to preserve without
+misrepresentation, leave it with the repository owner until it can be captured faithfully.
 
 ## Report the result
 

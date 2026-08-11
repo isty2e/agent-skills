@@ -23,7 +23,7 @@ Every candidate and canonical entry must use one of these values:
 - `decision-rule`: what to choose under stated conditions and trade-offs;
 - `distinction`: a boundary that prevents recurring category errors;
 - `synthesis`: an evidence-linked relation across sources or observations;
-- `hypothesis`: a potentially reusable claim that remains provisional.
+- `hypothesis`: a genuinely unproved, falsifiable proposition with explicit scope and assumptions.
 
 ## Required admission test
 

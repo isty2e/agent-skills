@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.5.0
+# durable-knowledge skill — draft 0.5.1
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.

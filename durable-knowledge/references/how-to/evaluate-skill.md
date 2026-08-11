@@ -79,10 +79,22 @@ methodology while overlooking substantive scientific content as a failure.
 
 Check these discriminating cases:
 
-- a closure factorization theorem proved in one repository → central candidate;
-- zero witness activations under a specified checkpoint and protocol → scoped observation or
-  hypothesis, not a universal impossibility claim;
+- a closure factorization theorem proved in one repository → central candidate with its semantic
+  kind preserved;
+- a proved theorem whose statement wording is still being refined → keep its semantic kind and use
+  `pending`, not `hypothesis`;
+- a genuinely unproved proposition → pending `hypothesis` candidate;
+- zero witness activations under a specified checkpoint and protocol → scoped `distinction`
+  between finite non-observation and impossibility, or `hypothesis` only when a genuinely unproved
+  explanatory proposition is stated; do not label the observation a `constraint` merely because it
+  limits inference;
 - “the current Lean tree has 127 passing files” → repository status, not knowledge.
+
+A written scenario is not evidence that an agent follows it. For each release that changes research
+routing, run this prompt in a clean context and preserve a compact receipt containing the fixture,
+model and harness, source revision, observed routing, deviations, reviewer verdict, and whether human
+review occurred. The current baseline receipt is
+[Research forward-evaluation baseline](../../evaluations/research-forward-baseline.md).
 
 ### Abstention quality
 
