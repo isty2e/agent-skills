@@ -1,11 +1,12 @@
-# durable-knowledge skill — draft 0.3.0
+# durable-knowledge skill — draft 0.4.0
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
 
-It stores origin-independent mechanisms, constraints, methods, decision rules, distinctions, and
-syntheses. User preferences and session-, repository-, project-, organization-, or machine-bound
-facts remain with their contextual owner.
+It stores context-complete mechanisms, constraints, methods, decision rules, distinctions,
+syntheses, hypotheses, and project-originated scientific propositions. Incidental user, session,
+repository, project, organization, or machine state remains with its contextual owner; a named
+research program may remain as semantic scope.
 
 ## Start here
 
@@ -24,6 +25,7 @@ The bundled documentation follows Diátaxis. Choose a document by what you need 
 
 - [Set up a durable-knowledge vault](references/how-to/set-up-vault.md)
 - [Capture a durable knowledge candidate](references/how-to/capture-knowledge.md)
+- [Extract durable knowledge from a research corpus](references/how-to/capture-research-knowledge.md)
 - [Curate selected candidates](references/how-to/curate-candidates.md)
 - [Ingest an academic paper](references/how-to/ingest-paper.md)
 - [Recall relevant knowledge](references/how-to/recall-knowledge.md)
@@ -180,6 +182,19 @@ New candidates and proposals use a 16-character random hex suffix in both the ID
 avoid ordinary cross-replica creation collisions. Existing IDs remain valid. See
 [Sync desktop and headless clients](references/how-to/sync-clients.md) for setup commands.
 
+## Extract scientific content without losing its owner
+
+A theorem, scientific mechanism, scoped empirical result, or conjecture does not become repository
+trivia merely because its current proof or evidence lives in one project. The repository remains
+authoritative for exact proof source, declaration and claim IDs, experiment artifacts, manuscript
+wording, and current status. The vault may own the self-contained scientific proposition, its scope,
+rationale, evidence state, and invalidation conditions.
+
+Use [Extract durable knowledge from a research corpus](references/how-to/capture-research-knowledge.md)
+when reviewing a research project. Inventory substantive definitions, theorem families, mechanisms,
+results, and conjectures before extracting workflow methodology. Reuse within the same named research
+program is sufficient; unrelated-project generality is not required.
+
 ## Keep evidence portable across replicas
 
 Each candidate and canonical note must contain enough evidence summary to interpret and evaluate the
@@ -257,6 +272,7 @@ durable-knowledge/
 - Earlier draft candidates using `resolution_ref` and `resolved_at` require migration to
   `canonical_id`; the validator rejects mixed lifecycle schemas.
 - Candidates already marked `deferred` or `rejected` must add a substantive `review_reason` before
-  validation under draft 0.3.0; other existing candidate states remain compatible without the field.
+  validation under draft 0.3.0 or later; other existing candidate states remain compatible without
+  the field.
 - Bootstrap does not overwrite an existing customized `candidate-review.base`; upgrades must merge
   the bundled `review_reason` property and review-view columns deliberately.

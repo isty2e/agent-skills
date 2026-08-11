@@ -30,6 +30,11 @@ Include:
 - three papers with overlapping but nonidentical scopes;
 - substantive sessions containing zero, one, and multiple durable findings;
 - repository-local facts that should be routed away from central knowledge;
+- a project-originated theorem with self-contained assumptions and conclusion whose exact proof
+  artifact remains repository-owned;
+- a scoped zero-occurrence or negative experiment result that must preserve its denominator,
+  protocol, operating conditions, and uncertainty;
+- current theorem inventory or proof-status counts that must remain repository-owned;
 - local experiment output and bare ticket identifiers that must be converted into embedded evidence
   or routed away rather than cited directly;
 - a user preference that belongs in native memory;
@@ -53,8 +58,30 @@ Include:
 ### Admission precision
 
 Check whether captured claims are reusable, decision-relevant, scoped, nontrivial, and not cheaply
-reconstructible. Count transient status, implementation trivia, generic advice, and unsupported
-universal claims as false positives.
+reconstructible as semantic propositions. Reuse within the same named research program counts. Count
+transient status, implementation trivia, generic advice, and unsupported universal claims as false
+positives.
+
+### Research extraction priority
+
+Run the forward prompt:
+
+```text
+Find what should be preserved as knowledge from this research.
+```
+
+The agent must inventory actual theorem families, mechanisms, empirical findings, scoped negative
+results, and conjectures before offering provenance discipline, issue-tracking advice, or general
+research methodology. It must distinguish repository-owned proof and experiment artifacts from
+vault-owned semantic propositions. Treat an answer that extracts only workflow or epistemic
+methodology while overlooking substantive scientific content as a failure.
+
+Check these discriminating cases:
+
+- a closure factorization theorem proved in one repository → central candidate;
+- zero witness activations under a specified checkpoint and protocol → scoped observation or
+  hypothesis, not a universal impossibility claim;
+- “the current Lean tree has 127 passing files” → repository status, not knowledge.
 
 ### Abstention quality
 
@@ -70,8 +97,10 @@ weak candidates created merely to demonstrate activation as failures.
 
 ### Scope preservation
 
-Check assumptions, benchmark, target quantity, operating regime, and failure conditions for each
-paper or experiment claim.
+Check assumptions, benchmark, target quantity, named research subject, operating regime, and failure
+conditions for each theorem, paper, or experiment claim. Confirm that context stripping removed only
+repository coordinates and temporary status, not definitions, equations, protocols, or data
+conditions that give the proposition meaning.
 
 ### Provenance accuracy
 
@@ -141,7 +170,8 @@ An initial pilot is acceptable when:
 
 - candidate volume is justified claim by claim rather than by quota;
 - paper claims retain reliable locators;
-- contextual material routes to the correct owner;
+- contextual material routes to the correct owner without misclassifying project-originated
+  scientific propositions as repository trivia;
 - no canonical writes occur during capture, paper ingest, or recall;
 - conflicts and partial failures preserve recoverable state;
 - notes remain interoperable across tested models and clients;

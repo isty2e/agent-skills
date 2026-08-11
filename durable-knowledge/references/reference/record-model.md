@@ -95,6 +95,12 @@ refine admission or routing for these kinds, but it must not add or rename them.
 repository-, project-, organization-, and machine-owned categories do not belong in the central
 model.
 
+`theorem`, `formal-proof`, `empirical-result`, and `experiment` are not additional knowledge kinds.
+They describe statement or evidence form rather than the proposition's semantic role. A theorem may
+encode a `constraint`, `mechanism`, `distinction`, or `method`; an empirical result may support any
+kind whose scope and rationale are explicit. Keep exact proof and experiment artifact authority
+separate from the extracted proposition's semantic ownership.
+
 ## Candidate status
 
 | Status | Meaning | `canonical_id` | `review_reason` |
@@ -139,7 +145,11 @@ The original body, observation, source references, and evidence qualifiers remai
 | `contested` | Materially conflicting evidence or incompatible scoped claims remain |
 
 Evidence state is not a scalar probability. It describes support, not scope, truth, or review
-maturity.
+maturity. A direct computation or partial derivation is `observed` when its setup and result are
+preserved but it does not establish a complete formal argument. `source-backed` may describe a
+complete formal derivation even when the evolving proof source remains repository-owned; the durable
+record must preserve a self-contained statement, assumptions, derivation or proof capsule, and
+material verification conditions.
 
 ## Canonical lifecycle
 

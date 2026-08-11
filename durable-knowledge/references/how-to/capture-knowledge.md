@@ -10,11 +10,17 @@ Use this guide to preserve a reusable claim from current work without changing c
 3. Identify the owner of the material.
 
 Route user, session, repository, project, organization, and machine-bound facts to their contextual
-owner. Continue only when the proposed claim is plausibly origin-independent.
+owner. Do not route away a scientific proposition merely because it was produced in one project.
+Continue when the proposed claim is context-complete: incidental origin coordinates are removable,
+while semantically essential research scope is explicit.
+
+When the task asks what a research project or corpus has learned, first follow
+[Extract durable knowledge from a research corpus](capture-research-knowledge.md).
 
 ## Capture procedure
 
-1. State one main proposition without origin-local names unless they are semantically essential.
+1. State one main proposition without incidental origin-local names. Retain a research program,
+   study, system, dataset, or protocol name when it is semantically essential.
 2. Apply every condition in the admission test.
 3. Search `Knowledge/Canonical/`, `Knowledge/Papers/`, and `Knowledge/Candidates/` for semantic
    owners, aliases, close claims, and existing topic tags. Use bounded title, tag, and claim-keyword
@@ -74,11 +80,15 @@ fastcp experiment notes from Tuesday
 An explicit request requires preservation, not necessarily central capture:
 
 - store preferences and standing instructions in user memory;
-- store repository and project facts with their owning project;
+- store repository implementation, proof-status, run-status, and project-administration facts with
+  their owning project;
+- preserve self-contained project-originated scientific propositions when they pass admission;
 - preserve unsupported scientific assertions as unverified hypotheses;
 - create a central candidate only when the abstraction passes admission.
 
-Do not use a central candidate as a fallback when the correct contextual owner is available.
+Do not use a central candidate as a fallback when the correct contextual owner is available. Do not
+confuse the repository that owns an exact proof or experiment artifact with the semantic owner of the
+scientific proposition extracted from it.
 
 ## Preserve sources
 
