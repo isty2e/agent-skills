@@ -30,11 +30,12 @@ updated: <ISO-8601 UTC timestamp>
 
 <What was directly observed, derived, or stated. Keep this separate from generalization.>
 
-## Why it may generalize
+## Mechanism, rationale, or significance
 
-<Mechanism or rationale. Mark unsupported extension explicitly as inference. Use equations or
-symbolic notation when they improve precision; define symbols and assumptions and explain the result
-in prose.>
+<Explain the mechanism, rationale, or decision significance without broadening the claim merely to
+make it look general. Mark unsupported extension explicitly as inference. Use equations or symbolic
+notation when they improve precision; define symbols and assumptions and explain the result in
+prose.>
 
 ## Scope and assumptions
 
