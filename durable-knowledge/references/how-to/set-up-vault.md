@@ -61,10 +61,11 @@ Open the directory as an Obsidian vault and enable the Bases core plugin. Then o
 Knowledge/knowledge-browser.base
 ```
 
-The browser provides candidate inbox, ready, deferred, canonical, contested, integrated, and retired
-views. It displays the frontmatter `title` as a clickable note link and falls back to the filename for
-legacy records. Move the open Base tab into the left sidebar when a persistent knowledge-navigation
-surface is useful. Sidebar placement is client-local workspace state.
+The browser provides all-knowledge and paper views plus candidate inbox, ready, deferred, canonical,
+contested, integrated, and retired views. It displays the frontmatter `title` as a clickable note
+link, exposes multi-valued `topic/...` tags as **Topics**, and falls back to the filename for legacy
+records. Move the open Base tab into the left sidebar when a persistent knowledge-navigation surface
+is useful. Sidebar placement is client-local workspace state.
 
 `Knowledge/candidate-review.base` remains available as a smaller candidate-only queue. Both Bases are
 optional projections; any Markdown editor or script can review the same YAML properties.
@@ -75,7 +76,7 @@ Explorer surface. Each desktop or mobile client must install and enable the plug
 The plugin can also replace Obsidian's inline title, but the skill already preserves the first H1 as
 the portable document title; enabling both may show two title surfaces depending on client settings.
 The knowledge contract does not depend on the plugin: without it, the first H1 remains authoritative
-for the open document and bundled Bases continue to display candidate and canonical titles.
+for the open document and bundled Bases continue to display candidate, paper, and canonical titles.
 
 ## Validate the setup
 

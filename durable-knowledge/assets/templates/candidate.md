@@ -6,6 +6,7 @@ knowledge_kind: <mechanism|constraint|method|decision-rule|distinction|synthesis
 status: pending
 evidence_state: <unverified|observed|source-backed|corroborated|contested>
 canonical_id: null
+tags: []
 scope:
   - <where the claim applies>
 assumptions:

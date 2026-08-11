@@ -44,7 +44,7 @@ knowledge records it governs.
 
 | Root | Owner | Default agent permission |
 |---|---|---|
-| `Knowledge/Candidates/**` | Shared review queue | Append pending candidates; curation updates lifecycle fields |
+| `Knowledge/Candidates/**` | Shared review queue | Append pending candidates; review or curation updates managed metadata |
 | `Knowledge/Papers/**` | Source-grounded notes | Create or update from the identified source |
 | `Knowledge/Canonical/**` | Reviewed knowledge layer | Read; write only for `ready` candidates |
 | `Knowledge/knowledge-browser.base` | Obsidian projection | Create if absent; users may customize |
@@ -52,8 +52,9 @@ knowledge records it governs.
 | `_durable-knowledge/Proposals/**` | Review artifacts | Create for preview, delay, retirement, or risk |
 | Everything else | Human or external owner | Read and link only unless the user names the exact target |
 
-For an existing candidate, review or authorized curation may change only `status`, `canonical_id`, and
-`updated`. Treat all other fields and body content as provenance.
+For an existing candidate, review or authorized curation may change only `status`, `canonical_id`,
+`tags`, and `updated`. Topic tags are mutable curation metadata; treat all other fields and body
+content as provenance.
 
 `status: ready` authorizes ordinary create or merge under `Knowledge/Canonical/`. It does not
 authorize conflict, retirement, unrelated canonical changes, or edits to human-owned notes. When an
@@ -120,7 +121,8 @@ The validator enforces these shapes only for fields owned by the record model. I
 top-level fields, scalar/sequence mismatches, empty required knowledge-bearing sequences, and empty
 or placeholder sequence items. Candidate and canonical `scope`, `assumptions`,
 `invalidation_conditions`, and `source_refs` must contain at least one item. Proposal `source_refs`
-must also contain at least one item.
+must also contain at least one item. Candidate, paper, and canonical `tags` are optional flat
+sequences; `[]` means that no topic has been assigned.
 
 New candidate, paper, canonical, and proposal records must provide a non-empty scalar `title`. The
 validator keeps legacy title-less records compatible by reporting a warning rather than an error.
@@ -130,6 +132,11 @@ conflicting human labels.
 Paper `source_uri` and `source_sha256` are optional managed scalars for legacy compatibility. When
 present, `source_uri` must be `null` or a resolvable HTTPS URI, and `source_sha256` must be `null` or
 64 lowercase hexadecimal characters.
+
+Topic values use `topic/<lowercase-kebab-case>`. Multiple topics are allowed, order carries no
+meaning, and the vocabulary is open after searching existing tags for an equivalent label. The
+validator warns rather than fails on legacy unnamespaced or duplicate tags, but new and modified
+records must normalize them.
 
 Additional metadata may use richer YAML, but the validator does not interpret its nested meaning.
 Do not move a managed contract field into nested metadata or rely on unvalidated metadata to satisfy
@@ -208,8 +215,9 @@ python <skill>/scripts/bootstrap.py \
 ```
 
 Bootstrap is idempotent. It does not modify existing notes, policy copies, template overrides, or an
-existing bundled Base. It installs `Knowledge/knowledge-browser.base` for candidate and canonical
-navigation and retains `Knowledge/candidate-review.base` as the focused candidate queue.
+existing bundled Base. It installs `Knowledge/knowledge-browser.base` for candidate, paper, and
+canonical navigation and retains `Knowledge/candidate-review.base` as the focused candidate queue.
+Both projections expose topic tags from managed frontmatter.
 
 ## Legacy control-directory migration
 

@@ -11,6 +11,7 @@ from urllib.parse import urlsplit
 
 _TOP_LEVEL_KEY = re.compile(r"^([A-Za-z_][A-Za-z0-9_-]*):(?:\s*(.*))?$")
 _LOWER_KEBAB = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+_TOPIC_TAG = re.compile(r"^topic/[a-z0-9]+(?:-[a-z0-9]+)*$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 _SCALAR_FIELDS: dict[str, frozenset[str]] = {
@@ -90,7 +91,9 @@ _SEQUENCE_FIELDS: dict[str, frozenset[str]] = {
 }
 
 _OPTIONAL_SEQUENCE_FIELDS: dict[str, frozenset[str]] = {
-    "canonical": frozenset({"aliases"}),
+    "candidate": frozenset({"tags"}),
+    "paper": frozenset({"tags"}),
+    "canonical": frozenset({"aliases", "tags"}),
 }
 
 _TITLED_RECORD_TYPES = frozenset({"candidate", "paper", "canonical", "proposal"})
@@ -524,6 +527,32 @@ def validate_file(
                 + ", ".join(placeholder_sequences),
             )
         )
+
+    tags = fields.get("tags")
+    if isinstance(tags, tuple):
+        noncanonical_tags = sorted(
+            {
+                tag
+                for tag in tags
+                if tag
+                and "<" not in tag
+                and ">" not in tag
+                and not _TOPIC_TAG.fullmatch(tag)
+            }
+        )
+        if noncanonical_tags:
+            findings.append(
+                Finding(
+                    "warning",
+                    str(relative),
+                    "topic tags should use topic/<lowercase-kebab-case>: "
+                    + ", ".join(noncanonical_tags),
+                )
+            )
+        if len(tags) != len(set(tags)):
+            findings.append(
+                Finding("warning", str(relative), "topic tags contain duplicate values")
+            )
 
     source_references: list[str] = []
     source_refs = fields.get("source_refs")

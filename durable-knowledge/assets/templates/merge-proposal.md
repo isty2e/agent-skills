@@ -39,7 +39,8 @@ machine-scoped artifact labels.>
 
 ## Candidate disposition
 
-<How each candidate's status and canonical_id change only after successful application.>
+<How each candidate's status, canonical_id, tags, and updated timestamp change only after
+successful application.>
 
 ## Preconditions for apply
 

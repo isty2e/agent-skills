@@ -33,6 +33,13 @@ class BootstrapTest(unittest.TestCase):
                 "file.asLink(if(title.isEmpty(), file.name, title))",
                 candidate_review.read_text(encoding="utf-8"),
             )
+            knowledge_browser_text = knowledge_browser.read_text(encoding="utf-8")
+            candidate_review_text = candidate_review.read_text(encoding="utf-8")
+            self.assertIn('file.inFolder("Knowledge/Papers")', knowledge_browser_text)
+            self.assertIn("name: All knowledge", knowledge_browser_text)
+            self.assertIn("name: Papers", knowledge_browser_text)
+            self.assertIn("displayName: Topics", knowledge_browser_text)
+            self.assertIn("displayName: Topics", candidate_review_text)
 
             knowledge_browser.write_text("customized base\n", encoding="utf-8")
             second = subprocess.run(

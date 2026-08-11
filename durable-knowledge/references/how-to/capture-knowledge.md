@@ -16,8 +16,8 @@ owner. Continue only when the proposed claim is plausibly origin-independent.
 
 1. State one main proposition without origin-local names unless they are semantically essential.
 2. Apply every condition in the admission test.
-3. Search `Knowledge/Canonical/` and `Knowledge/Candidates/` for semantic owners, aliases, and close
-   claims.
+3. Search `Knowledge/Canonical/`, `Knowledge/Papers/`, and `Knowledge/Candidates/` for semantic
+   owners, aliases, close claims, and existing topic tags.
 4. Choose one result:
    - `SKIP` — no durable candidate;
    - `ROUTE` — preserve the material at its contextual owner;
@@ -28,20 +28,23 @@ owner. Continue only when the proposed claim is plausibly origin-independent.
    format and use the full ID as the filename stem.
 6. Write one concise semantic `title` and mirror it exactly in the first H1 heading. Do not expose the
    timestamp, random suffix, ticket name, or activity-log wording in the title.
-7. Separate the actual observation or source claim from the proposed generalization.
-8. Record scope, assumptions, mechanism or rationale, a self-contained evidence summary, portable
+7. Assign zero or more relevant `topic/<lowercase-kebab-case>` tags. Reuse equivalent existing tags;
+   add a new topic freely when no equivalent exists. Include every materially relevant topic without
+   choosing a primary tag.
+8. Separate the actual observation or source claim from the proposed generalization.
+9. Record scope, assumptions, mechanism or rationale, a self-contained evidence summary, portable
    source references, and invalidation conditions. When equations or symbolic notation make a
    relationship more precise, use them and define their symbols, domains, assumptions, and prose
    interpretation nearby.
-9. Record the likely semantic owner or the search terms used when none was found.
-10. Write the note under `Knowledge/Candidates/` with:
+10. Record the likely semantic owner or the search terms used when none was found.
+11. Write the note under `Knowledge/Candidates/` with:
 
    ```yaml
    status: pending
    canonical_id: null
    ```
 
-11. Run structural validation.
+12. Run structural validation.
 
 Capture must not set `ready`, merge canonical notes, or broaden the task into curation.
 

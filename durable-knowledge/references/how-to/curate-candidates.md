@@ -37,13 +37,14 @@ deferred → ready
 rejected → ready
 ```
 
-These review transitions leave `canonical_id: null` and do not rewrite candidate provenance.
+These review transitions leave `canonical_id: null` and do not rewrite candidate claim provenance.
+Reviewers may also add, remove, or normalize `tags`; update the candidate timestamp when doing so.
 
 ## Integrate directly
 
 1. Read the admission policy, record model, and vault contract.
 2. Select authorized candidates.
-3. Search canonical IDs, titles, aliases, summaries, body text, and backlinks.
+3. Search canonical IDs, titles, aliases, topic tags, summaries, body text, and backlinks.
 4. Identify the semantic owner by meaning, scope, assumptions, definitions, and target quantity.
 5. Read the evidence capsules and portable source locators needed to support the change.
 6. Choose one decision:
@@ -60,12 +61,14 @@ These review transitions leave `canonical_id: null` and do not rewrite candidate
 9. Give a new canonical owner a concise semantic `title` and mirror it exactly in the first H1. The
    canonical title names the durable topic and need not copy the candidate title. A title change on
    an existing canonical owner preserves its stable ID and records useful former names in `aliases`.
-10. For create or merge, write the canonical result and inspect the diff. Restate the minimum
+10. Reconcile relevant candidate, paper, and existing canonical topic tags. Preserve all materially
+    relevant topics, reuse equivalent existing values, and do not copy tags mechanically.
+11. For create or merge, write the canonical result and inspect the diff. Restate the minimum
    claim-supporting evidence in the canonical note so it does not depend on the candidate file or an
    originating local source.
-11. For conflict, preserve each competing claim and set canonical `lifecycle: contested` or
+12. For conflict, preserve each competing claim and set canonical `lifecycle: contested` or
    `evidence_state: contested`.
-12. After the canonical write succeeds, update each applied candidate:
+13. After the canonical write succeeds, update each applied candidate:
 
     ```yaml
     status: integrated  # or contested
@@ -73,7 +76,7 @@ These review transitions leave `canonical_id: null` and do not rewrite candidate
     updated: <current UTC timestamp>
     ```
 
-13. Run structural validation.
+14. Run structural validation.
 
 ## Prepare a proposal when needed
 

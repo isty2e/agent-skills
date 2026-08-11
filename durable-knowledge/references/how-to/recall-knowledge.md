@@ -28,6 +28,11 @@ every task.
 Use generic file search and `rg` when no index exists. A future semantic index may rank candidates,
 but Markdown and YAML remain the source of truth.
 
+Treat topic tags as multi-valued retrieval hints rather than exclusive categories. Match any topic
+for broad recall and intersect multiple `topic/...` values when the task requires all of them. Do not
+infer greater authority from a tag match; lifecycle, evidence, scope, and assumptions still govern
+use.
+
 ## Rank results
 
 Consider:
