@@ -74,7 +74,8 @@ For each potentially reusable claim:
    - the locator;
    - the proposed generalization marked as inference;
    - invalidation conditions.
-4. Write candidates under `Knowledge/Candidates/` with `status: pending`.
+4. Write candidates under `Knowledge/Candidates/` with `status: pending`, `canonical_id: null`, and
+   `review_reason: null`.
 
 One paper is evidence, not consensus. Do not write “the literature shows” from a single source.
 

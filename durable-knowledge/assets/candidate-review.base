@@ -17,6 +17,8 @@ properties:
     displayName: Evidence
   canonical_id:
     displayName: Canonical owner
+  review_reason:
+    displayName: Review reason
   updated:
     displayName: Updated
 views:
@@ -31,6 +33,7 @@ views:
       - status
       - knowledge_kind
       - evidence_state
+      - review_reason
       - updated
   - type: table
     name: Ready
@@ -42,6 +45,7 @@ views:
       - tags
       - knowledge_kind
       - evidence_state
+      - review_reason
       - updated
   - type: table
     name: Deferred
@@ -53,6 +57,7 @@ views:
       - tags
       - knowledge_kind
       - evidence_state
+      - review_reason
       - updated
   - type: table
     name: Rejected
@@ -63,6 +68,7 @@ views:
       - formula.title_link
       - tags
       - knowledge_kind
+      - review_reason
       - updated
   - type: table
     name: Integrated

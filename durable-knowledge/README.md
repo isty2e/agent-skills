@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.2.6
+# durable-knowledge skill — draft 0.3.0
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
@@ -109,7 +109,8 @@ Open `Knowledge/knowledge-browser.base` to browse all managed knowledge, paper n
 inbox, ready and deferred candidates, active canonical knowledge, contested knowledge, integrated
 candidate provenance, and retired owners. The Base shows a clickable human-readable `title` and
 multi-valued **Topics** while machine-oriented IDs and filenames remain stable. It updates
-automatically when matching Markdown records arrive or their lifecycle or topic properties change.
+automatically when matching Markdown records arrive or their lifecycle, review, or topic properties
+change.
 `Knowledge/candidate-review.base` remains available as a candidate-only view.
 
 New candidate, paper, canonical, and proposal records store their human label in frontmatter and
@@ -142,12 +143,16 @@ required H1, depending on client settings. The plugin is a client-local presenta
 part of the knowledge contract; each client enables it separately, and plain Markdown readers use
 the matching first H1.
 
-Reviewers normally change `status` and may refine topic tags:
+Reviewers normally change `status`, record disposition rationale, and may refine topic tags:
 
 - `pending` → `ready` to authorize ordinary canonical create or merge;
-- `pending` or `ready` → `deferred` to keep the candidate for later;
-- `pending` or `ready` → `rejected` to remove it from the active queue;
+- `pending` or `ready` → `deferred` with a non-empty `review_reason` to keep the candidate for later;
+- `pending` or `ready` → `rejected` with a non-empty `review_reason` to remove it from the active queue;
 - add, remove, or normalize `topic/...` tags without rewriting candidate claim provenance.
+
+Before creating a candidate, inspect semantically similar deferred or rejected candidates and their
+`review_reason`. Create a duplicate claim only when new scope, evidence, mechanism, or reuse value
+materially addresses the recorded reason.
 
 Capture never sets `ready`, and agents curate only `ready` candidates. When a user explicitly names
 a non-applied candidate and requests integration, the agent first sets it to `ready` in the same
@@ -251,3 +256,7 @@ durable-knowledge/
 - Obsidian Headless is an optional sync transport, not a Bases or plugin runtime.
 - Earlier draft candidates using `resolution_ref` and `resolved_at` require migration to
   `canonical_id`; the validator rejects mixed lifecycle schemas.
+- Candidates already marked `deferred` or `rejected` must add a substantive `review_reason` before
+  validation under draft 0.3.0; other existing candidate states remain compatible without the field.
+- Bootstrap does not overwrite an existing customized `candidate-review.base`; upgrades must merge
+  the bundled `review_reason` property and review-view columns deliberately.

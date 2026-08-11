@@ -17,7 +17,10 @@ owner. Continue only when the proposed claim is plausibly origin-independent.
 1. State one main proposition without origin-local names unless they are semantically essential.
 2. Apply every condition in the admission test.
 3. Search `Knowledge/Canonical/`, `Knowledge/Papers/`, and `Knowledge/Candidates/` for semantic
-   owners, aliases, close claims, and existing topic tags.
+   owners, aliases, close claims, and existing topic tags. Use bounded title, tag, and claim-keyword
+   searches rather than loading the full queue. For each semantically similar deferred or rejected
+   candidate, read `review_reason`; recreate the claim only when new scope, evidence, mechanism, or
+   reuse value materially addresses that reason.
 4. Choose one result:
    - `SKIP` — no durable candidate;
    - `ROUTE` — preserve the material at its contextual owner;
@@ -42,6 +45,7 @@ owner. Continue only when the proposed claim is plausibly origin-independent.
    ```yaml
    status: pending
    canonical_id: null
+   review_reason: null
    ```
 
 12. Run structural validation.
@@ -102,7 +106,7 @@ Report:
 
 - candidate path and ID;
 - one-sentence claim;
-- `status: pending`;
+- `status: pending` and `review_reason: null`;
 - evidence state;
 - possible canonical owner;
 - limitations blocking promotion;

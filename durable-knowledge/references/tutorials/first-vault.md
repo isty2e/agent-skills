@@ -80,6 +80,7 @@ record_type: candidate
 title: Durable intent should precede non-atomic external side effects
 status: pending
 canonical_id: null
+review_reason: null
 tags:
   - topic/distributed-systems
 ```
@@ -102,8 +103,8 @@ Change only the review status:
 status: ready
 ```
 
-Leave `canonical_id: null`. The `ready` state authorizes an ordinary canonical create or merge; it
-does not authorize retirement or edits to human-owned notes.
+Leave `canonical_id: null` and `review_reason: null`. The `ready` state authorizes an ordinary
+canonical create or merge; it does not authorize retirement or edits to human-owned notes.
 
 ## 4. Integrate the candidate
 
@@ -120,6 +121,7 @@ The agent searches for an existing semantic owner, creates or updates a note und
 ```yaml
 status: integrated
 canonical_id: knowledge-<kind>-<slug>
+review_reason: null
 ```
 
 The canonical write must complete before the candidate claims integration.

@@ -97,14 +97,14 @@ model.
 
 ## Candidate status
 
-| Status | Meaning | `canonical_id` |
-|---|---|---|
-| `pending` | Captured but not selected | `null` |
-| `ready` | Selected for semantic integration | `null` |
-| `deferred` | Retained for later evidence, scope, or ownership review | `null` |
-| `rejected` | Excluded from active integration | `null` |
-| `integrated` | Incorporated into the referenced canonical owner | Existing canonical ID |
-| `contested` | Preserved as conflicting evidence in the referenced canonical owner | Existing canonical ID |
+| Status | Meaning | `canonical_id` | `review_reason` |
+|---|---|---|---|
+| `pending` | Captured but not selected | `null` | Optional |
+| `ready` | Selected for semantic integration | `null` | Optional |
+| `deferred` | Retained for later evidence, scope, or ownership review | `null` | Required |
+| `rejected` | Excluded from active integration | `null` | Required |
+| `integrated` | Incorporated into the referenced canonical owner | Existing canonical ID | Optional |
+| `contested` | Preserved as conflicting evidence in the referenced canonical owner | Existing canonical ID | Optional |
 
 Humans may move among `pending`, `ready`, `deferred`, and `rejected` by editing `status`. Capture may
 create only `pending`. An explicit user request to integrate a named non-applied candidate is recorded
@@ -116,9 +116,15 @@ Authorized review or curation may update only these candidate fields:
 ```text
 status
 canonical_id
+review_reason
 tags
 updated
 ```
+
+`review_reason` records why the current or most recent review disposition was chosen. It is a
+single substantive scalar, not a second claim body. `deferred` and `rejected` require a non-empty
+reason. Other states may retain one when it remains useful, but reviewers should clear or revise
+stale rationale when the disposition changes.
 
 The original body, observation, source references, and evidence qualifiers remain provenance.
 
@@ -155,6 +161,12 @@ ready    → integrated | contested | deferred | rejected
 deferred → ready
 rejected → ready
 ```
+
+A transition to `deferred` or `rejected` sets `review_reason` and `updated` with the status change.
+When an editor persists one property at a time, set the reason before the status; reasons are allowed
+on other states so the intermediate record remains valid. A transition back to `ready` clears or
+revises rationale that no longer applies. These changes affect review metadata only and must not
+rewrite the candidate body.
 
 `integrated` and `contested` are terminal descriptions of an applied canonical effect. Reconsidering
 the underlying knowledge occurs through new evidence and curation, not by rewriting candidate

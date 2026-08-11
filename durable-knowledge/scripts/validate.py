@@ -12,6 +12,7 @@ from urllib.parse import urlsplit
 _TOP_LEVEL_KEY = re.compile(r"^([A-Za-z_][A-Za-z0-9_-]*):(?:\s*(.*))?$")
 _LOWER_KEBAB = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _TOPIC_TAG = re.compile(r"^topic/[a-z0-9]+(?:-[a-z0-9]+)*$")
+_TEMPLATE_PLACEHOLDER = re.compile(r"^<[^<>]+>$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 _SCALAR_FIELDS: dict[str, frozenset[str]] = {
@@ -98,7 +99,7 @@ _OPTIONAL_SEQUENCE_FIELDS: dict[str, frozenset[str]] = {
 
 _TITLED_RECORD_TYPES = frozenset({"candidate", "paper", "canonical", "proposal"})
 _OPTIONAL_SCALAR_FIELDS: dict[str, frozenset[str]] = {
-    "candidate": frozenset({"title"}),
+    "candidate": frozenset({"title", "review_reason"}),
     "paper": frozenset(
         {"title", "doi", "arxiv", "pmid", "source_uri", "source_sha256"}
     ),
@@ -667,7 +668,20 @@ def validate_file(
             )
 
         canonical_id = _scalar_field(fields, "canonical_id")
+        review_reason = _scalar_field(fields, "review_reason")
         null_values = {"", "null", "~"}
+        if status in {"deferred", "rejected"} and (
+            review_reason in null_values
+            or _TEMPLATE_PLACEHOLDER.fullmatch(review_reason) is not None
+        ):
+            findings.append(
+                Finding(
+                    "error",
+                    str(relative),
+                    f"candidate status {status!r} requires a non-empty review_reason",
+                )
+            )
+
         if status in {"pending", "ready", "deferred", "rejected"}:
             if canonical_id not in null_values:
                 findings.append(

@@ -27,11 +27,12 @@ This subtree is managed by the `durable-knowledge` Agent Skill.
 - `Papers/`: grounded notes about individual academic papers.
 - `Canonical/`: reviewed semantic owners.
 - `knowledge-browser.base`: optional Obsidian browser for candidates, papers, and canonical knowledge.
-- `candidate-review.base`: optional Obsidian view over candidate status and topic properties.
+- `candidate-review.base`: optional Obsidian view over candidate status, review rationale, and topic properties.
 
-Candidate review is file-based: set `status` to `ready`, `deferred`, or `rejected` and maintain
-optional `topic/<lowercase-kebab-case>` tags in Obsidian or any Markdown editor. Agents integrate
-only `ready` candidates. An explicit request to integrate a named non-applied candidate first moves it to `ready`
+Candidate review is file-based: set `status` to `ready`, `deferred`, or `rejected`, record a
+substantive `review_reason` for deferred or rejected candidates, and maintain optional
+`topic/<lowercase-kebab-case>` tags in Obsidian or any Markdown editor. Agents integrate only `ready`
+candidates. An explicit request to integrate a named non-applied candidate first moves it to `ready`
 in the same operation.
 
 Desktop and headless clients may sync separate local replicas of this vault. Markdown and YAML remain

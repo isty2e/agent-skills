@@ -53,8 +53,10 @@ candidates may appear only as clearly labeled hypotheses or leads.
 - `contested` canonical: present competing claims and conditions.
 - `provisional` canonical: treat as a working model.
 - `integrated` candidate: follow `canonical_id`.
-- `rejected` candidate: exclude unless explaining the rejection.
-- `deferred` candidate: present only as incomplete.
+- `rejected` candidate: exclude from positive recall; consult `review_reason` when evaluating a
+  similar new candidate or explaining the rejection.
+- `deferred` candidate: present only as incomplete and preserve the limitation recorded in
+  `review_reason`.
 - `contested` candidate: follow `canonical_id` and preserve the conflict.
 - missing evidence or locators: lower trust and state the omission.
 

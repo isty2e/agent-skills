@@ -72,8 +72,14 @@ link, exposes multi-valued `topic/...` tags as **Topics**, and falls back to the
 records. Move the open Base tab into the left sidebar when a persistent knowledge-navigation surface
 is useful. Sidebar placement is client-local workspace state.
 
-`Knowledge/candidate-review.base` remains available as a smaller candidate-only queue. Both Bases are
-optional projections; any Markdown editor or script can review the same YAML properties.
+`Knowledge/candidate-review.base` remains available as a smaller candidate-only queue. Its Inbox,
+Ready, Deferred, and Rejected views display `review_reason` so a reviewer can enter rationale before
+changing status. Both Bases are optional projections; any Markdown editor or script can review the
+same YAML properties.
+
+Bootstrap preserves existing Base files. When upgrading an existing vault, merge the
+`review_reason` property and review-view columns from `assets/candidate-review.base` into the
+vault copy, or replace the copy only after preserving intentional customizations.
 
 To show the same `title` in Obsidian's ordinary File Explorer, optionally install the community
 plugin [Front Matter Title](https://github.com/snezhig/obsidian-front-matter-title) and enable its

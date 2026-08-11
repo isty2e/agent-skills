@@ -54,8 +54,9 @@ without requiring unsupported-file syncing on every replica.
 | Everything else | Human or external owner | Read and link only unless the user names the exact target |
 
 For an existing candidate, review or authorized curation may change only `status`, `canonical_id`,
-`tags`, and `updated`. Topic tags are mutable curation metadata; treat all other fields and body
-content as provenance.
+`review_reason`, `tags`, and `updated`. Topic tags and `review_reason` are mutable curation metadata;
+treat all other fields and body content as provenance. Deferred and rejected candidates require a
+substantive `review_reason` explaining the disposition.
 
 `status: ready` authorizes ordinary create or merge under `Knowledge/Canonical/`. It does not
 authorize conflict, retirement, unrelated canonical changes, or edits to human-owned notes. When an
@@ -129,6 +130,10 @@ New candidate, paper, canonical, and proposal records must provide a non-empty s
 validator keeps legacy title-less records compatible by reporting a warning rather than an error.
 When `title` is present, a missing or different first H1 is an error because it would create two
 conflicting human labels.
+
+Candidate `review_reason` is an optional managed scalar and starts as `null`. It becomes required and
+non-empty when `status` is `deferred` or `rejected`. It records review rationale rather than claim
+provenance, so authorized review may revise or clear it without changing the candidate body.
 
 Paper `source_uri` and `source_sha256` are optional managed scalars for legacy compatibility. When
 present, `source_uri` must be `null` or a resolvable HTTPS URI, and `source_sha256` must be `null` or
@@ -218,7 +223,9 @@ python <skill>/scripts/bootstrap.py \
 Bootstrap is idempotent. It does not modify existing notes, policy copies, template overrides, or an
 existing bundled Base. It installs `Knowledge/knowledge-browser.base` for candidate, paper, and
 canonical navigation and retains `Knowledge/candidate-review.base` as the focused candidate queue.
-Both projections expose topic tags from managed frontmatter.
+Both projections expose topic tags from managed frontmatter; the focused review Base also displays
+`review_reason` across Inbox, Ready, Deferred, and Rejected views so reason-first edits are available
+without opening the note body.
 
 ## Legacy control-directory migration
 

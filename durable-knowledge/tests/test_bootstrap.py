@@ -42,6 +42,8 @@ class BootstrapTest(unittest.TestCase):
             self.assertIn("name: Papers", knowledge_browser_text)
             self.assertIn("displayName: Topics", knowledge_browser_text)
             self.assertIn("displayName: Topics", candidate_review_text)
+            self.assertIn("displayName: Review reason", candidate_review_text)
+            self.assertGreaterEqual(candidate_review_text.count("- review_reason"), 4)
 
             knowledge_browser.write_text("customized base\n", encoding="utf-8")
             second = subprocess.run(

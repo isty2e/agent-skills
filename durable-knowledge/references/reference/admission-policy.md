@@ -91,9 +91,12 @@ Do not agent-initiate central capture for:
 - Zero agent-initiated candidates is normal.
 - Candidate creation has no session, task, source, or backlog quota.
 - Every candidate must independently pass the admission test.
+- Before capture, inspect semantically similar deferred or rejected candidates and their
+  `review_reason`. Do not recreate one unless materially changed scope, evidence, mechanism, or reuse
+  value addresses the recorded reason.
 - Finish the primary task before marginal capture unless delay would lose the only source locator.
 - Never ingest an entire session automatically.
-- Capture creates `status: pending` and `canonical_id: null`.
+- Capture creates `status: pending`, `canonical_id: null`, and `review_reason: null`.
 - Capture must never mark its own output `ready`.
 - When a user explicitly names a non-applied candidate and requests integration, first transition it
   to `ready` in the same operation; canonical curation still processes only `ready` candidates.
