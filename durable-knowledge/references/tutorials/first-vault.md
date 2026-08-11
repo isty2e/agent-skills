@@ -40,6 +40,7 @@ Knowledge/
 ├── Candidates/
 ├── Papers/
 ├── Canonical/
+├── Artifacts/
 ├── knowledge-browser.base
 └── candidate-review.base
 _durable-knowledge/
@@ -87,8 +88,9 @@ tags:
 
 The note should separate the observed or sourced claim from the proposed generalization and state its
 scope, assumptions, evidence, and invalidation conditions. Its evidence must be understandable from
-the note itself, and `source_refs` must use `embedded:<anchor>`, a synced-vault record ID, or a stable
-external locator rather than a local path, ticket name, or session ID.
+the note itself, and `source_refs` must use `embedded:<anchor>`, a synced-vault record or
+content-addressed artifact ID, or a stable external locator rather than a local path, ticket name, or
+session ID.
 
 ## 3. Review the candidate
 

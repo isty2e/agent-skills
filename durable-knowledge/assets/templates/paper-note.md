@@ -7,7 +7,7 @@ citation_key: <author-year-short-title>
 doi: <DOI or null>
 arxiv: <arXiv identifier or null>
 pmid: <PMID or null>
-source_ref: <paper:doi:<DOI> | paper:arxiv:<identifier> | paper:pmid:<identifier> | stable HTTPS URI | embedded:claim-ledger>
+source_ref: <paper locator | vault:artifact:sha256:<64hex> | HTTPS URI | embedded:claim-ledger>
 source_uri: <stable external URI or null>
 source_sha256: <64 lowercase hex characters or null; identity and integrity only>
 tags: []

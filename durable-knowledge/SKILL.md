@@ -2,9 +2,9 @@
 name: durable-knowledge
 description: >-
   Maintain a portable Markdown/Obsidian knowledge base for coding and research agents. Activate when
-  prior reusable knowledge could improve substantive work; when work yields a durable mechanism,
-  constraint, method, distinction, synthesis, scoped hypothesis, theorem, or scientific result; when
-  ingesting papers, extracting a research corpus, or curating candidates. Route incidental user,
+  reusable knowledge could improve work; when work yields a durable mechanism, constraint, method,
+  distinction, synthesis, scoped hypothesis, theorem, or scientific result; when ingesting papers,
+  extracting research, attaching immutable evidence, or curating candidates. Route incidental user,
   session, repository, project, organization, and machine state to its contextual owner.
 ---
 
@@ -54,6 +54,7 @@ add or rename the `knowledge_kind` values defined by the record model.
 | Initialize a vault | `references/how-to/set-up-vault.md` | Managed vault structure |
 | Save a portable finding | `references/how-to/capture-knowledge.md` | Pending candidate |
 | Extract research findings | `references/how-to/capture-research-knowledge.md` | Inventory plus pending candidates |
+| Attach exact evidence | `references/how-to/attach-evidence-artifact.md` | Immutable artifact reference |
 | Process an academic paper | `references/how-to/ingest-paper.md` | Paper note plus optional pending candidates |
 | Retrieve prior knowledge | `references/how-to/recall-knowledge.md` | Read-only bounded context |
 | Curate or retire knowledge | `references/how-to/curate-candidates.md` | Canonical update or proposal |
@@ -96,10 +97,10 @@ retrieved records and zero new candidates are normal.
    application authority remains uncertain.
 7. **Do not generalize local observations silently.** State mechanism, scope, evidence, and
    invalidation conditions.
-8. **Keep evidence replica-portable.** Put the claim-supporting evidence summary in the record itself,
-   and use only synced-vault record IDs or stable external locators in `source_refs`. Never depend on
-   local paths, bare filenames, local ticket or issue names, session IDs, or machine-scoped artifact
-   labels.
+8. **Keep evidence replica-portable.** Put the claim-supporting evidence summary in the record itself.
+   Use embedded anchors, synced-vault record IDs, content-addressed vault artifacts, or stable external
+   locators in `source_refs`. Never depend on local paths, bare filenames, local ticket or issue names,
+   session IDs, or machine-scoped artifact labels.
 9. **Preserve conflicts.** Compare scope and assumptions before declaring conflict, then retain both
    sides when genuine disagreement remains.
 10. **Search before create.** Resolve semantic ownership by meaning, not title similarity. Inspect
@@ -133,7 +134,9 @@ retrieved records and zero new candidates are normal.
 Treat `source_refs` as audit and retrieval pointers, not as substitutes for evidence. For a local
 observation or derivation, write a compact evidence capsule in the note with the observed claim,
 portable setup and conditions, result, qualification, and reproduction details when practical; point
-to it with `embedded:<anchor>`. Preserve exact paper locators and immutable external URLs when
+to it with `embedded:<anchor>`. When exact small immutable bytes matter and attachment is explicitly
+authorized, follow `references/how-to/attach-evidence-artifact.md` and use
+`vault:artifact:sha256:<64hex>`. Preserve exact paper locators and immutable external URLs when
 available. Read `references/reference/vault-contract.md` before writing source references.
 
 Read `references/how-to/capture-research-knowledge.md` when extracting knowledge from a research
@@ -167,6 +170,7 @@ Runtime operations may write only within:
 Knowledge/Candidates/**
 Knowledge/Papers/**
 Knowledge/Canonical/**
+Knowledge/Artifacts/**
 Knowledge/candidate-review.base
 Knowledge/knowledge-browser.base
 _durable-knowledge/Proposals/**
@@ -186,6 +190,8 @@ Operation permissions:
 - Bootstrap: create only the missing scaffolding described above.
 - Capture: append under `Knowledge/Candidates/` only.
 - Paper ingest: write the identified paper note and optional pending candidates.
+- Artifact attach: append one immutable content-addressed payload only when explicitly requested or
+  authorized by vault policy; never overwrite or execute it.
 - Recall: no writes.
 - Curate: process only `ready` candidates. When an explicit user request names a non-applied
   candidate for integration, first set it to `ready` in the same operation; then write canonical
@@ -199,6 +205,8 @@ Never expand the write surface merely because filesystem access is available.
 
 - If a source lacks a reliable portable locator and cannot be summarized safely into a self-contained
   evidence capsule, record the limitation and do not promote its claims.
+- If a referenced vault artifact is missing, duplicated, symlinked, hash-mismatched, or not replicated
+  to a required client, stop promotion and repair the evidence boundary.
 - If portable evidence would require secrets, unnecessary personal data, proprietary source content,
   or a copied transcript, route or defer the claim instead of weakening the portability boundary.
 - If a proposal target hash changed, stop and regenerate the proposal.
@@ -222,10 +230,12 @@ Before reporting a write as complete:
 6. confirm every `deferred` or `rejected` candidate has a substantive `review_reason` and that any
    retained reason still describes the current review disposition;
 7. confirm the evidence summary is self-contained and every source reference is replica-resolvable;
-8. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
+8. for each `vault:artifact:sha256:` reference, confirm the payload is immutable, hash-valid, and
+   available on every replica required to evaluate the evidence;
+9. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
    name, session ID, or machine-scoped artifact label;
-9. run `scripts/validate.py --vault <vault>` when Python is available and resolve warnings for new or
-   modified records;
-10. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
+10. run `scripts/validate.py --vault <vault>` when Python is available and resolve warnings for new or
+    modified records;
+11. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
 
 Do not claim integration when only a candidate, review transition, or proposal exists.

@@ -27,9 +27,10 @@ regularity, scoped negative result, or conjecture may belong in the vault even w
 proof or evidence lives in one repository. In a research corpus, inspect substantive scientific
 propositions before extracting workflow or epistemic methodology. The repository retains authority
 for exact proof source, claim IDs, run artifacts, and status; the vault may own the extracted
-proposition. Make evidence self-contained or use a synced-vault ID or stable external URI. Never use
-a local path, bare filename, local ticket or issue name, session ID, or machine-scoped artifact label
-as claim support.
+proposition. Make evidence self-contained or use a synced-vault ID, content-addressed vault artifact,
+or stable external URI. Attach immutable evidence files only after an explicit user request or
+vault-policy authorization; never execute or overwrite them. Never use a local path, bare filename,
+local ticket or issue name, session ID, or machine-scoped artifact label as claim support.
 
 For every new candidate, paper, canonical, or proposal record, use `title` as the concise
 human-readable label and mirror it exactly in the first H1. Keep machine identity in `id`; never

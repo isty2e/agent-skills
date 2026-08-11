@@ -8,6 +8,7 @@
 - [Naming and IDs](#naming-and-ids)
 - [Frontmatter subset](#frontmatter-subset)
 - [Source references](#source-references)
+- [Evidence artifacts](#evidence-artifacts)
 - [Template resolution](#template-resolution)
 - [Bootstrap interface](#bootstrap-interface)
 - [Legacy control-directory migration](#legacy-control-directory-migration)
@@ -23,6 +24,7 @@
 │   ├── Candidates/
 │   ├── Papers/
 │   ├── Canonical/
+│   ├── Artifacts/
 │   ├── knowledge-browser.base
 │   └── candidate-review.base
 └── _durable-knowledge/
@@ -48,6 +50,7 @@ without requiring unsupported-file syncing on every replica.
 | `Knowledge/Candidates/**` | Shared review queue | Append pending candidates; review or curation updates managed metadata |
 | `Knowledge/Papers/**` | Source-grounded notes | Create or update from the identified source |
 | `Knowledge/Canonical/**` | Reviewed knowledge layer | Read; write only for `ready` candidates |
+| `Knowledge/Artifacts/artifact-sha256-*` | Evidence snapshots | Explicit or policy-authorized append only |
 | `Knowledge/knowledge-browser.base` | Obsidian projection | Create if absent; users may customize |
 | `Knowledge/candidate-review.base` | Obsidian projection | Create if absent; users may customize |
 | `_durable-knowledge/Proposals/**` | Review artifacts | Create for preview, delay, retirement, or risk |
@@ -161,6 +164,7 @@ Recommended forms:
 ```text
 embedded:<evidence-anchor>
 vault:record:<stable-record-id>#<anchor>
+vault:artifact:sha256:<64hex>#<optional-locator>
 paper:doi:10.xxxx/...#<page-section-equation-figure-or-table>
 paper:arxiv:2605.12341#<page-section-equation-figure-or-table>
 paper:pmid:12345678#<page-section-equation-figure-or-table>
@@ -196,6 +200,46 @@ these references without invalidating the vault. Do not copy them into a new or 
 record; preserve the useful support as an embedded capsule or replace the pointer with a portable
 locator.
 
+## Evidence artifacts
+
+`Knowledge/Artifacts/` may contain immutable content-addressed payloads named:
+
+```text
+artifact-sha256-<64 lowercase hexadecimal characters>/payload.<extension>
+```
+
+The payload is an evidence snapshot, not a managed knowledge record and not the evolving authority
+for a proof, experiment, dataset, manuscript, or external source. Its bytes are identified by the
+SHA-256 in the containing directory and `vault:artifact:sha256:` reference. The optional `#locator`
+identifies a relevant theorem, table, page, field, or other internal target without changing artifact
+identity.
+
+Artifact creation follows these rules:
+
+- attach only a regular non-symlink file with an extension;
+- require an explicit user request or vault-policy authorization;
+- copy bytes without executing or interpreting the source;
+- never overwrite an existing payload;
+- reuse the existing reference when the same bytes already exist, regardless of source filename or
+  extension;
+- create a new hash directory and payload when the bytes change;
+- keep the supporting evidence capsule self-contained enough to interpret the claim without relying
+  on the payload alone;
+- keep large, evolving, executable, sensitive, or externally governed material at a stable external
+  owner when a vault snapshot is inappropriate.
+
+The bundled attachment command writes one payload into a temporary directory, hashes the copied
+bytes, and atomically renames the complete directory to its hash identity without replacing an
+existing entry. Validation resolves each artifact reference, requires exactly one regular
+non-symlink payload, and verifies its SHA-256. A paper note using a vault artifact as `source_ref`
+must use the same digest in `source_sha256`.
+Unreferenced files that do not use the managed content-addressed naming scheme remain outside this
+contract and are ignored.
+
+Artifact file extensions remain subject to the capabilities and settings of the configured sync
+transport. A locally valid reference is not replica-portable until every replica required to evaluate
+it has received the payload.
+
 ## Template resolution
 
 For `<name>.md`:
@@ -220,8 +264,9 @@ python <skill>/scripts/bootstrap.py \
   --install-policy-copy
 ```
 
-Bootstrap is idempotent. It does not modify existing notes, policy copies, template overrides, or an
-existing bundled Base. It installs `Knowledge/knowledge-browser.base` for candidate, paper, and
+Bootstrap is idempotent. It creates `Knowledge/Artifacts/` when absent and does not modify existing
+artifacts, notes, policy copies, template overrides, or an existing bundled Base. It installs
+`Knowledge/knowledge-browser.base` for candidate, paper, and
 canonical navigation and retains `Knowledge/candidate-review.base` as the focused candidate queue.
 Both projections expose topic tags from managed frontmatter; the focused review Base also displays
 `review_reason` across Inbox, Ready, Deferred, and Rejected views so reason-first edits are available
@@ -288,12 +333,18 @@ The `_durable-knowledge/` directory also syncs as ordinary vault content. Its Ma
 policy, proposals, and template overrides therefore share the same replication boundary as managed
 records without a per-device unsupported-file setting.
 
+Evidence artifacts live in visible `Knowledge/Artifacts/`, but some extensions may require transport
+configuration on every client. Confirm required replicas receive an attached payload; validation can
+check only the local replica.
+
 ## Concurrency and recovery
 
 Concurrency control is a lightweight operating convention, not a distributed lock protocol. The
 skill does not create lock files, leases, or a coordination service.
 
 - Multiple clients may append candidates with unique IDs and filenames.
+- Repeated or concurrent attachment of identical artifact bytes converges on one hash directory even
+  when source extensions differ. A conflicting existing hash path fails without overwrite.
 - Only one curation transaction may modify a given canonical note at a time.
 - Different canonical owners may be curated concurrently.
 - Write canonical state before marking a candidate `integrated` or `contested`.

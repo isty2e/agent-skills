@@ -30,6 +30,9 @@ frontmatter subset defined by the vault contract.
 | `proposal` | `_durable-knowledge/Proposals/` | Optional preview or delayed/high-risk change artifact |
 
 The synthesis template is a specialized `canonical` record with `knowledge_kind: synthesis`.
+Content-addressed files under `Knowledge/Artifacts/` are immutable evidence payloads rather than a
+fifth `record_type`; their semantic role remains in the record and evidence capsule that references
+them.
 
 ## Display titles
 
@@ -206,8 +209,10 @@ stable claim.
 
 The evidence summary is part of the durable claim and must remain understandable on any synced
 replica. `portable_source_refs` add auditability and retrieval but cannot carry the claim's meaning or
-support alone. Local paths, bare filenames, local ticket or issue names, session IDs, and
-machine-scoped artifact labels are contextual provenance, not portable source references.
+support alone. A `vault:artifact:sha256:` reference may preserve exact immutable bytes, but the record
+still owns their interpretation, conditions, and limitations. Local paths, bare filenames, local
+ticket or issue names, session IDs, and machine-scoped artifact labels are contextual provenance, not
+portable source references.
 
 ## Formal notation
 

@@ -114,8 +114,11 @@ verification method, and material toolchain conditions. For an experiment, prese
 dataset or sample regime, parameters, denominator, result, uncertainty, and reproduction details.
 
 Exact local paths and claim IDs remain repository audit coordinates rather than portable
-`source_refs`. Use a commit-pinned resolvable URL when available. If portable support cannot be made
-self-contained, keep the candidate provisional or leave the evidence with its source owner.
+`source_refs`. Use a commit-pinned resolvable URL when available. When exact small immutable bytes
+materially improve auditability and attachment is explicitly authorized, follow
+[Attach an immutable evidence artifact](attach-evidence-artifact.md) and add its
+`vault:artifact:sha256:` reference. If portable support cannot be made self-contained, keep the
+candidate provisional or leave the evidence with its source owner.
 
 ## Choose granularity and destination
 

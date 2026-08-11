@@ -9,9 +9,10 @@ Markdown or Obsidian vault.
 python <skill>/scripts/bootstrap.py --vault <vault>
 ```
 
-Bootstrap creates missing managed directories, marker files, explanatory README files, default
-template directories, `Knowledge/knowledge-browser.base`, and `Knowledge/candidate-review.base`. It
-leaves existing notes and customized files unchanged.
+Bootstrap creates missing managed directories, including `Knowledge/Artifacts/`, plus marker files,
+explanatory README files, default template directories, `Knowledge/knowledge-browser.base`, and
+`Knowledge/candidate-review.base`. It leaves existing notes, artifacts, and customized files
+unchanged.
 
 The `_durable-knowledge/` control directory is deliberately visible so Obsidian Sync and ordinary
 file replication include it. Obsidian Sync excludes dot-prefixed directories other than its

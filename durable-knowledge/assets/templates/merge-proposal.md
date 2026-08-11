@@ -9,7 +9,7 @@ base_sha256: <64 lowercase hex chars, or null for create, reject, or defer>
 candidate_ids:
   - <candidate ID>
 source_refs:
-  - <embedded evidence, synced-vault record ID, or stable external locator>
+  - <embedded evidence, synced-vault record or artifact ID, or stable external locator>
 created: <ISO-8601 UTC timestamp>
 ---
 

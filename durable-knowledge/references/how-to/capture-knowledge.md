@@ -104,7 +104,10 @@ For a local observation or derivation, add an evidence capsule under `## Evidenc
 
 Set `source_refs` to `embedded:evidence-1`. When an external source exists, add a stable DOI, arXiv,
 PMID, URN, or immutable HTTPS locator. When another synced managed note owns the source material, use
-`vault:record:<stable-record-id>#<anchor>` instead of its filename.
+`vault:record:<stable-record-id>#<anchor>` instead of its filename. When exact small immutable bytes
+matter and attachment is explicitly authorized, follow
+[Attach an immutable evidence artifact](attach-evidence-artifact.md) and add the printed
+`vault:artifact:sha256:<64hex>` reference.
 
 Do not copy complete conversations, hidden reasoning, secrets, unnecessary personal data, or
 proprietary source content. If the useful support cannot be made portable safely, keep the candidate

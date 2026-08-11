@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.4.0
+# durable-knowledge skill — draft 0.5.0
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
@@ -26,6 +26,7 @@ The bundled documentation follows Diátaxis. Choose a document by what you need 
 - [Set up a durable-knowledge vault](references/how-to/set-up-vault.md)
 - [Capture a durable knowledge candidate](references/how-to/capture-knowledge.md)
 - [Extract durable knowledge from a research corpus](references/how-to/capture-research-knowledge.md)
+- [Attach an immutable evidence artifact](references/how-to/attach-evidence-artifact.md)
 - [Curate selected candidates](references/how-to/curate-candidates.md)
 - [Ingest an academic paper](references/how-to/ingest-paper.md)
 - [Recall relevant knowledge](references/how-to/recall-knowledge.md)
@@ -74,6 +75,7 @@ Knowledge/
 ├── Candidates/
 ├── Papers/
 ├── Canonical/
+├── Artifacts/
 ├── knowledge-browser.base
 └── candidate-review.base
 _durable-knowledge/
@@ -198,10 +200,24 @@ program is sufficient; unrelated-project generality is not required.
 ## Keep evidence portable across replicas
 
 Each candidate and canonical note must contain enough evidence summary to interpret and evaluate the
-claim without access to the originating machine. Use `source_refs` only for synced-vault record IDs
-or stable external locators such as DOI, arXiv, PMID, URN, or immutable HTTPS URLs. For local
-observations and derivations, embed a compact evidence capsule in the note and reference it with
-`embedded:<anchor>`.
+claim without access to the originating machine. Use `source_refs` for embedded anchors, synced-vault
+record IDs, content-addressed vault artifacts, or stable external locators such as DOI, arXiv, PMID,
+URN, and immutable HTTPS URLs. For local observations and derivations, embed a compact evidence
+capsule in the note and reference it with `embedded:<anchor>`.
+
+When exact small immutable bytes materially improve auditability, attach them explicitly:
+
+```bash
+python ~/.local/share/agent-skills/durable-knowledge/scripts/attach_artifact.py \
+  --vault ~/path/to/vault \
+  --file ./result.json
+```
+
+The command writes `Knowledge/Artifacts/artifact-sha256-<64hex>/payload.<ext>` and prints a
+`vault:artifact:sha256:<64hex>` reference. Artifacts are append-only evidence snapshots: changed bytes
+produce a new reference, and existing files are never overwritten. The record's evidence capsule
+must still explain what the artifact supports. See
+[Attach an immutable evidence artifact](references/how-to/attach-evidence-artifact.md).
 
 Do not use local paths, bare filenames, local ticket or issue names, harness session IDs, or
 machine-scoped artifact labels as claim support. Existing legacy references remain readable, but the
@@ -230,7 +246,8 @@ python ~/.local/share/agent-skills/durable-knowledge/scripts/validate.py \
 Validation checks paths, required frontmatter, scalar versus flat-sequence shape, non-empty
 knowledge-bearing sequences, placeholder items, duplicate top-level fields and IDs, controlled
 values, topic-tag shape and normalization, candidate-to-canonical lifecycle relationships, malformed
-or non-portable source-reference forms, and optional paper source URI and SHA-256 shape. Managed
+or non-portable source-reference forms, content-addressed artifact existence and SHA-256 integrity,
+and optional paper source URI and SHA-256 shape. Managed
 contract fields use top-level scalars or block sequences; `[]` represents an explicit empty sequence
 where allowed. Arbitrary nested
 metadata is outside this structural subset.
@@ -255,9 +272,11 @@ durable-knowledge/
 │   ├── knowledge-browser.base
 │   └── templates/
 ├── scripts/
+│   ├── attach_artifact.py
 │   ├── bootstrap.py
 │   └── validate.py
 └── tests/
+    ├── test_attach_artifact.py
     ├── test_bootstrap.py
     └── test_validate.py
 ```
@@ -267,6 +286,7 @@ durable-knowledge/
 - Admission and semantic merge remain model-dependent.
 - Recall uses ordinary file and search tools unless a later index is added.
 - There is no lock manager or multi-file transaction service.
+- Artifact transport depends on each replica's sync settings for the attached file extension.
 - Existing human notes are linked rather than rewritten by default.
 - Obsidian Headless is an optional sync transport, not a Bases or plugin runtime.
 - Earlier draft candidates using `resolution_ref` and `resolved_at` require migration to

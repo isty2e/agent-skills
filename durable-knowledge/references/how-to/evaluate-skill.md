@@ -35,8 +35,9 @@ Include:
 - a scoped zero-occurrence or negative experiment result that must preserve its denominator,
   protocol, operating conditions, and uncertainty;
 - current theorem inventory or proof-status counts that must remain repository-owned;
-- local experiment output and bare ticket identifiers that must be converted into embedded evidence
-  or routed away rather than cited directly;
+- local experiment output and bare ticket identifiers that must be converted into embedded evidence,
+  an explicitly authorized content-addressed artifact, or routed away rather than cited directly;
+- valid, missing, duplicated, symlinked, and hash-mismatched `vault:artifact:sha256:` fixtures;
 - a user preference that belongs in native memory;
 - near-duplicate canonical owners;
 - an apparent contradiction resolved by scope;
@@ -111,9 +112,12 @@ capsules, synced-vault records, or stable external resources.
 
 Open generated records from a fixture replica that lacks the originating working tree, local ticket
 store, and harness session history. Confirm that each claim remains interpretable and its evidence can
-be evaluated from the record itself plus synced-vault IDs or stable external locators. Count local
-paths, bare filenames, local ticket or issue names, session IDs, machine-scoped artifact labels, and
-hash-only source references as failures.
+be evaluated from the record itself plus synced-vault records, content-addressed artifacts, or stable
+external locators. Count local paths, bare filenames, local ticket or issue names, session IDs,
+machine-scoped artifact labels, and hash-only references with no resolvable payload as failures.
+
+For attached evidence, confirm that every required replica receives the payload, exactly one file
+matches the hash, and the file bytes validate. A local validator pass does not prove remote transport.
 
 ### Semantic owner resolution
 
@@ -162,7 +166,9 @@ Check that:
 - proposal-only work leaves candidate status unchanged;
 - delayed proposal application fails when `base_sha256` no longer matches;
 - concurrent curation of the same canonical owner is serialized or surfaces a reviewable conflict;
-- desktop views and headless file reads observe the same YAML state.
+- desktop views and headless file reads observe the same YAML state;
+- artifact attachment never overwrites existing bytes, retries identical bytes idempotently, and
+  blocks promotion when a referenced payload is missing, duplicated, symlinked, or hash-mismatched.
 
 ## Accept an initial pilot
 

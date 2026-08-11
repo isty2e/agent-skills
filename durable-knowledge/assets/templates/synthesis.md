@@ -14,7 +14,7 @@ assumptions:
 invalidation_conditions:
   - <what evidence would break the synthesis>
 source_refs:
-  - <at least two independent portable source references unless explicitly excepted>
+  - <at least two independent embedded, record, artifact, or external references unless excepted>
 created: <ISO-8601 UTC timestamp>
 updated: <ISO-8601 UTC timestamp>
 ---

@@ -15,7 +15,7 @@ assumptions:
 invalidation_conditions:
   - <condition that would limit, falsify, or supersede the claim>
 source_refs:
-  - <embedded:evidence-1 | vault:record:<stable-id>#<anchor> | stable external locator>
+  - <embedded:evidence-1 | vault:record:<stable-id>#<anchor> | vault:artifact:sha256:<64hex> | stable external locator>
 created: <ISO-8601 UTC timestamp>
 updated: <ISO-8601 UTC timestamp>
 ---

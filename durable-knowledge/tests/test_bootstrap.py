@@ -25,6 +25,11 @@ class BootstrapTest(unittest.TestCase):
             self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
             self.assertTrue((vault / "_durable-knowledge/ROOT.md").is_file())
             self.assertFalse((vault / "_durable-knowledge/ROOT").exists())
+            self.assertTrue((vault / "Knowledge/Artifacts").is_dir())
+            self.assertIn(
+                "immutable content-addressed evidence snapshots",
+                (vault / "Knowledge/README.md").read_text(encoding="utf-8"),
+            )
             self.assertTrue(knowledge_browser.is_file())
             self.assertTrue(candidate_review.is_file())
             self.assertIn(
@@ -58,6 +63,28 @@ class BootstrapTest(unittest.TestCase):
             self.assertEqual(
                 knowledge_browser.read_text(encoding="utf-8"), "customized base\n"
             )
+
+    def test_bootstrap_rejects_symlinked_knowledge_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            vault = root / "vault"
+            vault.mkdir()
+            external = root / "external-knowledge"
+            external.mkdir()
+            (vault / "Knowledge").symlink_to(external, target_is_directory=True)
+
+            result = subprocess.run(
+                [sys.executable, str(_BOOTSTRAP), "--vault", str(vault)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn(
+                "managed directory path must not contain symlinks", result.stderr
+            )
+            self.assertFalse((external / "Artifacts").exists())
 
     def test_bootstrap_migrates_legacy_control_directory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
