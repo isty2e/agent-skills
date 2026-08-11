@@ -36,7 +36,8 @@ Include:
 - near-duplicate canonical owners;
 - an apparent contradiction resolved by scope;
 - a genuine unresolved conflict;
-- candidates requiring pending, ready, deferred, rejected, integrated, and contested states.
+- candidates requiring pending, ready, deferred, rejected, integrated, and contested states;
+- a deferred or rejected near-duplicate whose `review_reason` should prevent low-value recapture.
 
 ## Run the evaluation
 
@@ -116,12 +117,19 @@ not a quality signal.
 Check that:
 
 - capture creates only `pending`;
-- humans can triage with one property edit;
+- humans can triage ordinary selection with one property edit and record a substantive
+  `review_reason` when deferring or rejecting;
+- property-by-property editors can save the reason before the status without creating an invalid
+  intermediate record;
 - curation processes only `ready` candidates;
 - an explicit request to integrate a named non-applied candidate records `ready` before canonical
   curation rather than bypassing the lifecycle;
 - canonical state is written before integration status;
 - integrated and contested candidates reference existing owners;
+- deferred and rejected candidates have a non-empty reason while their body and original provenance
+  remain unchanged;
+- capture checks semantically similar deferred or rejected candidates and does not recreate one
+  unless new evidence, scope, mechanism, or reuse value addresses the recorded reason;
 - proposal-only work leaves candidate status unchanged;
 - delayed proposal application fails when `base_sha256` no longer matches;
 - concurrent curation of the same canonical owner is serialized or surfaces a reviewable conflict;

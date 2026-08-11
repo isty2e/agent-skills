@@ -427,6 +427,91 @@ created: 2026-03-13T14:22:33Z
         self.assertEqual(result.returncode, 1)
         self.assertIn("vault marker is not a regular file", result.stdout)
 
+    def test_rejected_candidate_requires_review_reason(self) -> None:
+        result = self.validate_candidate("\n  - example scope", status_yaml=" rejected")
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "candidate status 'rejected' requires a non-empty review_reason",
+            result.stdout,
+        )
+
+    def test_deferred_candidate_rejects_null_review_reason(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            status_yaml=" deferred",
+            extra="review_reason: null\n",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "candidate status 'deferred' requires a non-empty review_reason",
+            result.stdout,
+        )
+
+    def test_rejected_candidate_accepts_review_reason(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            status_yaml=" rejected",
+            extra="review_reason: Correct but cheaply reconstructible.\n",
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_comparative_review_reason_passes(self) -> None:
+        for operator in ("<", ">"):
+            with self.subTest(operator=operator):
+                result = self.validate_candidate(
+                    "\n  - example scope",
+                    status_yaml=" rejected",
+                    extra=(
+                        "review_reason: Correct, but expected benefit "
+                        f"{operator} migration cost.\n"
+                    ),
+                )
+
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_placeholder_review_reason_fails(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            status_yaml=" rejected",
+            extra="review_reason: <why the candidate was rejected>\n",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "candidate status 'rejected' requires a non-empty review_reason",
+            result.stdout,
+        )
+
+    def test_review_reason_must_be_scalar(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            status_yaml=" rejected",
+            extra="review_reason:\n  - insufficient standalone reuse value\n",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("fields must be scalars: review_reason", result.stdout)
+
+    def test_review_reason_can_be_staged_before_status_change(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            extra="review_reason: Insufficient standalone reuse value.\n",
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_review_reason_may_remain_on_reactivated_candidate(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            status_yaml=" ready",
+            extra="review_reason: Previously deferred pending stronger evidence.\n",
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_legacy_marker_requires_migration(self) -> None:
         marker = self.vault / "_durable-knowledge/ROOT.md"
         legacy_marker = self.vault / "_durable-knowledge/ROOT"

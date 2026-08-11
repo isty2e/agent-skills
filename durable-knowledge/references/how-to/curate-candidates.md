@@ -38,7 +38,11 @@ rejected → ready
 ```
 
 These review transitions leave `canonical_id: null` and do not rewrite candidate claim provenance.
-Reviewers may also add, remove, or normalize `tags`; update the candidate timestamp when doing so.
+A transition to `deferred` or `rejected` must also set a substantive `review_reason`. When a UI saves
+properties separately, set `review_reason` before changing `status`; reasons are allowed on other
+states so the intermediate record remains valid. When moving a candidate to `ready`, clear or revise
+rationale that no longer describes its disposition. Reviewers may also add, remove, or normalize
+`tags`; update the candidate timestamp for every metadata change.
 
 ## Integrate directly
 
@@ -51,9 +55,12 @@ Reviewers may also add, remove, or normalize `tags`; update the candidate timest
    - `create` — no semantic owner exists;
    - `merge` — an existing owner covers the compatible claim;
    - `conflict` — materially competing evidence remains under compatible scope;
-   - `reject` — material is not durable, supported, or correctly routed;
-   - `defer` — evidence, scope, or identity remains incomplete;
+   - `reject` — material is not durable, supported, correctly routed, or independently reusable;
+   - `defer` — evidence, scope, identity, or ownership remains incomplete;
    - `retire` — an obsolete canonical owner has an authorized successor.
+   For `reject` or `defer`, do not write canonical state. Set the chosen status, keep
+   `canonical_id: null`, record a substantive `review_reason`, update the timestamp, validate, and
+   stop.
 7. Confirm that the current authorization covers the chosen effect and that no other curation
    operation is modifying the same canonical owner.
 8. For create, resolve `canonical-entry.md`, except that `knowledge_kind: synthesis` resolves
@@ -73,6 +80,7 @@ Reviewers may also add, remove, or normalize `tags`; update the candidate timest
     ```yaml
     status: integrated  # or contested
     canonical_id: <existing canonical ID>
+    review_reason: null
     updated: <current UTC timestamp>
     ```
 
@@ -140,7 +148,7 @@ linkable.
 Canonical state must become durable before candidate status claims integration. If the canonical
 write succeeds but candidate metadata fails:
 
-1. leave or restore the candidate as `ready`;
+1. leave or restore the candidate as `ready`, clearing or revising stale `review_reason` metadata;
 2. search for the existing canonical owner on retry;
 3. reconcile the candidate with that owner instead of creating a duplicate.
 

@@ -9,7 +9,10 @@ when the task materially overlaps prior research or a known design mechanism. Af
 has produced a clear durable mechanism, scoped invariant or constraint, reusable method, conditional
 decision rule, important distinction, or cross-source synthesis, consider selective capture. Zero
 retrieved records and zero agent-initiated captures are normal. Candidate creation has no numeric
-quota, but every candidate must independently satisfy the full admission policy.
+quota, but every candidate must independently satisfy the full admission policy. Before creating a
+candidate, inspect semantically similar deferred or rejected candidates and their `review_reason`;
+recreate one only when new scope, evidence, mechanism, or reuse value materially addresses that
+reason.
 
 These are relevance-triggered reminders, not completion gates. Do not delay or block the primary
 task, report no-op checks, or create weak candidates merely to demonstrate that the skill was
@@ -35,4 +38,6 @@ origin-independent propositions, preserving honest scope and evidence state.
 Never let background capture interrupt the primary task. Background capture creates only `pending`
 candidates and must never set `ready` or mutate canonical knowledge. Curate only `ready` candidates.
 When a user explicitly names a non-applied candidate and requests integration, record that selection
-by setting it to `ready` in the same operation before canonical curation.
+by setting it to `ready` in the same operation before canonical curation. Deferred and rejected
+candidates require a substantive `review_reason`; this mutable review metadata must not rewrite the
+candidate body or original provenance.

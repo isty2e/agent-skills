@@ -39,8 +39,8 @@ machine-scoped artifact labels.>
 
 ## Candidate disposition
 
-<How each candidate's status, canonical_id, tags, and updated timestamp change only after
-successful application.>
+<How each candidate's status, canonical_id, review_reason, tags, and updated timestamp change only
+after successful application. Deferred or rejected dispositions require a substantive reason.>
 
 ## Preconditions for apply
 
