@@ -12,7 +12,7 @@ examples show how origin, scope, and reuse determine the destination.
 - [Repository proof status](#repository-proof-status)
 - [Scientific synthesis from one project](#scientific-synthesis-from-one-project)
 - [Durable recovery mechanism](#durable-recovery-mechanism)
-- [Local experiment becoming a hypothesis](#local-experiment-becoming-a-hypothesis)
+- [Local experiment motivating a hypothesis](#local-experiment-motivating-a-hypothesis)
 - [Paper-specific result](#paper-specific-result)
 - [User preference](#user-preference)
 - [Version-scoped portable knowledge](#version-scoped-portable-knowledge)
@@ -109,7 +109,7 @@ This is a plausible central candidate because the mechanism survives the origina
 Its scope must retain exceptions such as idempotent effects, authoritative external ledgers, or an
 atomic cross-domain commit.
 
-## Local experiment becoming a hypothesis
+## Local experiment motivating a hypothesis
 
 Observation:
 
@@ -126,7 +126,10 @@ low-dimensional recenter-and-scale models may be preferable until sample size su
 capacity.
 ```
 
-This remains an observed hypothesis until stronger evidence supports broader promotion.
+This is a `hypothesis` because the explanatory proposition remains genuinely unproved, not because
+the record is young or provisional. `observed` describes its current evidence; candidate status and
+canonical lifecycle describe review and maturity. Additional evidence may change support or justify
+integration without changing `knowledge_kind` unless the proposition's semantic role changes.
 
 ## Paper-specific result
 

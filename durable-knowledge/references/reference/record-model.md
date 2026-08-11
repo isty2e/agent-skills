@@ -101,7 +101,10 @@ model.
 `theorem`, `formal-proof`, `empirical-result`, and `experiment` are not additional knowledge kinds.
 They describe statement or evidence form rather than the proposition's semantic role. A theorem may
 encode a `constraint`, `mechanism`, `distinction`, or `method`; an empirical result may support any
-kind whose scope and rationale are explicit. Keep exact proof and experiment artifact authority
+kind whose scope and rationale are explicit. A finite zero-occurrence result is not a `constraint`
+solely because it limits inference: use `distinction` for the boundary between non-observation and
+impossibility, or `hypothesis` for a genuinely unproved explanatory proposition. Record direct
+empirical support with `evidence_state: observed`. Keep exact proof and experiment artifact authority
 separate from the extracted proposition's semantic ownership.
 
 ## Candidate status

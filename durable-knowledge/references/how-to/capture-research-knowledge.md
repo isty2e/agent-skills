@@ -137,7 +137,10 @@ Route by material:
 
 Do not use `theorem` or `empirical-result` as `knowledge_kind` values. A theorem's semantic role may
 be a `constraint`, `mechanism`, `distinction`, or `method`; an experiment describes its evidence, not
-a separate semantic axis.
+a separate semantic axis. A finite observation is not a `constraint` merely because it limits what
+can be inferred. Use `distinction` when the reusable proposition separates non-observation from
+impossibility, or `hypothesis` when the experiment motivates a genuinely unproved explanatory claim.
+Use `evidence_state: observed` for the direct empirical support.
 
 ## Capture selected propositions
 
