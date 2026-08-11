@@ -8,6 +8,9 @@ from pathlib import Path
 
 _CONTROL_DIRECTORY = Path("_durable-knowledge")
 _LEGACY_CONTROL_DIRECTORY = Path(".llm-wiki")
+_MARKER_NAME = "ROOT.md"
+_LEGACY_MARKER_NAME = "ROOT"
+_MARKER_CONTENT = "durable-knowledge-vault-v1\n"
 _DIRECTORIES = (
     Path("Knowledge/Candidates"),
     Path("Knowledge/Papers"),
@@ -42,7 +45,7 @@ Operational files for the `durable-knowledge` skill.
 This directory is intentionally visible because Obsidian Sync excludes dot-prefixed directories
 other than its configuration directory.
 
-- `ROOT`: marker used to resolve the vault safely.
+- `ROOT.md`: Markdown marker used to resolve the vault safely and sync without extra file-type settings.
 - `POLICY.md`: optional vault-owned admission and routing policy within the fixed record model.
 - `Proposals/`: optional review artifacts for delayed or high-risk canonical changes.
 - `templates/`: optional vault-owned template overrides.
@@ -56,7 +59,7 @@ def write_if_missing(path: Path, content: str) -> bool:
     return True
 
 
-class _ControlDirectoryConflictError(RuntimeError):
+class _MigrationConflictError(RuntimeError):
     pass
 
 
@@ -66,12 +69,37 @@ def _migrate_legacy_control_directory(vault: Path) -> None:
     if not legacy.exists():
         return
     if control.exists():
-        raise _ControlDirectoryConflictError(
+        raise _MigrationConflictError(
             "both .llm-wiki and _durable-knowledge exist; reconcile their contents "
             "manually before running bootstrap"
         )
 
     legacy.rename(control)
+
+
+def _migrate_legacy_marker(vault: Path) -> None:
+    control = vault / _CONTROL_DIRECTORY
+    legacy_marker = control / _LEGACY_MARKER_NAME
+    marker = control / _MARKER_NAME
+    if marker.exists() and not marker.is_file():
+        raise _MigrationConflictError(
+            "_durable-knowledge/ROOT.md is not a regular marker file; reconcile it manually"
+        )
+    if not legacy_marker.exists():
+        return
+    if not legacy_marker.is_file():
+        raise _MigrationConflictError(
+            "_durable-knowledge/ROOT is not a regular marker file; reconcile it manually"
+        )
+    if marker.exists():
+        if not marker.is_file() or legacy_marker.read_bytes() != marker.read_bytes():
+            raise _MigrationConflictError(
+                "_durable-knowledge/ROOT and ROOT.md marker files differ; reconcile them manually"
+            )
+        legacy_marker.unlink()
+        return
+
+    legacy_marker.rename(marker)
 
 
 def bootstrap(vault: Path, install_policy_copy: bool) -> list[Path]:
@@ -80,6 +108,7 @@ def bootstrap(vault: Path, install_policy_copy: bool) -> list[Path]:
     created: list[Path] = []
     skill_root = Path(__file__).resolve().parent.parent
     _migrate_legacy_control_directory(vault)
+    _migrate_legacy_marker(vault)
 
     for relative in _DIRECTORIES:
         path = vault / relative
@@ -87,8 +116,8 @@ def bootstrap(vault: Path, install_policy_copy: bool) -> list[Path]:
             path.mkdir(parents=True, exist_ok=True)
             created.append(path)
 
-    marker = vault / _CONTROL_DIRECTORY / "ROOT"
-    if write_if_missing(marker, "durable-knowledge-vault-v1\n"):
+    marker = vault / _CONTROL_DIRECTORY / _MARKER_NAME
+    if write_if_missing(marker, _MARKER_CONTENT):
         created.append(marker)
 
     knowledge_readme = vault / "Knowledge/README.md"
@@ -135,20 +164,33 @@ def main() -> int:
     migrated_legacy_control_directory = (
         vault / _LEGACY_CONTROL_DIRECTORY
     ).exists() and not (vault / _CONTROL_DIRECTORY).exists()
+    legacy_marker_was_present = any(
+        (vault / directory / _LEGACY_MARKER_NAME).exists()
+        for directory in (_LEGACY_CONTROL_DIRECTORY, _CONTROL_DIRECTORY)
+    )
     try:
         created = bootstrap(vault, args.install_policy_copy)
-    except _ControlDirectoryConflictError as error:
+    except _MigrationConflictError as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
 
     print(f"Vault: {vault}")
+    migrated_legacy_marker = (
+        legacy_marker_was_present
+        and not (vault / _LEGACY_CONTROL_DIRECTORY / _LEGACY_MARKER_NAME).exists()
+        and not (vault / _CONTROL_DIRECTORY / _LEGACY_MARKER_NAME).exists()
+        and (vault / _CONTROL_DIRECTORY / _MARKER_NAME).is_file()
+    )
+
     if migrated_legacy_control_directory:
         print("Migrated: .llm-wiki -> _durable-knowledge")
+    if migrated_legacy_marker:
+        print("Migrated: _durable-knowledge/ROOT -> _durable-knowledge/ROOT.md")
     if created:
         print("Created:")
         for path in created:
             print(f"  - {path.relative_to(vault)}")
-    elif not migrated_legacy_control_directory:
+    elif not migrated_legacy_control_directory and not migrated_legacy_marker:
         print("No changes; the vault structure already exists.")
     return 0
 

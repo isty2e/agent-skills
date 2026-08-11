@@ -15,7 +15,8 @@ leaves existing notes and customized files unchanged.
 
 The `_durable-knowledge/` control directory is deliberately visible so Obsidian Sync and ordinary
 file replication include it. Obsidian Sync excludes dot-prefixed directories other than its
-configuration directory.
+configuration directory. Its `ROOT.md` marker is Markdown so replication does not require the
+per-device **Sync all other types** setting.
 
 To install an editable vault-local admission policy:
 
@@ -42,6 +43,10 @@ rewriting its files. If both directories exist, bootstrap exits with an error. C
 directories, preserve the intended policy, proposals, and template overrides under
 `_durable-knowledge/`, then remove the legacy directory and rerun bootstrap.
 
+Earlier visible control directories used an extensionless `_durable-knowledge/ROOT` marker.
+Bootstrap renames it to `ROOT.md`. If both marker files exist with identical contents, bootstrap
+removes the extensionless duplicate. If their contents differ, it stops for manual reconciliation.
+
 ## Configure agent discovery
 
 Set the vault path in the environment used to launch the agent:
@@ -51,7 +56,7 @@ export DK_VAULT_PATH="<vault>"
 ```
 
 An explicit path in a user request overrides the environment variable. Agents running inside the
-vault may also discover the nearest ancestor containing `_durable-knowledge/ROOT` and `Knowledge/`.
+vault may also discover the nearest ancestor containing `_durable-knowledge/ROOT.md` and `Knowledge/`.
 
 ## Enable Obsidian review
 

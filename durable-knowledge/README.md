@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.2.5
+# durable-knowledge skill — draft 0.2.6
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
@@ -78,13 +78,13 @@ _durable-knowledge/
 ├── README.md
 ├── Proposals/
 ├── templates/
-└── ROOT
+└── ROOT.md
 ```
 
 The control directory is intentionally named `_durable-knowledge/` rather than using a dot prefix.
-Obsidian Sync excludes dot-prefixed files and directories other than its configuration directory, so
-this visible name keeps the marker, policy, proposals, and template overrides available on every
-replica.
+Obsidian Sync excludes dot-prefixed files and directories other than its configuration directory.
+The visible directory and Markdown `ROOT.md` marker keep the control state available on every
+replica without requiring the **Sync all other types** setting.
 
 Existing notes and existing bundled Bases are left unchanged. Add `--install-policy-copy` to create
 an editable vault-local `_durable-knowledge/POLICY.md` for admission and routing rules. The
@@ -92,7 +92,7 @@ package-wide `knowledge_kind` values remain fixed.
 
 Bootstrap automatically renames a legacy `.llm-wiki/` directory when `_durable-knowledge/` is
 absent. If both directories exist, it stops without merging them so their contents can be reconciled
-manually.
+manually. It also migrates the former extensionless `_durable-knowledge/ROOT` marker to `ROOT.md`.
 
 Set a default vault for agents:
 
