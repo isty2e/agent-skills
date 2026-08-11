@@ -64,6 +64,7 @@ updated: 2026-03-13T14:22:33Z
         source_sha256: str | None = "a" * 64,
         title_line: str = "title: Example paper\n",
         heading: str = "Example paper",
+        tags_yaml: str | None = None,
     ) -> subprocess.CompletedProcess[str]:
         papers = self.vault / "Knowledge/Papers"
         papers.mkdir(parents=True, exist_ok=True)
@@ -72,6 +73,7 @@ updated: 2026-03-13T14:22:33Z
             source_metadata += f"source_uri: {source_uri}\n"
         if source_sha256 is not None:
             source_metadata += f"source_sha256: {source_sha256}\n"
+        tag_metadata = "" if tags_yaml is None else f"tags:{tags_yaml}\n"
         (papers / "paper-example.md").write_text(
             f"""---
 id: paper-example
@@ -79,11 +81,44 @@ id: paper-example
 status: source
 citation_key: example-2026-paper
 source_ref: embedded:claim-ledger
-{source_metadata}created: 2026-03-13T14:22:33Z
+{source_metadata}{tag_metadata}created: 2026-03-13T14:22:33Z
 updated: 2026-03-13T14:22:33Z
 ---
 
 # {heading}
+""",
+            encoding="utf-8",
+        )
+        return self.run_validator()
+
+    def validate_canonical(
+        self, tags_yaml: str = " []"
+    ) -> subprocess.CompletedProcess[str]:
+        canonical = self.vault / "Knowledge/Canonical"
+        canonical.mkdir(parents=True, exist_ok=True)
+        (canonical / "knowledge-method-example.md").write_text(
+            f"""---
+id: knowledge-method-example
+title: Example canonical knowledge
+record_type: canonical
+knowledge_kind: method
+lifecycle: provisional
+evidence_state: observed
+aliases: []
+tags:{tags_yaml}
+scope:
+  - example scope
+assumptions:
+  - example assumption
+invalidation_conditions:
+  - example invalidation
+source_refs:
+  - embedded:evidence-1
+created: 2026-03-13T14:22:33Z
+updated: 2026-03-13T14:22:33Z
+---
+
+# Example canonical knowledge
 """,
             encoding="utf-8",
         )
@@ -133,6 +168,78 @@ created: 2026-03-13T14:22:33Z
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertNotIn("replica-portable", result.stdout)
+
+    def test_multiple_topic_tags_pass(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            extra=(
+                "tags:\n"
+                "  - topic/conformal-prediction\n"
+                "  - topic/uncertainty-quantification\n"
+            ),
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("topic tags should use", result.stdout)
+
+    def test_empty_topic_tags_pass(self) -> None:
+        result = self.validate_candidate("\n  - example scope", extra="tags: []\n")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_topic_tags_must_be_sequence(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope", extra="tags: topic/conformal-prediction\n"
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("fields must be flat sequences: tags", result.stdout)
+
+    def test_noncanonical_topic_tag_warns_for_legacy_compatibility(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope", extra="tags:\n  - conformal-prediction\n"
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(
+            "topic tags should use topic/<lowercase-kebab-case>", result.stdout
+        )
+
+    def test_duplicate_topic_tags_warn(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope",
+            extra=(
+                "tags:\n"
+                "  - topic/conformal-prediction\n"
+                "  - topic/conformal-prediction\n"
+            ),
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("topic tags contain duplicate values", result.stdout)
+
+    def test_topic_tag_placeholder_fails(self) -> None:
+        result = self.validate_candidate(
+            "\n  - example scope", extra="tags:\n  - topic/<slug>\n"
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "sequence fields contain empty or placeholder items: tags", result.stdout
+        )
+
+    def test_paper_and_canonical_topic_tags_pass(self) -> None:
+        paper_result = self.validate_paper(tags_yaml="\n  - topic/example")
+        canonical_result = self.validate_canonical("\n  - topic/example")
+
+        self.assertEqual(
+            paper_result.returncode, 0, paper_result.stdout + paper_result.stderr
+        )
+        self.assertEqual(
+            canonical_result.returncode,
+            0,
+            canonical_result.stdout + canonical_result.stderr,
+        )
 
     def test_local_source_reference_warns_without_invalidating_record(self) -> None:
         result = self.validate_candidate(

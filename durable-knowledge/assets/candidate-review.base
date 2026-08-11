@@ -7,6 +7,8 @@ formulas:
 properties:
   formula.title_link:
     displayName: Title
+  tags:
+    displayName: Topics
   status:
     displayName: Status
   knowledge_kind:
@@ -25,6 +27,7 @@ views:
         - 'status == "pending"'
     order:
       - formula.title_link
+      - tags
       - status
       - knowledge_kind
       - evidence_state
@@ -36,6 +39,7 @@ views:
         - 'status == "ready"'
     order:
       - formula.title_link
+      - tags
       - knowledge_kind
       - evidence_state
       - updated
@@ -46,6 +50,7 @@ views:
         - 'status == "deferred"'
     order:
       - formula.title_link
+      - tags
       - knowledge_kind
       - evidence_state
       - updated
@@ -56,6 +61,7 @@ views:
         - 'status == "rejected"'
     order:
       - formula.title_link
+      - tags
       - knowledge_kind
       - updated
   - type: table
@@ -65,6 +71,7 @@ views:
         - 'status == "integrated"'
     order:
       - formula.title_link
+      - tags
       - status
       - canonical_id
       - updated
@@ -75,6 +82,7 @@ views:
         - 'status == "contested"'
     order:
       - formula.title_link
+      - tags
       - status
       - canonical_id
       - updated

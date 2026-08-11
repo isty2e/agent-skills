@@ -80,6 +80,8 @@ record_type: candidate
 title: Durable intent should precede non-atomic external side effects
 status: pending
 canonical_id: null
+tags:
+  - topic/distributed-systems
 ```
 
 The note should separate the observed or sourced claim from the proposed generalization and state its
@@ -91,7 +93,8 @@ external locator rather than a local path, ticket name, or session ID.
 
 In Obsidian, open `Knowledge/knowledge-browser.base` and select the **Candidate inbox** view. The
 human-readable `title` is a clickable link even though the filename remains the machine-oriented
-candidate ID. In another Markdown editor, open the candidate file directly.
+candidate ID, and its topics appear in the **Topics** column. In another Markdown editor, open the
+candidate file directly.
 
 Change only the review status:
 

@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.2.4
+# durable-knowledge skill — draft 0.2.5
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
@@ -100,16 +100,17 @@ Set a default vault for agents:
 export DK_VAULT_PATH="$HOME/path/to/vault"
 ```
 
-## Browse candidates and canonical knowledge
+## Browse managed knowledge
 
 Markdown and YAML frontmatter are authoritative. Obsidian is an optional review surface through the
 Bases core plugin; any Markdown editor or script can edit the same state.
 
-Open `Knowledge/knowledge-browser.base` to browse a candidate inbox, ready and deferred candidates,
-active canonical knowledge, contested knowledge, integrated candidate provenance, and retired
-owners. The Base shows a clickable human-readable `title` while machine-oriented IDs and filenames
-remain stable. It updates automatically when matching Markdown records arrive or their lifecycle
-properties change. `Knowledge/candidate-review.base` remains available as a candidate-only view.
+Open `Knowledge/knowledge-browser.base` to browse all managed knowledge, paper notes, a candidate
+inbox, ready and deferred candidates, active canonical knowledge, contested knowledge, integrated
+candidate provenance, and retired owners. The Base shows a clickable human-readable `title` and
+multi-valued **Topics** while machine-oriented IDs and filenames remain stable. It updates
+automatically when matching Markdown records arrive or their lifecycle or topic properties change.
+`Knowledge/candidate-review.base` remains available as a candidate-only view.
 
 New candidate, paper, canonical, and proposal records store their human label in frontmatter and
 mirror it in the first H1:
@@ -120,6 +121,19 @@ title: Variance limits of residual calibration
 
 Legacy title-less records remain valid and fall back to the filename in metadata-aware views.
 
+Candidate, paper, and canonical records may use zero or more open-vocabulary topic tags:
+
+```yaml
+tags:
+  - topic/conformal-prediction
+  - topic/uncertainty-quantification
+```
+
+Search existing values before adding a new `topic/<lowercase-kebab-case>` tag, but do not force one
+primary topic or a directory hierarchy. Multiple topics are expected when a record spans them. Keep
+kind, lifecycle, and evidence semantics in their typed frontmatter fields rather than duplicating
+them as tags.
+
 The optional community plugin
 [Front Matter Title](https://github.com/snezhig/obsidian-front-matter-title) can project the same
 frontmatter title into Obsidian's File Explorer. Enable its Explorer surface when that display is
@@ -128,11 +142,12 @@ required H1, depending on client settings. The plugin is a client-local presenta
 part of the knowledge contract; each client enables it separately, and plain Markdown readers use
 the matching first H1.
 
-Reviewers normally change only `status`:
+Reviewers normally change `status` and may refine topic tags:
 
 - `pending` → `ready` to authorize ordinary canonical create or merge;
 - `pending` or `ready` → `deferred` to keep the candidate for later;
-- `pending` or `ready` → `rejected` to remove it from the active queue.
+- `pending` or `ready` → `rejected` to remove it from the active queue;
+- add, remove, or normalize `topic/...` tags without rewriting candidate claim provenance.
 
 Capture never sets `ready`, and agents curate only `ready` candidates. When a user explicitly names
 a non-applied candidate and requests integration, the agent first sets it to `ready` in the same
@@ -194,9 +209,10 @@ python ~/.local/share/agent-skills/durable-knowledge/scripts/validate.py \
 
 Validation checks paths, required frontmatter, scalar versus flat-sequence shape, non-empty
 knowledge-bearing sequences, placeholder items, duplicate top-level fields and IDs, controlled
-values, candidate-to-canonical lifecycle relationships, malformed or non-portable source-reference
-forms, and optional paper source URI and SHA-256 shape. Managed contract fields use top-level scalars
-or block sequences; `[]` represents an explicit empty sequence where allowed. Arbitrary nested
+values, topic-tag shape and normalization, candidate-to-canonical lifecycle relationships, malformed
+or non-portable source-reference forms, and optional paper source URI and SHA-256 shape. Managed
+contract fields use top-level scalars or block sequences; `[]` represents an explicit empty sequence
+where allowed. Arbitrary nested
 metadata is outside this structural subset.
 Missing display titles and portability findings remain warnings for legacy compatibility. A present
 `title` must match the first H1. Validation does not establish truth, reviewer identity, source

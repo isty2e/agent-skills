@@ -10,8 +10,7 @@ pmid: <PMID or null>
 source_ref: <paper:doi:<DOI> | paper:arxiv:<identifier> | paper:pmid:<identifier> | stable HTTPS URI | embedded:claim-ledger>
 source_uri: <stable external URI or null>
 source_sha256: <64 lowercase hex characters or null; identity and integrity only>
-tags:
-  - <topic>
+tags: []
 created: <ISO-8601 UTC timestamp>
 updated: <ISO-8601 UTC timestamp>
 ---

@@ -6,6 +6,7 @@ knowledge_kind: synthesis
 lifecycle: provisional
 evidence_state: <source-backed|corroborated|contested>
 aliases: []
+tags: []
 scope:
   - <scope of synthesis>
 assumptions:

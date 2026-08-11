@@ -7,6 +7,7 @@ lifecycle: <provisional|reviewed|stable|contested|retired>
 evidence_state: <unverified|observed|source-backed|corroborated|contested>
 aliases:
   - <alternate term>
+tags: []
 scope:
   - <where the knowledge applies>
 assumptions:

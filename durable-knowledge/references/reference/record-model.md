@@ -8,6 +8,7 @@ frontmatter subset defined by the vault contract.
 
 - [Record types](#record-types)
 - [Display titles](#display-titles)
+- [Topic tags](#topic-tags)
 - [Knowledge kinds](#knowledge-kinds)
 - [Candidate status](#candidate-status)
 - [Evidence state](#evidence-state)
@@ -49,6 +50,32 @@ metadata-aware views fall back to the filename until the record is deliberately 
 mechanical migration may copy the existing first H1 into a missing `title`; this does not authorize
 rewriting candidate prose or choosing a new candidate label.
 
+## Topic tags
+
+Candidate, paper, and canonical records may carry zero or more topical labels in the optional `tags`
+flat sequence:
+
+```yaml
+tags:
+  - topic/conformal-prediction
+  - topic/uncertainty-quantification
+```
+
+The `topic/` namespace has an open vocabulary: search existing values first, then add a new
+`topic/<lowercase-kebab-case>` value when no equivalent topic exists. A record may have multiple
+relevant topics. There is no primary topic, tag order has no meaning, and topic tags do not determine
+record location or semantic ownership.
+
+Use tags only for what the knowledge is about. Keep knowledge form in `knowledge_kind`, review state
+in `status`, canonical maturity in `lifecycle`, and support in `evidence_state` and evidence fields.
+Do not encode those typed properties as tags. The validator warns about legacy unnamespaced or
+duplicate values so existing records remain readable; new or modified records must resolve those
+warnings.
+
+Topic tags are mutable curation metadata. They may be added, removed, combined, or normalized without
+rewriting the claim or its provenance. Candidate promotion may reuse, merge, or refine candidate and
+paper tags rather than copying them mechanically.
+
 ## Knowledge kinds
 
 Allowed values:
@@ -89,6 +116,7 @@ Authorized review or curation may update only these candidate fields:
 ```text
 status
 canonical_id
+tags
 updated
 ```
 

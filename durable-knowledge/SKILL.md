@@ -112,6 +112,10 @@ retrieved records and zero new candidates are normal.
     express quantitative, logical, probabilistic, algorithmic, or constraint relationships more
     clearly than prose. Define symbols, domains, and assumptions nearby, and explain the expression
     in concise prose. Do not add decorative mathematics or force qualitative claims into formulas.
+17. **Index topics without forcing a tree.** Candidate, paper, and canonical records may use multiple
+    `topic/<lowercase-kebab-case>` tags. Search existing values before adding a new topic, but do not
+    require a registry, primary topic, or directory hierarchy. Keep kind, lifecycle, and evidence
+    semantics in their typed fields rather than duplicating them as tags.
 
 Treat `source_refs` as audit and retrieval pointers, not as substitutes for evidence. For a local
 observation or derivation, write a compact evidence capsule in the note with the observed claim,
@@ -170,7 +174,7 @@ Operation permissions:
 - Recall: no writes.
 - Curate: process only `ready` candidates. When an explicit user request names a non-applied
   candidate for integration, first set it to `ready` in the same operation; then write canonical
-  state and update candidate `status`, `canonical_id`, and `updated`.
+  state, reconcile candidate tags when needed, and update `status`, `canonical_id`, and `updated`.
 - Proposals: write only when preview, delay, retirement, human-owned targets, or risk justifies one.
 
 Never expand the write surface merely because filesystem access is available.
@@ -196,11 +200,14 @@ Before reporting a write as complete:
 3. confirm the ID is unique;
 4. confirm a new candidate, paper, canonical, or proposal record has a concise `title` matching its
    first H1;
-5. confirm the evidence summary is self-contained and every source reference is replica-resolvable;
-6. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
+5. when topical indexing is useful, confirm candidate, paper, and canonical tags are deduplicated
+   `topic/<lowercase-kebab-case>` values covering the materially relevant topics, without duplicating
+   typed lifecycle or evidence semantics;
+6. confirm the evidence summary is self-contained and every source reference is replica-resolvable;
+7. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
    name, session ID, or machine-scoped artifact label;
-7. run `scripts/validate.py --vault <vault>` when Python is available and resolve portability
-   warnings for new or modified records;
-8. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
+8. run `scripts/validate.py --vault <vault>` when Python is available and resolve warnings for new or
+   modified records;
+9. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
 
 Do not claim integration when only a candidate, review transition, or proposal exists.

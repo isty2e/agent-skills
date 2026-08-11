@@ -1,12 +1,17 @@
 filters:
   or:
     - 'file.inFolder("Knowledge/Candidates")'
+    - 'file.inFolder("Knowledge/Papers")'
     - 'file.inFolder("Knowledge/Canonical")'
 formulas:
   title_link: 'file.asLink(if(title.isEmpty(), file.name, title))'
 properties:
   formula.title_link:
     displayName: Title
+  record_type:
+    displayName: Record type
+  tags:
+    displayName: Topics
   status:
     displayName: Status
   lifecycle:
@@ -15,11 +20,26 @@ properties:
     displayName: Kind
   evidence_state:
     displayName: Evidence
+  citation_key:
+    displayName: Citation key
+  source_ref:
+    displayName: Source
   canonical_id:
     displayName: Canonical owner
   updated:
     displayName: Updated
 views:
+  - type: table
+    name: All knowledge
+    order:
+      - formula.title_link
+      - tags
+      - record_type
+      - status
+      - lifecycle
+      - knowledge_kind
+      - evidence_state
+      - updated
   - type: table
     name: Candidate inbox
     filters:
@@ -28,6 +48,7 @@ views:
         - 'status == "pending"'
     order:
       - formula.title_link
+      - tags
       - status
       - knowledge_kind
       - evidence_state
@@ -40,6 +61,7 @@ views:
         - 'status == "ready"'
     order:
       - formula.title_link
+      - tags
       - knowledge_kind
       - evidence_state
       - updated
@@ -51,6 +73,7 @@ views:
         - 'status == "deferred"'
     order:
       - formula.title_link
+      - tags
       - knowledge_kind
       - evidence_state
       - updated
@@ -62,6 +85,7 @@ views:
         - 'lifecycle != "retired"'
     order:
       - formula.title_link
+      - tags
       - lifecycle
       - knowledge_kind
       - evidence_state
@@ -76,6 +100,7 @@ views:
             - 'evidence_state == "contested"'
     order:
       - formula.title_link
+      - tags
       - lifecycle
       - knowledge_kind
       - evidence_state
@@ -90,6 +115,7 @@ views:
             - 'status == "contested"'
     order:
       - formula.title_link
+      - tags
       - status
       - canonical_id
       - updated
@@ -101,6 +127,18 @@ views:
         - 'lifecycle == "retired"'
     order:
       - formula.title_link
+      - tags
       - knowledge_kind
       - evidence_state
+      - updated
+  - type: table
+    name: Papers
+    filters:
+      and:
+        - 'record_type == "paper"'
+    order:
+      - formula.title_link
+      - tags
+      - citation_key
+      - source_ref
       - updated
