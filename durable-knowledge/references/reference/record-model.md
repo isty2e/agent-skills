@@ -30,6 +30,9 @@ frontmatter subset defined by the vault contract.
 | `proposal` | `_durable-knowledge/Proposals/` | Optional preview or delayed/high-risk change artifact |
 
 The synthesis template is a specialized `canonical` record with `knowledge_kind: synthesis`.
+Content-addressed files under `Knowledge/Artifacts/` are immutable evidence payloads rather than a
+fifth `record_type`; their semantic role remains in the record and evidence capsule that references
+them.
 
 ## Display titles
 
@@ -95,6 +98,12 @@ refine admission or routing for these kinds, but it must not add or rename them.
 repository-, project-, organization-, and machine-owned categories do not belong in the central
 model.
 
+`theorem`, `formal-proof`, `empirical-result`, and `experiment` are not additional knowledge kinds.
+They describe statement or evidence form rather than the proposition's semantic role. A theorem may
+encode a `constraint`, `mechanism`, `distinction`, or `method`; an empirical result may support any
+kind whose scope and rationale are explicit. Keep exact proof and experiment artifact authority
+separate from the extracted proposition's semantic ownership.
+
 ## Candidate status
 
 | Status | Meaning | `canonical_id` | `review_reason` |
@@ -139,7 +148,11 @@ The original body, observation, source references, and evidence qualifiers remai
 | `contested` | Materially conflicting evidence or incompatible scoped claims remain |
 
 Evidence state is not a scalar probability. It describes support, not scope, truth, or review
-maturity.
+maturity. A direct computation or partial derivation is `observed` when its setup and result are
+preserved but it does not establish a complete formal argument. `source-backed` may describe a
+complete formal derivation even when the evolving proof source remains repository-owned; the durable
+record must preserve a self-contained statement, assumptions, derivation or proof capsule, and
+material verification conditions.
 
 ## Canonical lifecycle
 
@@ -196,8 +209,10 @@ stable claim.
 
 The evidence summary is part of the durable claim and must remain understandable on any synced
 replica. `portable_source_refs` add auditability and retrieval but cannot carry the claim's meaning or
-support alone. Local paths, bare filenames, local ticket or issue names, session IDs, and
-machine-scoped artifact labels are contextual provenance, not portable source references.
+support alone. A `vault:artifact:sha256:` reference may preserve exact immutable bytes, but the record
+still owns their interpretation, conditions, and limitations. Local paths, bare filenames, local
+ticket or issue names, session IDs, and machine-scoped artifact labels are contextual provenance, not
+portable source references.
 
 ## Formal notation
 

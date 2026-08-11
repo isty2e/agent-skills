@@ -106,8 +106,11 @@ Apply these constraints:
 - Do not run desktop Sync and Headless Sync against the same local directory.
 - Let initial sync complete before enabling writes on a new replica.
 - Confirm that `_durable-knowledge/ROOT.md` arrived before allowing agent writes.
-- Keep claim support inside the synced record or behind a synced-vault ID or stable external URI;
-  never cite an originating machine's path, bare filename, local ticket name, or session ID.
+- Keep claim support inside the synced record or behind a synced-vault record, content-addressed
+  artifact, or stable external URI; never cite an originating machine's path, bare filename, local
+  ticket name, or session ID.
+- Ensure every client synchronizes the extensions used under `Knowledge/Artifacts/`; some transports
+  require per-client configuration for arbitrary file types.
 - Use the random-suffixed candidate and proposal IDs from the vault contract, with each full ID as
   the filename stem.
 - Serialize edits to the same canonical note.
@@ -135,7 +138,9 @@ On a desktop client, confirm that:
 - a `ready` edit reaches the headless replica;
 - integrated candidates move to the Integrated view;
 - contested candidates move to the Contested view;
-- canonical notes remain free of unresolved sync-conflict files.
+- canonical notes remain free of unresolved sync-conflict files;
+- each referenced `Knowledge/Artifacts/` payload exists and passes validation on every replica that
+  must evaluate it.
 
 Use Git or another backup layer in addition to Sync when rollback and diff review matter.
 

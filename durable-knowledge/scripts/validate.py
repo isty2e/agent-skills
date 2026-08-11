@@ -2,6 +2,7 @@
 """Validate durable-knowledge Markdown records using only the Python standard library."""
 
 import argparse
+import hashlib
 import json
 import re
 from collections.abc import Mapping
@@ -14,6 +15,9 @@ _LOWER_KEBAB = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _TOPIC_TAG = re.compile(r"^topic/[a-z0-9]+(?:-[a-z0-9]+)*$")
 _TEMPLATE_PLACEHOLDER = re.compile(r"^<[^<>]+>$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_ARTIFACT_ROOT = Path("Knowledge/Artifacts")
+_ARTIFACT_PREFIX = "vault:artifact:sha256:"
+_HASH_CHUNK_SIZE = 1024 * 1024
 
 _SCALAR_FIELDS: dict[str, frozenset[str]] = {
     "candidate": frozenset(
@@ -149,6 +153,7 @@ _EXPECTED_ROOT: dict[str, Path] = {
 
 _PORTABLE_SOURCE_PREFIXES = (
     "embedded:",
+    "vault:artifact:sha256:",
     "vault:record:",
     "paper:doi:",
     "paper:arxiv:",
@@ -280,6 +285,45 @@ def _scalar_field(fields: Mapping[str, str | tuple[str, ...]], key: str) -> str:
     return value if isinstance(value, str) else ""
 
 
+def _source_references(
+    fields: Mapping[str, str | tuple[str, ...]],
+) -> tuple[str, ...]:
+    source_references: list[str] = []
+    source_refs = fields.get("source_refs")
+    if isinstance(source_refs, tuple):
+        source_references.extend(source_refs)
+    source_ref = _scalar_field(fields, "source_ref")
+    if source_ref:
+        source_references.append(source_ref)
+    return tuple(source_references)
+
+
+def _artifact_digest(source_reference: str) -> str | None:
+    normalized = source_reference.strip().lower()
+    if not normalized.startswith(_ARTIFACT_PREFIX):
+        return None
+    locator = source_reference.strip()[len(_ARTIFACT_PREFIX) :]
+    digest, _, _ = locator.partition("#")
+    return digest if _SHA256.fullmatch(digest) is not None else None
+
+
+def _sha256_file(path: Path) -> str:
+    hasher = hashlib.sha256()
+    with path.open("rb") as stream:
+        while chunk := stream.read(_HASH_CHUNK_SIZE):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def _path_contains_symlink(vault: Path, relative: Path) -> bool:
+    current = vault
+    for part in relative.parts:
+        current /= part
+        if current.is_symlink():
+            return True
+    return False
+
+
 def _is_resolvable_https_uri(value: str) -> bool:
     try:
         parsed = urlsplit(value)
@@ -309,6 +353,9 @@ def _portable_source_reference_is_well_formed(source_reference: str) -> bool:
         return False
     if prefix == "embedded:":
         return "#" not in locator
+    if prefix == _ARTIFACT_PREFIX:
+        digest, separator, anchor = locator.partition("#")
+        return _SHA256.fullmatch(digest) is not None and (not separator or bool(anchor))
     if prefix == "vault:record:":
         record_id, separator, anchor = locator.partition("#")
         return bool(record_id and separator and anchor)
@@ -555,15 +602,22 @@ def validate_file(
                 Finding("warning", str(relative), "topic tags contain duplicate values")
             )
 
-    source_references: list[str] = []
-    source_refs = fields.get("source_refs")
-    if isinstance(source_refs, tuple):
-        source_references.extend(source_refs)
-    source_ref = _scalar_field(fields, "source_ref")
-    if source_ref:
-        source_references.append(source_ref)
-
-    for source_reference in source_references:
+    for source_reference in _source_references(fields):
+        normalized_source_reference = source_reference.strip().lower()
+        artifact_namespace = normalized_source_reference == "vault:artifact" or (
+            normalized_source_reference.startswith("vault:artifact:")
+        )
+        if artifact_namespace and not _portable_source_reference_is_well_formed(
+            source_reference
+        ):
+            findings.append(
+                Finding(
+                    "error",
+                    str(relative),
+                    f"artifact source reference is malformed: {source_reference!r}",
+                )
+            )
+            continue
         portability_message = _source_reference_portability_message(source_reference)
         if portability_message is not None:
             findings.append(Finding("warning", str(relative), portability_message))
@@ -596,6 +650,32 @@ def validate_file(
                     "paper source_sha256 must be null or 64 lowercase hexadecimal characters",
                 )
             )
+
+        artifact_digest = _artifact_digest(_scalar_field(fields, "source_ref"))
+        if artifact_digest is not None:
+            if not isinstance(source_sha256, str) or source_sha256 in {
+                "",
+                "null",
+                "~",
+            }:
+                findings.append(
+                    Finding(
+                        "error",
+                        str(relative),
+                        "paper artifact source_ref requires matching source_sha256",
+                    )
+                )
+            elif (
+                _SHA256.fullmatch(source_sha256) is not None
+                and source_sha256 != artifact_digest
+            ):
+                findings.append(
+                    Finding(
+                        "error",
+                        str(relative),
+                        "paper source_sha256 must match the vault artifact reference",
+                    )
+                )
 
     expected_root = _EXPECTED_ROOT[record_type]
     if not is_under(relative, expected_root):
@@ -803,6 +883,28 @@ def validate_vault(vault: Path) -> list[Finding]:
             Finding("error", "_durable-knowledge/ROOT.md", "vault marker is missing")
         )
 
+    artifact_root = vault / _ARTIFACT_ROOT
+    artifact_path_has_symlink = _path_contains_symlink(vault, _ARTIFACT_ROOT)
+    artifact_root_valid = not artifact_path_has_symlink and (
+        not artifact_root.exists() or artifact_root.is_dir()
+    )
+    if artifact_path_has_symlink:
+        findings.append(
+            Finding(
+                "error",
+                str(_ARTIFACT_ROOT),
+                "artifact path must not contain symlinks",
+            )
+        )
+    elif not artifact_root_valid:
+        findings.append(
+            Finding(
+                "error",
+                str(_ARTIFACT_ROOT),
+                "artifact root must be a regular non-symlink directory",
+            )
+        )
+
     ids: dict[str, list[str]] = {}
     records: list[tuple[Path, dict[str, str | tuple[str, ...]]]] = []
     for path in iter_managed_markdown(vault):
@@ -818,6 +920,86 @@ def validate_vault(vault: Path) -> list[Finding]:
             findings.append(
                 Finding("error", ", ".join(paths), f"duplicate id {record_id!r}")
             )
+
+    artifact_references: dict[str, list[str]] = {}
+    for path, fields in records:
+        for source_reference in _source_references(fields):
+            digest = _artifact_digest(source_reference)
+            if digest is not None and _portable_source_reference_is_well_formed(
+                source_reference
+            ):
+                artifact_references.setdefault(digest, []).append(
+                    str(path.relative_to(vault))
+                )
+
+    if artifact_root_valid:
+        for digest, referring_paths in sorted(artifact_references.items()):
+            artifact_directory = artifact_root / f"artifact-sha256-{digest}"
+            references = ", ".join(sorted(set(referring_paths)))
+            if not artifact_directory.exists():
+                findings.append(
+                    Finding(
+                        "error",
+                        references,
+                        f"artifact reference has no matching payload: {digest}",
+                    )
+                )
+                continue
+
+            relative_directory = str(artifact_directory.relative_to(vault))
+            if artifact_directory.is_symlink() or not artifact_directory.is_dir():
+                findings.append(
+                    Finding(
+                        "error",
+                        relative_directory,
+                        "artifact path must be a regular non-symlink directory",
+                    )
+                )
+                continue
+
+            payloads = sorted(artifact_directory.glob("payload.*"))
+            if len(payloads) != 1:
+                findings.append(
+                    Finding(
+                        "error",
+                        relative_directory,
+                        "artifact reference resolves to multiple payloads"
+                        if payloads
+                        else "artifact reference has no matching payload",
+                    )
+                )
+                continue
+
+            payload = payloads[0]
+            relative_payload = str(payload.relative_to(vault))
+            if payload.is_symlink() or not payload.is_file():
+                findings.append(
+                    Finding(
+                        "error",
+                        relative_payload,
+                        "artifact payload must be a regular non-symlink file",
+                    )
+                )
+                continue
+            try:
+                actual_digest = _sha256_file(payload)
+            except OSError as error:
+                findings.append(
+                    Finding(
+                        "error",
+                        relative_payload,
+                        f"artifact payload could not be read: {error}",
+                    )
+                )
+                continue
+            if actual_digest != digest:
+                findings.append(
+                    Finding(
+                        "error",
+                        relative_payload,
+                        "artifact payload SHA-256 does not match its source reference",
+                    )
+                )
 
     canonical_records: dict[str, dict[str, str | tuple[str, ...]]] = {}
     for _, fields in records:

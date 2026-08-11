@@ -50,7 +50,8 @@ rationale that no longer describes its disposition. Reviewers may also add, remo
 2. Select authorized candidates.
 3. Search canonical IDs, titles, aliases, topic tags, summaries, body text, and backlinks.
 4. Identify the semantic owner by meaning, scope, assumptions, definitions, and target quantity.
-5. Read the evidence capsules and portable source locators needed to support the change.
+5. Read the evidence capsules and portable source locators needed to support the change. Validate any
+   `vault:artifact:sha256:` payload before relying on it.
 6. Choose one decision:
    - `create` — no semantic owner exists;
    - `merge` — an existing owner covers the compatible claim;

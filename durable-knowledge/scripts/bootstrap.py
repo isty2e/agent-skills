@@ -15,6 +15,7 @@ _DIRECTORIES = (
     Path("Knowledge/Candidates"),
     Path("Knowledge/Papers"),
     Path("Knowledge/Canonical"),
+    Path("Knowledge/Artifacts"),
     _CONTROL_DIRECTORY / "Proposals",
     _CONTROL_DIRECTORY / "templates",
 )
@@ -26,6 +27,7 @@ This subtree is managed by the `durable-knowledge` Agent Skill.
 - `Candidates/`: captured claims with human-readable review status.
 - `Papers/`: grounded notes about individual academic papers.
 - `Canonical/`: reviewed semantic owners.
+- `Artifacts/`: immutable content-addressed evidence snapshots referenced by managed records.
 - `knowledge-browser.base`: optional Obsidian browser for candidates, papers, and canonical knowledge.
 - `candidate-review.base`: optional Obsidian view over candidate status, review rationale, and topic properties.
 
@@ -62,6 +64,31 @@ def write_if_missing(path: Path, content: str) -> bool:
 
 class _MigrationConflictError(RuntimeError):
     pass
+
+
+def _ensure_managed_directory(vault: Path, relative: Path) -> bool:
+    current = vault
+    for part in relative.parts:
+        current /= part
+        if current.is_symlink():
+            raise _MigrationConflictError(
+                "managed directory path must not contain symlinks"
+            )
+        if current.exists() and not current.is_dir():
+            raise _MigrationConflictError(
+                f"managed directory path is not a directory: {current.relative_to(vault)}"
+            )
+
+    path = vault / relative
+    existed = path.exists()
+    path.mkdir(parents=True, exist_ok=True)
+    try:
+        path.resolve().relative_to(vault)
+    except ValueError as error:
+        raise _MigrationConflictError(
+            "managed directory path escapes the vault"
+        ) from error
+    return not existed
 
 
 def _migrate_legacy_control_directory(vault: Path) -> None:
@@ -113,8 +140,7 @@ def bootstrap(vault: Path, install_policy_copy: bool) -> list[Path]:
 
     for relative in _DIRECTORIES:
         path = vault / relative
-        if not path.exists():
-            path.mkdir(parents=True, exist_ok=True)
+        if _ensure_managed_directory(vault, relative):
             created.append(path)
 
     marker = vault / _CONTROL_DIRECTORY / _MARKER_NAME

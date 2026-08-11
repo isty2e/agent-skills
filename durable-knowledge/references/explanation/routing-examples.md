@@ -7,6 +7,10 @@ examples show how origin, scope, and reuse determine the destination.
 
 - [Repository-local implementation trivia](#repository-local-implementation-trivia)
 - [Project semantic invariant](#project-semantic-invariant)
+- [Project-originated theorem](#project-originated-theorem)
+- [Scoped negative result](#scoped-negative-result)
+- [Repository proof status](#repository-proof-status)
+- [Scientific synthesis from one project](#scientific-synthesis-from-one-project)
 - [Durable recovery mechanism](#durable-recovery-mechanism)
 - [Local experiment becoming a hypothesis](#local-experiment-becoming-a-hypothesis)
 - [Paper-specific result](#paper-specific-result)
@@ -43,8 +47,55 @@ Decision layers should consume canonical semantic representations rather than pa
 or presentation projections, unless currentness is explicitly part of the decision semantics.
 ```
 
-That abstraction still needs evidence across contexts, a mechanism, scope, and invalidation
-conditions. Removing repository names is not enough to establish portability.
+That abstraction still needs a mechanism, scope, and invalidation conditions. Removing repository
+names is not enough to establish semantic value.
+
+## Project-originated theorem
+
+A repository contains a machine-checked closure factorization theorem. The exact Lean declaration,
+imports, proof term, claim ID, and current verification status belong to the repository. The
+mathematical proposition may still become a central candidate when the note preserves:
+
+- definitions of the closure and factorization objects;
+- complete assumptions and quantified domains;
+- the theorem conclusion and mathematical significance;
+- a proof capsule or complete formal derivation;
+- verification conditions and invalidation criteria.
+
+The theorem does not need a second project or external publication before capture. Its discovery
+location is not its semantic owner.
+
+## Scoped negative result
+
+Observation:
+
+```text
+A witness activated zero times across 4,096 evaluated routing decisions at checkpoint C under
+protocol P.
+```
+
+This can become an `observed` candidate when the denominator, checkpoint, protocol, data regime,
+witness definition, and decision relevance are preserved. It supports a scoped negative result such
+as “no activations were observed under these conditions”; it does not prove that activation is
+impossible. If the count is merely the latest run status with no durable scientific consequence, the
+experiment log remains its owner.
+
+## Repository proof status
+
+```text
+The current Lean tree has 127 passing files.
+```
+
+This is repository status. It changes with the tree, is cheaply recomputed, and does not state a
+mathematical proposition. Keep it in CI, a project report, or the theorem inventory rather than the
+knowledge vault.
+
+## Scientific synthesis from one project
+
+Several proved project results jointly show that a routing guarantee decomposes into selection,
+branch-validity, and fallback obligations. A synthesis relating those propositions may be central
+knowledge even if every proof currently lives in one repository. The repository owns the exact proof
+artifacts; the vault owns the self-contained scientific relation and its documented scope.
 
 ## Durable recovery mechanism
 
@@ -121,5 +172,6 @@ When independent sources estimate the same target under compatible conditions an
 incompatible conclusions, preserve both source-linked claims. Record likely methodological causes
 and mark the canonical entry contested rather than choosing one by recency or fluency.
 
-Use the [admission policy](../reference/admission-policy.md) for the normative gate and the
-[capture guide](../how-to/capture-knowledge.md) for the procedure.
+Use the [admission policy](../reference/admission-policy.md) for the normative gate, the
+[research extraction guide](../how-to/capture-research-knowledge.md) for bounded scientific review,
+and the [capture guide](../how-to/capture-knowledge.md) for record creation.

@@ -1,3 +1,4 @@
+import hashlib
 import subprocess
 import sys
 import tempfile
@@ -62,6 +63,7 @@ updated: 2026-03-13T14:22:33Z
         *,
         source_uri: str | None = "https://example.org/paper",
         source_sha256: str | None = "a" * 64,
+        source_ref: str = "embedded:claim-ledger",
         title_line: str = "title: Example paper\n",
         heading: str = "Example paper",
         tags_yaml: str | None = None,
@@ -80,7 +82,7 @@ id: paper-example
 {title_line}record_type: paper
 status: source
 citation_key: example-2026-paper
-source_ref: embedded:claim-ledger
+source_ref: {source_ref}
 {source_metadata}{tag_metadata}created: 2026-03-13T14:22:33Z
 updated: 2026-03-13T14:22:33Z
 ---
@@ -160,6 +162,16 @@ created: 2026-03-13T14:22:33Z
             capture_output=True,
             text=True,
         )
+
+    def write_artifact(self, payload: bytes, suffix: str = ".json") -> tuple[str, Path]:
+        digest = hashlib.sha256(payload).hexdigest()
+        artifacts = self.vault / "Knowledge/Artifacts"
+        artifacts.mkdir(parents=True, exist_ok=True)
+        artifact_directory = artifacts / f"artifact-sha256-{digest}"
+        artifact_directory.mkdir(exist_ok=True)
+        artifact = artifact_directory / f"payload{suffix}"
+        artifact.write_bytes(payload)
+        return digest, artifact
 
     def test_valid_flat_sequence_passes(self) -> None:
         result = self.validate_candidate(
@@ -272,6 +284,179 @@ created: 2026-03-13T14:22:33Z
 
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertIn("source reference is malformed", result.stdout)
+
+    def test_malformed_artifact_reference_fails(self) -> None:
+        digest = "a" * 64
+        malformed_references = (
+            "vault:artifact:",
+            "vault:artifact:sha256",
+            f"vault:artifact:md5:{digest}",
+            "vault:artifact:sha256:not-a-hash",
+            f"vault:artifact:sha256:{digest}#",
+            f"vault:artifact:sha256:{digest}#bad anchor",
+        )
+
+        for source_reference in malformed_references:
+            with self.subTest(source_reference=source_reference):
+                result = self.validate_candidate(
+                    "\n  - example scope", source_ref=source_reference
+                )
+
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("artifact source reference is malformed", result.stdout)
+
+    def test_non_directory_artifact_root_fails(self) -> None:
+        knowledge = self.vault / "Knowledge"
+        (knowledge / "Artifacts").write_text("not a directory\n", encoding="utf-8")
+
+        result = self.validate_candidate("\n  - example scope")
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "artifact root must be a regular non-symlink directory", result.stdout
+        )
+
+    def test_symlinked_knowledge_parent_fails_artifact_validation(self) -> None:
+        self.validate_candidate("\n  - example scope")
+        knowledge = self.vault / "Knowledge"
+        external = self.vault / "external-knowledge"
+        knowledge.rename(external)
+        knowledge.symlink_to(external, target_is_directory=True)
+
+        result = self.run_validator()
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("artifact path must not contain symlinks", result.stdout)
+
+    def test_content_addressed_artifact_reference_passes(self) -> None:
+        digest, _ = self.write_artifact(b'{"activations": 0}\n')
+
+        result = self.validate_candidate(
+            "\n  - example scope",
+            source_ref=f"vault:artifact:sha256:{digest}",
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_artifact_reference_accepts_locator_anchor(self) -> None:
+        digest, _ = self.write_artifact(b"proof report\n", suffix=".txt")
+
+        result = self.validate_candidate(
+            "\n  - example scope",
+            source_ref=f"vault:artifact:sha256:{digest}#theorem-4",
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_missing_artifact_reference_fails(self) -> None:
+        digest = "a" * 64
+
+        result = self.validate_candidate(
+            "\n  - example scope",
+            source_ref=f"vault:artifact:sha256:{digest}",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("artifact reference has no matching payload", result.stdout)
+
+    def test_tampered_artifact_payload_fails(self) -> None:
+        digest, artifact = self.write_artifact(b"expected payload\n", suffix=".txt")
+        artifact.write_bytes(b"tampered payload\n")
+
+        result = self.validate_candidate(
+            "\n  - example scope",
+            source_ref=f"vault:artifact:sha256:{digest}",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("artifact payload SHA-256 does not match", result.stdout)
+
+    def test_artifact_symlink_fails(self) -> None:
+        payload = b"linked payload\n"
+        digest = hashlib.sha256(payload).hexdigest()
+        external = self.vault / "external.txt"
+        external.write_bytes(payload)
+        artifacts = self.vault / "Knowledge/Artifacts"
+        artifacts.mkdir(parents=True)
+        artifact_directory = artifacts / f"artifact-sha256-{digest}"
+        artifact_directory.mkdir()
+        artifact = artifact_directory / "payload.txt"
+        artifact.symlink_to(external)
+
+        result = self.validate_candidate(
+            "\n  - example scope",
+            source_ref=f"vault:artifact:sha256:{digest}",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "artifact payload must be a regular non-symlink file", result.stdout
+        )
+
+    def test_duplicate_artifact_payloads_for_hash_fail(self) -> None:
+        payload = b"same payload\n"
+        digest, _ = self.write_artifact(payload, suffix=".txt")
+        self.write_artifact(payload, suffix=".json")
+
+        result = self.validate_candidate(
+            "\n  - example scope",
+            source_ref=f"vault:artifact:sha256:{digest}",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("artifact reference resolves to multiple payloads", result.stdout)
+
+    def test_unreferenced_human_artifact_is_ignored(self) -> None:
+        artifacts = self.vault / "Knowledge/Artifacts"
+        artifacts.mkdir(parents=True)
+        (artifacts / "human-note.txt").write_text("human-owned\n", encoding="utf-8")
+
+        result = self.validate_candidate("\n  - example scope")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_paper_artifact_digest_must_match_source_sha256(self) -> None:
+        digest, _ = self.write_artifact(b"paper snapshot\n", suffix=".pdf")
+
+        result = self.validate_paper(
+            source_uri="null",
+            source_sha256="b" * 64,
+            source_ref=f"vault:artifact:sha256:{digest}",
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "paper source_sha256 must match the vault artifact reference",
+            result.stdout,
+        )
+
+    def test_paper_artifact_reference_requires_source_sha256(self) -> None:
+        digest, _ = self.write_artifact(b"paper snapshot\n", suffix=".pdf")
+
+        for source_sha256 in (None, "null"):
+            with self.subTest(source_sha256=source_sha256):
+                result = self.validate_paper(
+                    source_uri="null",
+                    source_sha256=source_sha256,
+                    source_ref=f"vault:artifact:sha256:{digest}",
+                )
+
+                self.assertEqual(result.returncode, 1)
+                self.assertIn(
+                    "paper artifact source_ref requires matching source_sha256",
+                    result.stdout,
+                )
+
+    def test_paper_artifact_digest_matches_source_sha256(self) -> None:
+        digest, _ = self.write_artifact(b"paper snapshot\n", suffix=".pdf")
+
+        result = self.validate_paper(
+            source_uri="null",
+            source_sha256=digest,
+            source_ref=f"vault:artifact:sha256:{digest}",
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_paper_source_metadata_passes_when_portable_and_well_formed(self) -> None:
         result = self.validate_paper()

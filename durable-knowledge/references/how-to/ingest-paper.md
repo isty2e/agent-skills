@@ -36,11 +36,14 @@ Read enough of the original paper to preserve:
 Use a physical PDF page plus section, equation, figure, or table identifiers where available. If
 reliable locators cannot be obtained, state the limitation and do not emit durable candidates.
 
-If the source exists only as a local file, do not store its path. Record its hash only as identity or
-integrity metadata, make the claim ledger self-contained, and use `embedded:claim-ledger` as the paper
-note's source reference. Do not emit a durable candidate unless another replica can evaluate the
-support through a stable external URI, a synced managed record, or sufficient safely embedded
-evidence.
+If the source exists only as a local file, do not store its path. Make the claim ledger self-contained.
+When the user explicitly authorizes a small immutable snapshot, follow
+[Attach an immutable evidence artifact](attach-evidence-artifact.md), use its
+`vault:artifact:sha256:` value as the paper note's source reference, and retain the same digest in
+`source_sha256`; validation requires them to match. Otherwise use `embedded:claim-ledger` and treat
+the hash as identity or integrity
+metadata only. Do not emit a durable candidate unless another replica can evaluate the support through
+a stable external URI, a synced managed record or artifact, or sufficient safely embedded evidence.
 
 ## Create the paper note
 

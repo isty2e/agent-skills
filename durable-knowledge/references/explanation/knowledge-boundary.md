@@ -18,28 +18,57 @@ These facts belong with that owner:
 - organization policy in organization-owned documentation;
 - machine facts in environment-scoped memory or configuration.
 
-Central knowledge is different. Its proposition should remain intelligible and reusable when the
-identity of the originating user, session, repository, project, organization, or machine is removed.
+Central knowledge is different. Its proposition should remain intelligible and reusable when
+incidental origin coordinates such as the working tree, file layout, ticket state, current task, or
+machine are removed. The scientific subject itself does not have to disappear.
 
-## Origin-independent does not mean universal
+## Project origin is not project ownership
+
+A repository may be where a theorem was proved or an experiment was run without owning the
+proposition's meaning. Separate three questions:
+
+1. Where was the result discovered?
+2. What scientific object, program, study, system, or operating regime gives it meaning?
+3. Which source owns the exact proof, artifact, wording, or current verification status?
+
+The first answer does not determine the other two. A theorem about a named research system can remain
+specific to that system and still be durable knowledge when its definitions, assumptions,
+conclusion, and support are self-contained.
+
+## Artifact authority and semantic ownership coexist
+
+Repository and vault records need not compete as duplicate sources of truth:
+
+- the repository, manuscript, or experiment system owns exact source text, declaration and claim IDs,
+  proof status, run artifacts, and current wording;
+- the knowledge vault may own the extracted mathematical proposition, scientific mechanism, scoped
+  result, distinction, or synthesis.
+
+A later source change may invalidate or supersede the knowledge claim, but it does not make the
+semantic extraction repository trivia. The knowledge record must preserve its scope, evidence state,
+and invalidation conditions without pretending to replace the exact artifact.
+
+## Origin-separated does not mean universal
 
 Portable knowledge may still depend on real conditions. A claim can be scoped to:
 
+- a named research program, study, scientific system, or model family;
 - a scientific domain or data distribution;
 - a technology and version range;
-- a time period;
+- a time period or experiment checkpoint;
 - an operating regime;
 - explicit assumptions or target quantities.
 
-These conditions belong inside the claim because they affect whether it is true or useful. The
-originating identity does not. The admission question is therefore not “Is this timeless?” but “Does
-its meaning survive removal of its original owner?”
+These conditions belong inside the claim because they affect whether it is true or useful. Reuse in
+future work within the same research program is enough. The admission question is not “Will unrelated
+projects reuse this?” but “Can a reader understand and evaluate this proposition without reconstructing
+the incidental context in which it was discovered?”
 
 ## The vault is a slow semantic layer
 
 The vault optimizes for future reasoning, not capture volume. It favors compact mechanisms,
-constraints, methods, decision rules, distinctions, and syntheses that are expensive to rediscover
-and likely to affect another decision.
+constraints, methods, decision rules, distinctions, theorems expressed through those semantic roles,
+and syntheses that are expensive to rediscover and likely to affect another decision.
 
 This excludes most activity history. A completed task, passing test count, current filename, or raw
 conversation may be useful evidence, but it is not automatically durable knowledge. The source
