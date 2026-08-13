@@ -1,180 +1,92 @@
-# Understanding knowledge routing through examples
+# Knowledge Routing Examples
 
-The difficult part of capture is often not wording the claim but identifying its owner. These
-examples show how origin, scope, and reuse determine the destination.
+Route by semantic owner, scope, and future use, not discovery location.
 
-## Contents
+## Repository-Local Implementation Trivia
 
-- [Repository-local implementation trivia](#repository-local-implementation-trivia)
-- [Project semantic invariant](#project-semantic-invariant)
-- [Project-originated theorem](#project-originated-theorem)
-- [Scoped negative result](#scoped-negative-result)
-- [Repository proof status](#repository-proof-status)
-- [Scientific synthesis from one project](#scientific-synthesis-from-one-project)
-- [Durable recovery mechanism](#durable-recovery-mechanism)
-- [Local experiment motivating a hypothesis](#local-experiment-motivating-a-hypothesis)
-- [Paper-specific result](#paper-specific-result)
-- [User preference](#user-preference)
-- [Version-scoped portable knowledge](#version-scoped-portable-knowledge)
-- [Apparent contradiction caused by scope](#apparent-contradiction-caused-by-scope)
-- [Genuine conflict](#genuine-conflict)
+> Moving `foo.go` under package `render` creates an import cycle in this repository.
 
-## Repository-local implementation trivia
+Keep this in code, tests, issues, or repository architecture docs. It depends on a changing import graph and is cheap to
+rediscover.
 
-Observation:
+## Project Semantic Invariant
 
-```text
-Moving foo.go under package render creates an import cycle in this repository.
-```
+> The planner must derive decisions from canonical desired state rather than presentation projections.
 
-This belongs in code, a test, an issue, or repository architecture documentation. The fact is tied to
-the current import graph, likely to change after refactoring, and cheap to rediscover.
+The repository owns this architecture invariant. A durable abstraction is possible only with mechanism, scope, and
+invalidation conditions, for example: decision layers should consume canonical semantic representations unless
+currentness is explicitly part of decision semantics. Removing repository names alone does not create knowledge.
 
-## Project semantic invariant
+## Project-Originated Theorem
 
-Claim:
+A repository owns the exact Lean declaration, imports, proof term, claim ID, and current verification status. The
+mathematical proposition can still be a candidate when it preserves definitions, quantified domains, assumptions,
+conclusion, significance, proof capsule or derivation, verification conditions, and invalidation criteria. It needs no
+second project or publication; origin is not semantic ownership.
 
-```text
-The planner must derive decisions from canonical desired state rather than presentation-oriented
-projections.
-```
+## Scoped Negative Result
 
-The repository owns this invariant because its architecture relies on it. A central abstraction may
-be possible:
+> Witness W activated zero times across 4,096 routing decisions at checkpoint C under protocol P.
 
-```text
-Decision layers should consume canonical semantic representations rather than partial observations
-or presentation projections, unless currentness is explicitly part of the decision semantics.
-```
+This may be an `observed` candidate if denominator, checkpoint, protocol, data regime, witness definition, and decision
+relevance remain explicit. It supports “no activations were observed under these conditions,” not impossibility. If the
+count has no durable scientific consequence, keep it in the experiment log.
 
-That abstraction still needs a mechanism, scope, and invalidation conditions. Removing repository
-names is not enough to establish semantic value.
+## Repository Proof Status
 
-## Project-originated theorem
+> The current Lean tree has 127 passing files.
 
-A repository contains a machine-checked closure factorization theorem. The exact Lean declaration,
-imports, proof term, claim ID, and current verification status belong to the repository. The
-mathematical proposition may still become a central candidate when the note preserves:
+This mutable, cheaply recomputed status belongs in CI, a report, or theorem inventory, not the vault.
 
-- definitions of the closure and factorization objects;
-- complete assumptions and quantified domains;
-- the theorem conclusion and mathematical significance;
-- a proof capsule or complete formal derivation;
-- verification conditions and invalidation criteria.
+## Scientific Synthesis From One Project
 
-The theorem does not need a second project or external publication before capture. Its discovery
-location is not its semantic owner.
+If several proofs show that a routing guarantee decomposes into selection, branch validity, and fallback obligations,
+the repository owns proof artifacts while the vault may own that self-contained scoped relation.
 
-## Scoped negative result
+## Durable Recovery Mechanism
 
-Observation:
+> When external effects cannot commit atomically with local state, durable intent must precede visible mutation;
+> otherwise recovery cannot distinguish “not applied” from “applied but not recorded.”
 
-```text
-A witness activated zero times across 4,096 evaluated routing decisions at checkpoint C under
-protocol P.
-```
+This mechanism survives one implementation. Scope it with exceptions such as idempotent effects, authoritative external
+ledgers, or atomic cross-domain commit.
 
-This can become an `observed` candidate when the denominator, checkpoint, protocol, data regime,
-witness definition, and decision relevance are preserved. It supports a scoped negative result such
-as “no activations were observed under these conditions”; it does not prove that activation is
-impossible. If the count is merely the latest run status with no durable scientific consequence, the
-experiment log remains its owner.
+## Experiment-Motivated Hypothesis
 
-## Repository proof status
+> Flexible monotone post-hoc calibrators can become variance-limited in small residual samples; low-dimensional
+> recenter-and-scale models may be preferable until sample size supports extra capacity.
 
-```text
-The current Lean tree has 127 passing files.
-```
+This preserves the mechanism and sample regime instead of generalizing “PIT adapters do not work for small datasets.”
+Use `hypothesis` because the explanatory proposition is unproved; `observed` describes evidence, while candidate status
+and canonical lifecycle describe review and maturity.
 
-This is repository status. It changes with the tree, is cheaply recomputed, and does not state a
-mathematical proposition. Keep it in CI, a project report, or the theorem inventory rather than the
-knowledge vault.
+## Paper Result
 
-## Scientific synthesis from one project
+> Paper A improves metric X on benchmark Y under protocol Z.
 
-Several proved project results jointly show that a routing guarantee decomposes into selection,
-branch-validity, and fallback obligations. A synthesis relating those propositions may be central
-knowledge even if every proof currently lives in one repository. The repository owns the exact proof
-artifacts; the vault owns the self-contained scientific relation and its documented scope.
+The paper note owns this result. Promote centrally only when it supports a reusable mechanism, method, distinction, or
+cross-source synthesis.
 
-## Durable recovery mechanism
+## User Preference
 
-```text
-In crash-recoverable workflows whose external side effects are not transactionally coupled to local
-state, durable intent must precede externally visible mutation; otherwise recovery cannot distinguish
-“not applied” from “applied but not recorded.”
-```
+> Do not use scaffold split as the default evaluation split in my projects.
 
-This is a plausible central candidate because the mechanism survives the originating implementation.
-Its scope must retain exceptions such as idempotent effects, authoritative external ledgers, or an
-atomic cross-domain commit.
+Native user memory owns this instruction. Central capture would misstate personal authority as general methodology.
 
-## Local experiment motivating a hypothesis
+## Version-Scoped Knowledge
 
-Observation:
+> Ruff versions supporting a given safe fix can apply it with `ruff check --fix`; remaining diagnostics require review.
 
-```text
-A flexible PIT adapter was unstable with a very small residual calibration set.
-```
+This may be durable when version range and safety conditions are explicit; it depends on Ruff, not the originating user
+or repository.
 
-The universal statement “PIT adapters do not work for small datasets” erases the experiment's model,
-sample regime, and alternatives. A better candidate is:
+## Apparent And Genuine Conflict
 
-```text
-Flexible monotone post-hoc calibrators can become variance-limited in small residual samples;
-low-dimensional recenter-and-scale models may be preferable until sample size supports the additional
-capacity.
-```
+“Method M is calibrated under exchangeability” and “Method M fails under covariate shift” may describe different
+regimes. Compare definitions, assumptions, time, and target before declaring conflict. When independent sources estimate
+the same target under compatible conditions and materially disagree, retain both source-linked claims, record likely
+methodological causes, and mark the canonical owner contested rather than choosing by recency or fluency.
 
-This is a `hypothesis` because the explanatory proposition remains genuinely unproved, not because
-the record is young or provisional. `observed` describes its current evidence; candidate status and
-canonical lifecycle describe review and maturity. Additional evidence may change support or justify
-integration without changing `knowledge_kind` unless the proposition's semantic role changes.
-
-## Paper-specific result
-
-```text
-Paper A improves metric X on benchmark Y under protocol Z.
-```
-
-The paper note owns this result. It becomes central only when it supports a reusable mechanism,
-method, distinction, or cross-source synthesis.
-
-## User preference
-
-```text
-Do not use scaffold split as the default evaluation split in my projects.
-```
-
-The user is the authority, so native user memory owns the statement. Central capture would wrongly
-turn a personal instruction into a general methodological claim.
-
-## Version-scoped portable knowledge
-
-```text
-Ruff versions supporting a particular safe fix can apply it through `ruff check --fix`; remaining
-diagnostics still require review.
-```
-
-This may be central when the supported version range and fix-safety conditions are explicit. The
-claim depends on Ruff's behavior, not on the identity of the user or repository where it was learned.
-
-## Apparent contradiction caused by scope
-
-```text
-Method M is calibrated under exchangeability.
-Method M fails under covariate shift.
-```
-
-These statements may describe different regimes. Compare assumptions, definitions, time, and target
-quantity before declaring a conflict.
-
-## Genuine conflict
-
-When independent sources estimate the same target under compatible conditions and reach materially
-incompatible conclusions, preserve both source-linked claims. Record likely methodological causes
-and mark the canonical entry contested rather than choosing one by recency or fluency.
-
-Use the [admission policy](../reference/admission-policy.md) for the normative gate, the
-[research extraction guide](../how-to/capture-research-knowledge.md) for bounded scientific review,
-and the [capture guide](../how-to/capture-knowledge.md) for record creation.
+Apply the [admission policy](../reference/admission-policy.md) as the normative gate, the
+[research guide](../how-to/capture-research-knowledge.md) for corpus review, and the
+[capture guide](../how-to/capture-knowledge.md) for record creation.

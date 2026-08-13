@@ -1,89 +1,34 @@
-# Record model reference
+# Record Model Reference
 
-This document defines record types, controlled values, and lifecycle relationships. Templates under
-`assets/templates/` define the full note bodies; `scripts/validate.py` enforces the managed
-frontmatter subset defined by the vault contract.
+Templates define full note bodies; `scripts/validate.py` enforces managed frontmatter from the vault contract.
 
-## Contents
+## Record Types
 
-- [Record types](#record-types)
-- [Display titles](#display-titles)
-- [Topic tags](#topic-tags)
-- [Knowledge kinds](#knowledge-kinds)
-- [Candidate status](#candidate-status)
-- [Evidence state](#evidence-state)
-- [Canonical lifecycle](#canonical-lifecycle)
-- [Candidate lifecycle relationships](#candidate-lifecycle-relationships)
-- [Claim shape](#claim-shape)
-- [Formal notation](#formal-notation)
-- [Paper identity](#paper-identity)
-- [Proposal decisions](#proposal-decisions)
-- [Conflict representation](#conflict-representation)
+| `record_type` | Location                        | Purpose                                    |
+| ------------- | ------------------------------- | ------------------------------------------ |
+| `candidate`   | `Knowledge/Candidates/`         | Atomic proposed knowledge and review state |
+| `paper`       | `Knowledge/Papers/`             | One source-grounded academic note          |
+| `canonical`   | `Knowledge/Canonical/`          | Current owner for one durable topic        |
+| `proposal`    | `_durable-knowledge/Proposals/` | Optional preview/delayed/high-risk action  |
 
-## Record types
+Synthesis is canonical with `knowledge_kind: synthesis`. Content-addressed artifacts are immutable evidence payloads,
+not records; the referencing record owns their semantic role.
 
-| `record_type` | Location | Purpose |
-|---|---|---|
-| `candidate` | `Knowledge/Candidates/` | Atomic proposed knowledge plus review state |
-| `paper` | `Knowledge/Papers/` | Source-grounded note for one academic paper |
-| `canonical` | `Knowledge/Canonical/` | Current semantic owner for one durable topic |
-| `proposal` | `_durable-knowledge/Proposals/` | Optional preview or delayed/high-risk change artifact |
+## Titles And Topics
 
-The synthesis template is a specialized `canonical` record with `knowledge_kind: synthesis`.
-Content-addressed files under `Knowledge/Artifacts/` are immutable evidence payloads rather than a
-fifth `record_type`; their semantic role remains in the record and evidence capsule that references
-them.
+New records require non-empty `title` exactly matching first H1. `id` and filename remain stable identity. Pending
+candidate titles may change only for the same proposition; after pending they freeze with the reviewed claim. Authorized
+curation may rename canonical owners without changing ID and should preserve useful former names in `aliases`. Paper
+titles identify sources; proposal titles conventionally start `Proposal:`. Legacy missing titles warn and fall back to
+filename; migration may copy existing H1 but cannot rewrite claims.
 
-## Display titles
+Candidate, paper, and canonical `tags` are optional flat sequences of deduplicated
+`topic/<lowercase-kebab-case>`. Search before adding equivalent open-vocabulary topics. Multiple topics are valid; order,
+primary topic, location, and ownership carry no tag semantics. Keep kind, review state, lifecycle, and evidence in typed
+fields. Tags are mutable curation metadata and need not copy mechanically during promotion. Legacy unnamespaced or
+duplicate tags warn; new/modified records must normalize them.
 
-New candidate, paper, canonical, and proposal records use a non-empty `title` scalar as their
-canonical human-readable label. The first H1 heading must exactly mirror `title` so plain Markdown
-readers and metadata-aware Obsidian surfaces show the same name. Stable identity remains in `id`;
-changing a title must not change its ID or filename.
-
-A candidate title describes the proposed claim. It may be refined while the candidate is `pending`
-and still represents the same proposition. Once the candidate leaves `pending`, the title is part of
-the reviewed claim revision and is frozen until the candidate returns to `pending`. A canonical title
-names the long-lived semantic owner and may therefore be narrower, broader, or otherwise refined
-during authorized curation. Preserve useful prior canonical names in `aliases`.
-
-Paper titles identify the cited work. Proposal titles describe the proposed action and conventionally
-start with `Proposal:`.
-
-Legacy managed records without `title` remain structurally valid. The validator warns, and
-metadata-aware views fall back to the filename until the record is deliberately migrated. A
-mechanical migration may copy the existing first H1 into a missing `title`; this does not authorize
-rewriting candidate prose or choosing a new candidate label.
-
-## Topic tags
-
-Candidate, paper, and canonical records may carry zero or more topical labels in the optional `tags`
-flat sequence:
-
-```yaml
-tags:
-  - topic/conformal-prediction
-  - topic/uncertainty-quantification
-```
-
-The `topic/` namespace has an open vocabulary: search existing values first, then add a new
-`topic/<lowercase-kebab-case>` value when no equivalent topic exists. A record may have multiple
-relevant topics. There is no primary topic, tag order has no meaning, and topic tags do not determine
-record location or semantic ownership.
-
-Use tags only for what the knowledge is about. Keep knowledge form in `knowledge_kind`, review state
-in `status`, canonical maturity in `lifecycle`, and support in `evidence_state` and evidence fields.
-Do not encode those typed properties as tags. The validator warns about legacy unnamespaced or
-duplicate values so existing records remain readable; new or modified records must resolve those
-warnings.
-
-Topic tags are mutable curation metadata. They may be added, removed, combined, or normalized without
-rewriting the claim or its provenance. Candidate promotion may reuse, merge, or refine candidate and
-paper tags rather than copying them mechanically.
-
-## Knowledge kinds
-
-Allowed values:
+## Knowledge Kinds
 
 ```text
 mechanism
@@ -95,200 +40,108 @@ synthesis
 hypothesis
 ```
 
-This is a closed controlled set shared by every vault and compatible agent. A vault policy may
-refine admission or routing for these kinds, but it must not add or rename them. User-, session-,
-repository-, project-, organization-, and machine-owned categories do not belong in the central
-model.
+This set is closed across vaults. Theorem/formal-proof/empirical-result/experiment describe statement or evidence form,
+not semantic role. A theorem may encode constraint, mechanism, distinction, or method; empirical evidence may support
+any kind. Zero occurrence is not automatically a constraint: use distinction for non-observation versus impossibility,
+or hypothesis for an unproved explanation, with direct support `evidence_state: observed`. Source artifacts retain their
+authority separately from extracted propositions.
 
-`theorem`, `formal-proof`, `empirical-result`, and `experiment` are not additional knowledge kinds.
-They describe statement or evidence form rather than the proposition's semantic role. A theorem may
-encode a `constraint`, `mechanism`, `distinction`, or `method`; an empirical result may support any
-kind whose scope and rationale are explicit. A finite zero-occurrence result is not a `constraint`
-solely because it limits inference: use `distinction` for the boundary between non-observation and
-impossibility, or `hypothesis` for a genuinely unproved explanatory proposition. Record direct
-empirical support with `evidence_state: observed`. Keep exact proof and experiment artifact authority
-separate from the extracted proposition's semantic ownership.
+## Candidate Status
 
-## Candidate status
+| Status       | Meaning                          | `canonical_id`        | `review_reason` |
+| ------------ | -------------------------------- | --------------------- | --------------- |
+| `pending`    | Editable, unselected draft       | `null`                | Optional        |
+| `ready`      | Selected frozen revision         | `null`                | Optional        |
+| `deferred`   | Retained for later review        | `null`                | Required        |
+| `rejected`   | Excluded from active integration | `null`                | Required        |
+| `integrated` | Incorporated into owner          | Existing canonical ID | Optional        |
+| `contested`  | Preserved as owner conflict      | Existing canonical ID | Optional        |
 
-| Status | Meaning | `canonical_id` | `review_reason` |
-|---|---|---|---|
-| `pending` | Editable draft, not selected | `null` | Optional |
-| `ready` | Selected frozen revision for semantic integration | `null` | Optional |
-| `deferred` | Retained for later evidence, scope, or ownership review | `null` | Required |
-| `rejected` | Excluded from active integration | `null` | Required |
-| `integrated` | Incorporated into the referenced canonical owner | Existing canonical ID | Optional |
-| `contested` | Preserved as conflicting evidence in the referenced canonical owner | Existing canonical ID | Optional |
+Capture creates only pending. Explicit named integration transitions to ready before curation. Set integrated/contested
+only after canonical success.
 
-Humans may move among `pending`, `ready`, `deferred`, and `rejected` by editing `status`. Capture may
-create only `pending`. An explicit user request to integrate a named non-applied candidate is recorded
-as a transition to `ready` before canonical curation. Set `integrated` or `contested` only after the
-canonical write succeeds.
+Pending editors may refine the same proposition while preserving `id`, `record_type`, `created`, and filename and
+updating `updated`; materially changed proposition, owner, or split requires a new candidate. Leaving pending freezes
+`title`, kind, evidence state, scope, assumptions, invalidation conditions, source refs, and body. Return ready/deferred/
+rejected to pending before claim edits and review again. Integrated/contested records are immutable provenance.
 
-While `status: pending`, an editor may refine the claim-bearing fields and body when the record still
-represents the same proposed proposition. Preserve these identity fields:
+Authorized review may update status, canonical ID, review reason, tags, and timestamp without redefining the claim.
+`review_reason` is one substantive disposition scalar, required for defer/reject; clear or revise stale reasons after
+state change.
 
-```text
-id
-record_type
-created
-filename
-```
+## Evidence State
 
-Update `updated` for every draft revision. A materially different main proposition, semantic owner,
-or claim split requires a new candidate rather than repurposing the existing identity.
+| State           | Meaning                                                        |
+| --------------- | -------------------------------------------------------------- |
+| `unverified`    | Requested/inferred without recorded direct check               |
+| `observed`      | Direct result with portable material setup and result          |
+| `source-backed` | One identifiable external source or complete formal derivation |
+| `corroborated`  | Independent sources/derivations/replications agree             |
+| `contested`     | Material conflict under compatible scope                       |
 
-Leaving `pending` freezes `title`, `knowledge_kind`, `evidence_state`, `scope`, `assumptions`,
-`invalidation_conditions`, `source_refs`, and the note body. Before changing frozen content on a
-`ready`, `deferred`, or `rejected` candidate, transition it to `pending`; this withdraws the prior
-selection or disposition and requires a new review. `integrated` and `contested` candidates are
-immutable provenance and are never reopened for claim edits.
+Evidence state describes support, not probability, scope, truth, or maturity. Partial derivation/computation is observed;
+a complete formal derivation can be source-backed while evolving proof source remains repository-owned, provided the
+record preserves statement, assumptions, proof/derivation capsule, and material verification conditions.
 
-Authorized review or curation may update `status`, `canonical_id`, `review_reason`, `tags`, and
-`updated` without redefining the claim. `review_reason` records why the current or most recent review
-disposition was chosen. It is a single substantive scalar, not a second claim body. `deferred` and
-`rejected` require a non-empty reason. Other states may retain one when it remains useful, but
-reviewers should clear or revise stale rationale when the disposition changes.
+## Canonical Lifecycle
 
-Once a candidate leaves `pending`, its body, observation, source references, and evidence qualifiers
-belong to the frozen reviewed revision.
+| Lifecycle     | Meaning                                                   |
+| ------------- | --------------------------------------------------------- |
+| `provisional` | Useful owner under active validation/incomplete synthesis |
+| `reviewed`    | Scope, sources, and wording explicitly reviewed           |
+| `stable`      | Repeatedly useful and undisputed within scope             |
+| `contested`   | Preserves unresolved competing claims                     |
+| `retired`     | Inactive; names successor or withdrawal reason            |
 
-## Evidence state
+Lifecycle is curation maturity; age, backlinks, and fluency do not imply stable.
 
-| State | Meaning |
-|---|---|
-| `unverified` | Preserved by request or inference without a recorded direct check |
-| `observed` | Directly seen or derived, with the material setup and result preserved in a portable evidence capsule |
-| `source-backed` | Supported by one identifiable external source or a complete formal derivation |
-| `corroborated` | Supported by materially independent sources or replicated evidence |
-| `contested` | Materially conflicting evidence or incompatible scoped claims remain |
-
-Evidence state is not a scalar probability. It describes support, not scope, truth, or review
-maturity. A direct computation or partial derivation is `observed` when its setup and result are
-preserved but it does not establish a complete formal argument. `source-backed` may describe a
-complete formal derivation even when the evolving proof source remains repository-owned; the durable
-record must preserve a self-contained statement, assumptions, derivation or proof capsule, and
-material verification conditions.
-
-## Canonical lifecycle
-
-| Lifecycle | Meaning |
-|---|---|
-| `provisional` | Useful owner under active validation or incomplete synthesis |
-| `reviewed` | Scope, sources, and wording received an explicit review pass |
-| `stable` | Repeatedly useful and not currently disputed within documented scope |
-| `contested` | Intentionally preserves unresolved competing claims |
-| `retired` | No longer active; names a successor or explains withdrawal |
-
-Lifecycle records curation maturity. Do not infer `stable` from age, backlinks, or fluent prose.
-
-## Candidate lifecycle relationships
+## Lifecycle Graph
 
 ```text
-pending  → ready | deferred | rejected
-ready    → pending | integrated | contested | deferred | rejected
-deferred → pending | ready
-rejected → pending | ready
+pending  -> ready | deferred | rejected
+ready    -> pending | integrated | contested | deferred | rejected
+deferred -> pending | ready
+rejected -> pending | ready
 ```
 
-A transition to `deferred` or `rejected` sets `review_reason` and `updated` with the status change.
-When an editor persists one property at a time, set the reason before the status; reasons are allowed
-on other states so the intermediate record remains valid. A transition to `pending` must be persisted
-before claim-bearing edits so another replica never observes newly revised content as already
-selected. A later transition back to `ready` clears or revises rationale that no longer applies.
+Defer/reject sets reason and `updated`; property-by-property editors save reason before status. Persist pending before
+claim edits so replicas never see revised content under stale authorization. Returning ready should clear/revise stale
+rationale. Integrated/contested are terminal applied effects; reconsider through new evidence/curation. Rejected may
+return to pending for revision or directly to ready for unchanged reconsideration. Named integration still follows the
+ready edge.
 
-`integrated` and `contested` are terminal descriptions of an applied canonical effect. Reconsidering
-the underlying knowledge occurs through new evidence and curation, not by rewriting candidate
-provenance. `rejected` is excluded from the active queue but remains reviewable; return it to
-`pending` before revising its claim, or move it directly to `ready` when the unchanged revision is
-reconsidered. Naming a non-applied candidate for integration never bypasses this graph: the same
-operation first records the applicable transition to `ready`.
-
-## Claim shape
-
-A durable claim is represented as:
+## Claim Shape And Notation
 
 ```text
 claim = (
-  statement,
-  scope,
-  assumptions,
-  mechanism_or_rationale,
-  evidence_state,
-  evidence_summary,
-  portable_source_refs,
+  statement, scope, assumptions, mechanism_or_rationale,
+  evidence_state, evidence_summary, portable_source_refs,
   invalidation_conditions,
 )
 ```
 
-Missing components require a provisional canonical note or a candidate rather than an overstated
-stable claim.
+Missing parts require candidate/provisional status, not overstated stable knowledge. Evidence summary must stand alone
+on replicas; refs improve audit/retrieval but cannot carry meaning. Artifacts preserve bytes, while records own
+interpretation and conditions. Local paths, filenames, tickets/issues, sessions, and machine labels are not portable.
 
-The evidence summary is part of the durable claim and must remain understandable on any synced
-replica. `portable_source_refs` add auditability and retrieval but cannot carry the claim's meaning or
-support alone. A `vault:artifact:sha256:` reference may preserve exact immutable bytes, but the record
-still owns their interpretation, conditions, and limitations. Local paths, bare filenames, local
-ticket or issue names, session IDs, and machine-scoped artifact labels are contextual provenance, not
-portable source references.
+Use standard Markdown/Obsidian-compatible notation when it improves precision/falsifiability. Define symbols, domains,
+indices, units, and assumptions nearby and explain the regime in prose. Avoid decorative equations and plugin-local
+macros unless policy standardizes them.
 
-## Formal notation
-
-Use equations or symbolic notation when they make a quantitative, logical, probabilistic,
-algorithmic, or constraint relationship more precise, compact, or falsifiable than prose alone.
-Prefer standard MathJax/LaTeX notation that survives ordinary Markdown and Obsidian sync; avoid
-vault-local macros or plugin-dependent syntax unless the vault policy explicitly standardizes them.
-
-Define every non-obvious symbol, domain, index set, unit, and material assumption near the expression.
-Follow the expression with a concise prose interpretation, including the regime in which it applies.
-Do not introduce decorative equations, unexplained symbols, or mathematical restatements that add no
-semantic precision.
-
-## Paper identity
-
-Resolve paper identity in this order:
+## Paper Identity And Proposals
 
 ```text
-DOI → arXiv ID → PMID → stable citation key → source-file SHA-256 prefix
+DOI -> arXiv ID -> PMID -> stable citation key -> source-file SHA-256 prefix
 ```
 
-A paper note uses `status: source`; paper status is not candidate lifecycle state. A source-file hash
-may provide stable identity or integrity checking, but it is not a portable locator. Do not store the
-originating machine's file path.
+Paper notes use `status: source`; source hash gives identity/integrity, not portable location, and originating path is
+never stored.
 
-## Proposal decisions
+Proposal decisions are `create`, `merge`, `conflict`, `reject`, `defer`, and `retire`. A proposal neither authorizes
+application nor changes candidate status during review.
 
-Allowed `decision` values:
+## Conflict
 
-```text
-create
-merge
-conflict
-reject
-defer
-retire
-```
-
-A proposal records a possible action. It does not authorize application and does not change candidate
-status while under review.
-
-## Conflict representation
-
-Before marking a conflict, compare scope, assumptions, definitions, time, and target quantity. A
-candidate with `status: contested` must reference a canonical note with either:
-
-```yaml
-lifecycle: contested
-```
-
-or:
-
-```yaml
-evidence_state: contested
-```
-
-Use explicit prose labels in paper and canonical notes when needed:
-
-- **Source claim** — directly stated or demonstrated by a source;
-- **Interpretation** — an agent's explanation or connection;
-- **Inference** — derived but not directly stated;
-- **Open question** — unresolved or unsupported extension.
+Compare scope, assumptions, definitions, time, and target before conflict. A contested candidate must reference a
+canonical note with `lifecycle: contested` or `evidence_state: contested`. Label prose when useful as **Source claim**,
+**Interpretation**, **Inference**, or **Open question**.

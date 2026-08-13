@@ -1,174 +1,93 @@
-# Curate selected candidates
+# Curate Selected Candidates
 
-Use this guide to integrate human-selected candidates into canonical knowledge or preserve an
-explicit conflict.
+Integrate selected candidates into canonical knowledge or preserve explicit conflict.
 
-## Contents
+## Select Authorized Candidates
 
-- [Select authorized candidates](#select-authorized-candidates)
-- [Integrate directly](#integrate-directly)
-- [Prepare a proposal when needed](#prepare-a-proposal-when-needed)
-- [Merge without prose accretion](#merge-without-prose-accretion)
-- [Handle human-owned notes](#handle-human-owned-notes)
-- [Retire a canonical owner](#retire-a-canonical-owner)
-- [Recover from partial failure](#recover-from-partial-failure)
-- [Report the result](#report-the-result)
+Process only `ready`. It freezes `title`, `knowledge_kind`, `evidence_state`, `scope`, `assumptions`,
+`invalidation_conditions`, `source_refs`, and body. Tags and review metadata remain mutable. To revise frozen content,
+set `pending`, keep `canonical_id: null`, update the timestamp, edit, validate, and select again.
 
-## Select authorized candidates
+An explicit request to integrate a named non-applied candidate may select it in the same operation: set `ready`, keep
+`canonical_id: null`, and update UTC `updated` before curation. Naming without an integration request does not select.
+`ready` authorizes ordinary canonical create/merge only, not conflict, retirement, human-note edits, or unrelated
+changes.
 
-Process only candidates with `status: ready`.
-
-`ready` selects and freezes the current claim-bearing revision: `title`, `knowledge_kind`,
-`evidence_state`, `scope`, `assumptions`, `invalidation_conditions`, `source_refs`, and the note body.
-Tags and review metadata remain mutable because they do not redefine the proposed claim. If frozen
-content needs revision, first set `status: pending`, keep `canonical_id: null`, update the timestamp,
-then edit and validate the draft. It must be selected as `ready` again before integration.
-
-When a user explicitly names a non-applied candidate and requests integration, select it in the same
-operation before canonical curation:
-
-1. set `status: ready`;
-2. keep `canonical_id: null`;
-3. set `updated` to the current UTC timestamp.
-
-Naming a candidate without requesting integration does not select it. The `ready` transition is the
-single authorization path for an ordinary create or merge under `Knowledge/Canonical/`; it does not
-authorize conflict, retirement, edits to human-owned notes, or unrelated canonical changes.
-
-Humans may triage queue state in Obsidian, another Markdown editor, or a script:
+Allowed review transitions:
 
 ```text
-pending  → ready | deferred | rejected
-ready    → pending | deferred | rejected
-deferred → pending | ready
-rejected → pending | ready
+pending  -> ready | deferred | rejected
+ready    -> pending | deferred | rejected
+deferred -> pending | ready
+rejected -> pending | ready
 ```
 
-Returning to `pending` withdraws the prior selection or disposition so the draft may be revised.
-Other review transitions leave `canonical_id: null` and do not rewrite the frozen candidate claim.
-A transition to `deferred` or `rejected` must also set a substantive `review_reason`. When a UI saves
-properties separately, set `review_reason` before changing `status`; reasons are allowed on other
-states so the intermediate record remains valid. When moving a candidate to `ready`, clear or revise
-rationale that no longer describes its disposition. Reviewers may also add, remove, or normalize
-`tags`; update the candidate timestamp for every metadata change.
+Returning to pending withdraws prior selection/disposition. Other review transitions keep `canonical_id: null` and do
+not edit frozen claims. `deferred`/`rejected` require substantive `review_reason`; property-by-property UIs should save
+the reason before status. Clear or revise stale rationale when moving to ready. Update `updated` for every metadata
+change.
 
-## Integrate directly
+## Integrate
 
-1. Read the admission policy, record model, and vault contract.
-2. Select authorized candidates.
-3. Search canonical IDs, titles, aliases, topic tags, summaries, body text, and backlinks.
-4. Identify the semantic owner by meaning, scope, assumptions, definitions, and target quantity.
-5. Read the evidence capsules and portable source locators needed to support the change. Validate any
-   `vault:artifact:sha256:` payload before relying on it.
-6. Choose one decision:
-   - `create` — no semantic owner exists;
-   - `merge` — an existing owner covers the compatible claim;
-   - `conflict` — materially competing evidence remains under compatible scope;
-   - `reject` — material is not durable, supported, correctly routed, or independently reusable;
-   - `defer` — evidence, scope, identity, or ownership remains incomplete;
-   - `retire` — an obsolete canonical owner has an authorized successor.
-   For `reject` or `defer`, do not write canonical state. Set the chosen status, keep
-   `canonical_id: null`, record a substantive `review_reason`, update the timestamp, validate, and
-   stop.
-7. Confirm that the current authorization covers the chosen effect and that no other curation
-   operation is modifying the same canonical owner.
-8. For create, resolve `canonical-entry.md`, except that `knowledge_kind: synthesis` resolves
-   `synthesis.md`. For merge, retain the existing canonical owner's record shape.
-9. Give a new canonical owner a concise semantic `title` and mirror it exactly in the first H1. The
-   canonical title names the durable topic and need not copy the candidate title. A title change on
-   an existing canonical owner preserves its stable ID and records useful former names in `aliases`.
-10. Reconcile relevant candidate, paper, and existing canonical topic tags. Preserve all materially
-    relevant topics, reuse equivalent existing values, and do not copy tags mechanically.
-11. For create or merge, write the canonical result and inspect the diff. Restate the minimum
-   claim-supporting evidence in the canonical note so it does not depend on the candidate file or an
-   originating local source.
-12. For conflict, preserve each competing claim and set canonical `lifecycle: contested` or
-   `evidence_state: contested`.
-13. After the canonical write succeeds, update each applied candidate:
+1. Read the admission policy, record model, and vault contract; select authorized candidates.
+2. Search canonical IDs, titles, aliases, topics, summaries, body, and backlinks. Resolve owner by meaning, scope,
+   assumptions, definitions, and target quantity, not title.
+3. Read required evidence and portable locators; validate any artifact payload.
+4. Decide:
+   - `create`: no owner exists;
+   - `merge`: an owner covers a compatible claim;
+   - `conflict`: materially competing evidence remains under compatible scope;
+   - `reject` or `defer`: no canonical write; set status/reason, keep `canonical_id: null`, update, validate, stop;
+   - `retire`: an authorized successor replaces an obsolete owner.
+5. Confirm authority for the chosen effect and exclusive modification of that canonical owner.
+6. For create, resolve `canonical-entry.md`, or `synthesis.md` for synthesis. Merge retains the owner's record shape.
+7. Give a new owner a semantic `title` matching H1. Existing title changes retain ID and useful former names in
+   `aliases`.
+8. Reconcile relevant candidate, paper, and canonical topic tags; do not copy mechanically.
+9. For create/merge, write canonical state, inspect the diff, and restate minimum supporting evidence so the owner does
+   not depend on candidate or local source. For conflict, preserve each claim and set canonical lifecycle or evidence
+   state to `contested`.
+10. Only after canonical success, set each applied candidate:
 
     ```yaml
-    status: integrated  # or contested
-    canonical_id: <existing canonical ID>
+    status: integrated # or contested
+    canonical_id: <canonical ID>
     review_reason: null
     updated: <current UTC timestamp>
     ```
 
-14. Run structural validation.
+11. Run structural validation.
 
-## Prepare a proposal when needed
+## Proposals
 
-Use `_durable-knowledge/Proposals/` instead of direct application when:
+Use `_durable-knowledge/Proposals/` when the user requests preview/diff, application is delayed, retirement is proposed,
+the target is human-owned, or unresolved risk blocks direct application.
 
-- the user requests a preview or diff;
-- application will be delayed;
-- the change retires a canonical owner;
-- the target is human-owned;
-- unresolved risk makes direct application inappropriate.
+1. For merge/conflict/retire, compute target SHA-256; use `null` for create/reject/defer.
+2. Resolve `merge-proposal.md`, generate the random-suffix proposal ID, and use it as filename stem.
+3. Set a concise `Proposal: <action>` title matching H1.
+4. Record proposed body or patch, candidate IDs, source refs, and unknowns.
+5. Leave candidate status unchanged during review.
+6. Before delayed application, require current target hash to equal `base_sha256`.
 
-To prepare a proposal:
+A proposal describes an action; it does not authorize it.
 
-1. Compute the target canonical SHA-256 for merge, conflict, or retire; use `null` for create, reject,
-   or defer.
-2. Instantiate the vault override of `merge-proposal.md` or the bundled template. Generate the
-   proposal ID using the vault contract's random-suffix format and use the full ID as the filename
-   stem.
-3. Give the proposal a concise `Proposal: <short action>` title and mirror it exactly in the first
-   H1.
-4. Record the proposed canonical body or patch, candidate IDs, source references, and unresolved
-   questions.
-5. Leave candidate status unchanged while the proposal is only under review.
-6. Before delayed application, require the current target hash to match `base_sha256`.
+## Merge Discipline
 
-A proposal records a possible action. It does not authorize application.
+- Merge only compatible semantic owners; preserve narrower scopes and genuine dissent.
+- New evidence does not automatically raise lifecycle or evidence state.
+- Keep useful candidate IDs as provenance, but never propagate local paths, filenames, tickets, sessions, or machine
+  labels into canonical refs.
+- State evidence-driven revisions and rewrite a coherent current model rather than appending fragments.
+- Preserve useful equations with definitions, assumptions, and prose interpretation.
+- For a human-owned note, link it from an agent-managed owner or propose a named-target edit; never edit it implicitly.
+- Retirement needs explicit authority, stable ID and rationale, `lifecycle: retired`, and successor or reason none exists.
 
-## Merge without prose accretion
+## Recovery And Report
 
-- Merge only claims with compatible semantic ownership.
-- Preserve narrower scopes instead of flattening them into a universal statement.
-- Add evidence without automatically increasing lifecycle or evidence state.
-- Preserve candidate IDs as provenance when useful, but never propagate a local path, bare filename,
-  local ticket or issue name, session ID, or machine-scoped artifact label into canonical
-  `source_refs`.
-- State what changed and why when evidence revises a claim.
-- Rewrite the canonical page into a coherent current model rather than appending disconnected
-  fragments.
-- Preserve or improve equations and symbolic notation when they make the canonical relationship
-  more precise. Define symbols, domains, and assumptions nearby, and retain a concise prose
-  interpretation.
-- Preserve important dissent in evidence and conflict sections.
+Canonical state must precede integration metadata. If metadata fails after canonical success, leave or restore `ready`,
+clear/revise stale reason, find the existing owner on retry, and reconcile rather than duplicate. Never auto-resolve
+concurrent edits or sync-conflict canonical files.
 
-## Handle human-owned notes
-
-When a human-owned note already discusses the topic:
-
-- create or update an agent-managed canonical page that links to it; or
-- prepare a proposal targeting the human note.
-
-Do not edit the human-owned note without an explicit request naming that target.
-
-## Retire a canonical owner
-
-Retirement requires explicit authorization. Keep the stable ID and historical rationale, set
-`lifecycle: retired`, and identify a successor or explain why none exists. The retired page remains
-linkable.
-
-## Recover from partial failure
-
-Canonical state must become durable before candidate status claims integration. If the canonical
-write succeeds but candidate metadata fails:
-
-1. leave or restore the candidate as `ready`, clearing or revising stale `review_reason` metadata;
-2. search for the existing canonical owner on retry;
-3. reconcile the candidate with that owner instead of creating a duplicate.
-
-Do not auto-resolve concurrent edits or sync-conflict files in a canonical note.
-
-## Report the result
-
-Distinguish:
-
-- queue state changed only;
-- canonical create, merge, or conflict applied;
-- proposal prepared but not applied;
-- candidate left ready after a failed precondition;
-- validation or base-hash failure.
+Report separately: queue-only transition; applied create/merge/conflict; unapplied proposal; candidate left ready after a
+failed precondition; and validation or base-hash failure.

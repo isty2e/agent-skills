@@ -1,151 +1,78 @@
-# Sync desktop and headless clients
+# Sync Desktop And Headless Clients
 
-Use Obsidian Sync to replicate one durable-knowledge vault across desktop and Linux clients. Each
-client owns a separate local copy connected to the same remote vault. An active Obsidian Sync
-subscription is required.
+Replicate one vault through Obsidian Sync. Every client uses a separate local copy connected to the same remote vault;
+an active subscription is required.
 
-## Contents
+| Client            | Command    | Desktop required | Purpose                          |
+| ----------------- | ---------- | ---------------: | -------------------------------- |
+| Obsidian desktop  | app        |              Yes | Editing, Properties, Bases, Sync |
+| Obsidian CLI      | `obsidian` |     Yes, running | Open/query/automate desktop      |
+| Obsidian Headless | `ob`       |               No | Server Sync/Publish transport    |
 
-- [Choose the client for each machine](#choose-the-client-for-each-machine)
-- [Connect the desktop client](#connect-the-desktop-client)
-- [Connect a Linux headless client](#connect-a-linux-headless-client)
-- [Run multiple clients safely](#run-multiple-clients-safely)
-- [Verify the replicated vault](#verify-the-replicated-vault)
-- [Upstream documentation](#upstream-documentation)
+Headless does not execute Bases. Server agents read/write synced Markdown/YAML. Visible `_durable-knowledge/` and
+Markdown `ROOT.md` ensure marker, policy, proposals, and templates sync without enabling unsupported file types.
 
-## Choose the client for each machine
+## Desktop
 
-| Client | Command | Requires desktop app | Purpose |
-|---|---|---:|---|
-| Obsidian desktop | Obsidian app | Yes | Editing, Properties, Bases, desktop Sync |
-| Obsidian CLI | `obsidian` | Yes, running | Open, query, and automate the desktop app |
-| Obsidian Headless | `ob` | No | Sync and Publish transport on servers |
+1. Open/create a local vault and connect the intended remote.
+2. Enable Bases if using the bundled browsers.
+3. Let initial sync finish before writes.
 
-Obsidian Headless does not provide the desktop command surface or execute Bases. Server-side agents
-work directly with the synced Markdown and YAML files.
-
-The `_durable-knowledge/` control directory is visible by design because Obsidian Sync excludes
-dot-prefixed directories other than its configuration directory. This keeps the vault marker,
-policy, proposals, and template overrides synchronized with `Knowledge/`. The marker is `ROOT.md`,
-so it syncs as Markdown without enabling **Sync all other types** on every client.
-
-## Connect the desktop client
-
-On each desktop machine:
-
-1. Open or create a local vault.
-2. Connect it to the intended Obsidian Sync remote vault.
-3. Enable the Bases core plugin if you want to use `Knowledge/knowledge-browser.base` or the focused
-   `Knowledge/candidate-review.base`.
-4. Let the initial sync finish before editing shared files.
-
-The optional desktop CLI can open or query the knowledge browser while Obsidian is running:
+Optional CLI while desktop runs:
 
 ```bash
 cd "$DK_VAULT_PATH"
 obsidian open path="Knowledge/knowledge-browser.base"
-obsidian base:query \
-  path="Knowledge/knowledge-browser.base" \
-  view="Ready for curation" \
-  format=paths
+obsidian base:query path="Knowledge/knowledge-browser.base" view="Ready for curation" format=paths
 ```
 
-Use `property:set` only for a review transition explicitly requested by the user. Capture must not
-select its own output by setting `ready`.
+Use `property:set` only for an explicitly requested review transition; capture cannot select itself as ready.
 
-## Connect a Linux headless client
+## Linux Headless
 
-Install Node.js 22 or later and the official headless package:
+Install Node.js 22+ and `obsidian-headless`, then create a separate replica:
 
 ```bash
 npm install -g obsidian-headless
-```
-
-Set up a separate local replica:
-
-```bash
-mkdir -p ~/vaults/knowledge
-cd ~/vaults/knowledge
-
+mkdir -p ~/vaults/knowledge && cd ~/vaults/knowledge
 ob login
 ob sync-list-remote
-ob sync-setup \
-  --vault "My Knowledge Vault" \
-  --device-name "knowledge-server"
-```
-
-Run a one-time sync:
-
-```bash
+ob sync-setup --vault "My Knowledge Vault" --device-name "knowledge-server"
 ob sync --path ~/vaults/knowledge
 ```
 
-Keep the replica current under an existing process supervisor:
-
-```bash
-ob sync --path ~/vaults/knowledge --continuous
-```
-
-Point the agent at that local replica:
+Under an existing supervisor, use `ob sync --path ~/vaults/knowledge --continuous`. Point agents at the local replica:
 
 ```bash
 export DK_VAULT_PATH="$HOME/vaults/knowledge"
 ```
 
-The agent reads and writes files under `DK_VAULT_PATH`; `ob` only transports those changes.
+`ob` transports changes; the agent owns file operations.
 
-## Run multiple clients safely
+## Safety
 
-Desktop and headless clients are equal replicas at the sync layer. Multiple desktop clients and
-multiple headless clients may connect to the same remote vault.
+- One local directory and one sync engine per client; never run desktop and headless Sync on one path.
+- Finish initial sync and confirm `_durable-knowledge/ROOT.md` before writes.
+- Keep evidence in synced records/artifacts or stable external URIs, never originating paths, filenames, tickets, or
+  sessions.
+- Configure every client for artifact extensions required there.
+- Use random-suffixed candidate/proposal IDs and full-ID filenames.
+- Serialize same-canonical-owner edits. Different owners may proceed concurrently.
+- Sync is not a transaction, lock service, or semantic approval. Configure conflict behavior and never auto-approve
+  merges.
 
-Apply these constraints:
+## Verify
 
-- Give every client its own local vault directory.
-- Run one sync engine for a given local vault path.
-- Do not run desktop Sync and Headless Sync against the same local directory.
-- Let initial sync complete before enabling writes on a new replica.
-- Confirm that `_durable-knowledge/ROOT.md` arrived before allowing agent writes.
-- Keep claim support inside the synced record or behind a synced-vault record, content-addressed
-  artifact, or stable external URI; never cite an originating machine's path, bare filename, local
-  ticket name, or session ID.
-- Ensure every client synchronizes the extensions used under `Knowledge/Artifacts/`; some transports
-  require per-client configuration for arbitrary file types.
-- Use the random-suffixed candidate and proposal IDs from the vault contract, with each full ID as
-  the filename stem.
-- Serialize edits to the same canonical note.
-- Do not rely on Sync to provide a multi-file transaction.
-- Choose and review conflict behavior on every client; the skill never treats an automatic merge as
-  semantic approval.
-
-Different canonical notes may be curated concurrently. The exclusivity boundary is one canonical
-semantic owner, not the entire vault. Serialization is an operator or agent responsibility; the
-skill does not create synchronized lock files or run a coordination service.
-
-## Verify the replicated vault
-
-On a headless client:
+On headless:
 
 ```bash
 ob sync-status --path ~/vaults/knowledge
 python <skill>/scripts/validate.py --vault ~/vaults/knowledge
 ```
 
-On a desktop client, confirm that:
+On desktop, confirm control state/policy/templates, candidate queue transitions, integrated/contested views, absence of
+unresolved canonical conflicts, and artifact presence plus validation on every required replica. Use Git or another
+backup when rollback and diff review matter.
 
-- `_durable-knowledge/ROOT.md` and any shared policy or template overrides are present;
-- newly captured candidates appear in the Inbox view;
-- a `ready` edit reaches the headless replica;
-- integrated candidates move to the Integrated view;
-- contested candidates move to the Contested view;
-- canonical notes remain free of unresolved sync-conflict files;
-- each referenced `Knowledge/Artifacts/` payload exists and passes validation on every replica that
-  must evaluate it.
-
-Use Git or another backup layer in addition to Sync when rollback and diff review matter.
-
-## Upstream documentation
-
-- [Obsidian CLI](https://obsidian.md/cli)
-- [Obsidian Headless](https://github.com/obsidianmd/obsidian-headless)
-- [Obsidian Sync settings and selective syncing](https://obsidian.md/help/sync/settings)
+Upstream: [CLI](https://obsidian.md/cli), [Headless](https://github.com/obsidianmd/obsidian-headless), and
+[Sync settings](https://obsidian.md/help/sync/settings).

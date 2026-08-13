@@ -1,106 +1,63 @@
-# Set up a durable-knowledge vault
+# Set Up A Durable-Knowledge Vault
 
-Use this guide to initialize an empty directory or add the managed knowledge roots to an existing
-Markdown or Obsidian vault.
+Initialize an empty directory or add managed roots to a Markdown/Obsidian vault.
 
-## Bootstrap the directory
-
-```bash
-python <skill>/scripts/bootstrap.py --vault <vault>
-```
-
-Bootstrap creates missing managed directories, including `Knowledge/Artifacts/`, plus marker files,
-explanatory README files, default template directories, `Knowledge/knowledge-browser.base`, and
-`Knowledge/candidate-review.base`. It leaves existing notes, artifacts, and customized files
-unchanged.
-
-The `_durable-knowledge/` control directory is deliberately visible so Obsidian Sync and ordinary
-file replication include it. Obsidian Sync excludes dot-prefixed directories other than its
-configuration directory. Its `ROOT.md` marker is Markdown so replication does not require the
-per-device **Sync all other types** setting.
-
-To install an editable vault-local admission policy:
-
-```bash
-python <skill>/scripts/bootstrap.py \
-  --vault <vault> \
-  --install-policy-copy
-```
-
-The policy is copied to `_durable-knowledge/POLICY.md` only when that file does not already exist.
-Customize admission and routing there; keep the record model's `knowledge_kind` values unchanged.
-
-## Migrate a legacy control directory
-
-Vaults created by earlier drafts may contain `.llm-wiki/`. Run the current bootstrap command on the
-replica that contains the complete legacy control state:
+## Bootstrap
 
 ```bash
 python <skill>/scripts/bootstrap.py --vault <vault>
 ```
 
-When `.llm-wiki/` exists and `_durable-knowledge/` does not, bootstrap renames the directory without
-rewriting its files. If both directories exist, bootstrap exits with an error. Compare the two
-directories, preserve the intended policy, proposals, and template overrides under
-`_durable-knowledge/`, then remove the legacy directory and rerun bootstrap.
+Bootstrap creates missing managed roots, `Knowledge/Artifacts/`, markers, READMEs, template directories, and both
+bundled Bases; it preserves existing notes, artifacts, and customized files. `_durable-knowledge/` is visible so Sync
+replicates control state, and `ROOT.md` needs no per-client unsupported-file setting.
 
-Earlier visible control directories used an extensionless `_durable-knowledge/ROOT` marker.
-Bootstrap renames it to `ROOT.md`. If both marker files exist with identical contents, bootstrap
-removes the extensionless duplicate. If their contents differ, it stops for manual reconciliation.
+Optional editable policy:
 
-## Configure agent discovery
+```bash
+python <skill>/scripts/bootstrap.py --vault <vault> --install-policy-copy
+```
 
-Set the vault path in the environment used to launch the agent:
+This creates `_durable-knowledge/POLICY.md` only when absent. It may refine admission/routing, not record-model
+`knowledge_kind` values.
+
+## Migrate Legacy State
+
+Run bootstrap first on the replica with complete legacy state. If only `.llm-wiki/` exists, bootstrap renames it; if
+both old and new directories exist, it stops. Manually preserve intended policy, proposals, and template overrides under
+`_durable-knowledge/`, remove the old directory, and rerun.
+
+Bootstrap similarly renames sole extensionless `_durable-knowledge/ROOT` to `ROOT.md`, removes an identical duplicate,
+and stops when both differ.
+
+## Configure Discovery
 
 ```bash
 export DK_VAULT_PATH="<vault>"
 ```
 
-An explicit path in a user request overrides the environment variable. Agents running inside the
-vault may also discover the nearest ancestor containing `_durable-knowledge/ROOT.md` and `Knowledge/`.
+An explicit user path overrides the environment. Agents inside a vault may find the nearest ancestor containing both
+`_durable-knowledge/ROOT.md` and `Knowledge/`.
 
-## Enable Obsidian review
+## Optional Obsidian Review
 
-Open the directory as an Obsidian vault and enable the Bases core plugin. Then open:
+Enable the Bases core plugin and open `Knowledge/knowledge-browser.base` for managed knowledge, papers, candidate queue,
+canonical/contested/integrated/retired views, clickable titles, and topics. Sidebar placement is client-local.
+`Knowledge/candidate-review.base` is a smaller queue whose Inbox/Ready/Deferred/Rejected views show `review_reason`,
+allowing reason-before-status edits. Any Markdown editor or script can edit the same authoritative YAML.
 
-```text
-Knowledge/knowledge-browser.base
-```
+Bootstrap preserves existing Bases. On upgrade, merge needed `review_reason` columns from the bundled candidate Base or
+replace only after preserving customizations.
 
-The browser provides all-knowledge and paper views plus candidate inbox, ready, deferred, canonical,
-contested, integrated, and retired views. It displays the frontmatter `title` as a clickable note
-link, exposes multi-valued `topic/...` tags as **Topics**, and falls back to the filename for legacy
-records. Move the open Base tab into the left sidebar when a persistent knowledge-navigation surface
-is useful. Sidebar placement is client-local workspace state.
+Front Matter Title may optionally project frontmatter titles into File Explorer; each client configures it separately.
+Its inline title can duplicate the required H1. No knowledge contract depends on the plugin.
 
-`Knowledge/candidate-review.base` remains available as a smaller candidate-only queue. Its Inbox,
-Ready, Deferred, and Rejected views display `review_reason` so a reviewer can enter rationale before
-changing status. Both Bases are optional projections; any Markdown editor or script can review the
-same YAML properties.
-
-Bootstrap preserves existing Base files. When upgrading an existing vault, merge the
-`review_reason` property and review-view columns from `assets/candidate-review.base` into the
-vault copy, or replace the copy only after preserving intentional customizations.
-
-To show the same `title` in Obsidian's ordinary File Explorer, optionally install the community
-plugin [Front Matter Title](https://github.com/snezhig/obsidian-front-matter-title) and enable its
-Explorer surface. Each desktop or mobile client must install and enable the plugin independently.
-The plugin can also replace Obsidian's inline title, but the skill already preserves the first H1 as
-the portable document title; enabling both may show two title surfaces depending on client settings.
-The knowledge contract does not depend on the plugin: without it, the first H1 remains authoritative
-for the open document and bundled Bases continue to display candidate, paper, and canonical titles.
-
-## Validate the setup
+## Verify
 
 ```bash
 python <skill>/scripts/validate.py --vault <vault>
-```
-
-Re-running bootstrap should report no changes unless managed files were removed:
-
-```bash
 python <skill>/scripts/bootstrap.py --vault <vault>
 ```
 
-Use [Sync desktop and headless clients](sync-clients.md) when the vault must be replicated across
-machines.
+The second command should report no changes unless managed files were removed. Apply the
+[sync guide](sync-clients.md) for multi-machine replicas.

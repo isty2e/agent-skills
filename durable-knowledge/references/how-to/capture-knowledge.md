@@ -1,57 +1,43 @@
-# Capture a durable knowledge candidate
+# Capture A Durable Knowledge Candidate
 
-Use this guide to preserve a reusable claim from current work without changing canonical knowledge.
+Preserve one reusable claim without changing canonical knowledge.
 
-## Before capture
+## Prepare
 
 1. Resolve the vault.
-2. Read the vault-local policy when present, then the bundled
-   [admission policy](../reference/admission-policy.md).
-3. Identify the owner of the material.
+2. Read vault policy, if present, then the [admission policy](../reference/admission-policy.md).
+3. Identify the semantic owner.
 
-Route user, session, repository, project, organization, and machine-bound facts to their contextual
-owner. Do not route away a scientific proposition merely because it was produced in one project.
-Continue when the proposed claim is context-complete: incidental origin coordinates are removable,
-while semantically essential research scope is explicit.
+Route user, session, repository, project, organization, and machine facts to their owners, but do not route away a
+self-contained scientific proposition merely because one project produced it. Keep semantically essential program,
+study, system, dataset, or protocol scope; remove incidental origin coordinates. For a research corpus, first apply the
+[research extraction guide](capture-research-knowledge.md).
 
-When the task asks what a research project or corpus has learned, first follow
-[Extract durable knowledge from a research corpus](capture-research-knowledge.md).
+## Capture
 
-## Capture procedure
-
-1. State one main proposition without incidental origin-local names. Retain a research program,
-   study, system, dataset, or protocol name when it is semantically essential.
-2. Apply every condition in the admission test.
-3. Search `Knowledge/Canonical/`, `Knowledge/Papers/`, and `Knowledge/Candidates/` for semantic
-   owners, aliases, close claims, and existing topic tags. Use bounded title, tag, and claim-keyword
-   searches rather than loading the full queue. For each semantically similar deferred or rejected
-   candidate, read `review_reason`; recreate the claim only when new scope, evidence, mechanism, or
-   reuse value materially addresses that reason.
-4. Choose one result:
-   - `SKIP` — no durable candidate;
-   - `ROUTE` — preserve the material at its contextual owner;
-   - `CAPTURE` — write one candidate;
-   - `REFINE` — revise an existing pending candidate that still represents the same proposed
-     proposition;
-   - `DEFER` — the abstraction lacks enough evidence, scope, or rationale.
-5. For `CAPTURE`, instantiate the vault override of `candidate.md` or
-   `assets/templates/candidate.md`. Generate the candidate ID using the vault contract's random-suffix
-   format and use the full ID as the filename stem.
-6. For `REFINE`, require `status: pending`. Preserve the candidate's `id`, `record_type`, `created`,
-   and filename. If the main proposition, semantic owner, or required claim split changes
-   materially, use `CAPTURE` for a new candidate instead of repurposing the existing identity.
-7. Write one concise semantic `title` and mirror it exactly in the first H1 heading. Do not expose the
-   timestamp, random suffix, ticket name, or activity-log wording in the title.
-8. Assign zero or more relevant `topic/<lowercase-kebab-case>` tags. Reuse equivalent existing tags;
-   add a new topic freely when no equivalent exists. Include every materially relevant topic without
-   choosing a primary tag.
-9. Separate the actual observation or source claim from the proposed generalization.
-10. Record scope, assumptions, mechanism or rationale, a self-contained evidence summary, portable
-   source references, and invalidation conditions. When equations or symbolic notation make a
-   relationship more precise, use them and define their symbols, domains, assumptions, and prose
-   interpretation nearby.
-11. Record the likely semantic owner or the search terms used when none was found.
-12. For `CAPTURE`, write the note under `Knowledge/Candidates/` with:
+1. State one main proposition and apply every admission condition.
+2. Search bounded titles, tags, and claim keywords in `Knowledge/Canonical/`, `Knowledge/Papers/`, and
+   `Knowledge/Candidates/`. Read related deferred/rejected `review_reason`; recreate only when new scope, evidence,
+   mechanism, or reuse value addresses it.
+3. Choose:
+   - `SKIP`: no durable claim;
+   - `ROUTE`: preserve with its contextual owner;
+   - `CAPTURE`: create one candidate;
+   - `REFINE`: revise the same proposition in an existing pending candidate;
+   - `DEFER`: evidence, scope, or rationale is insufficient.
+4. For `CAPTURE`, resolve `candidate.md`, generate the random-suffix ID defined by the vault contract, and use the full
+   ID as filename stem.
+5. For `REFINE`, require `pending`; preserve `id`, `record_type`, `created`, and filename. A materially changed
+   proposition, owner, or claim split requires `CAPTURE` instead.
+6. Write a concise semantic `title` exactly matching the first H1; exclude timestamps, random suffixes, tickets, and
+   activity wording.
+7. Add zero or more relevant, deduplicated `topic/<lowercase-kebab-case>` tags. Reuse equivalent tags; add a new one
+   when needed; do not select a primary topic.
+8. Separate observation or source claim from proposed generalization. Record scope, assumptions, mechanism or
+   rationale, self-contained evidence, portable references, invalidation conditions, and likely semantic owner or
+   owner-search terms. Use equations when they improve precision and define symbols, domains, assumptions, and prose
+   interpretation.
+9. New candidates start with:
 
    ```yaml
    status: pending
@@ -59,77 +45,37 @@ When the task asks what a research project or corpus has learned, first follow
    review_reason: null
    ```
 
-13. For `REFINE`, update `updated` after the content change and retain `status: pending`.
-14. Run structural validation.
+   Refined candidates remain `pending` and update `updated`.
 
-Capture and refinement must not set `ready`, merge canonical notes, or broaden the task into
-curation. Do not revise a ready, deferred, or rejected candidate in place: return it to `pending`
-before editing so the previous selection or disposition cannot silently apply to new content.
+10. Run structural validation.
 
-## Choose candidate granularity
+Never set `ready`, merge canonical notes, or broaden capture into curation. Return a ready, deferred, or rejected
+candidate to `pending` before editing so an old selection or disposition cannot govern new content.
 
-Keep one main proposition per candidate. Split claims only when their scope, evidence, semantic owner,
-or invalidation conditions differ.
+## Granularity And Explicit Requests
 
-Prefer a semantic title:
+Keep one proposition per candidate; split when scope, evidence, owner, or invalidation differs. Prefer a semantic title
+such as “Flexible post-hoc calibration is variance-limited in small residual samples,” not “experiment notes from
+Tuesday.”
 
-```text
-Flexible post-hoc calibration is variance-limited in small residual samples
-```
+An explicit preservation request does not require central capture. Store preferences in user memory; implementation,
+proof/run status, and project administration with the project; admitted self-contained science in candidates; and
+unsupported science as scoped unverified hypotheses. Never use a candidate when the correct contextual owner exists.
 
-Avoid activity-log titles:
+## Preserve Evidence
 
-```text
-fastcp experiment notes from Tuesday
-```
+For local observation or derivation, add an anchored `## Evidence` capsule containing the claim, portable setup and
+conditions, result, qualification or uncertainty, and practical reproduction details. Reference it as
+`embedded:<anchor>`. Add stable DOI, arXiv, PMID, URN, immutable HTTPS, or
+`vault:record:<stable-id>#<anchor>` locators where applicable. For explicitly authorized exact bytes, apply the
+[artifact guide](attach-evidence-artifact.md) and use its `vault:artifact:sha256:<64hex>` reference.
 
-## Handle explicit user requests
+Never cite session IDs, local paths, bare filenames, local ticket/issue names, or machine labels. Do not copy
+conversations, hidden reasoning, secrets, unnecessary personal data, or proprietary content. If support cannot be made
+portable safely, keep the candidate unverified or defer and route it.
 
-An explicit request requires preservation, not necessarily central capture:
+## Report
 
-- store preferences and standing instructions in user memory;
-- store repository implementation, proof-status, run-status, and project-administration facts with
-  their owning project;
-- preserve self-contained project-originated scientific propositions when they pass admission;
-- preserve unsupported scientific assertions as unverified hypotheses;
-- create a central candidate only when the abstraction passes admission.
-
-Do not use a central candidate as a fallback when the correct contextual owner is available. Do not
-confuse the repository that owns an exact proof or experiment artifact with the semantic owner of the
-scientific proposition extracted from it.
-
-## Preserve sources
-
-Do not record a session ID, local path, bare filename, local ticket or issue name, or machine-scoped
-artifact label as evidence. These identifiers do not resolve on another synced replica.
-
-For a local observation or derivation, add an evidence capsule under `## Evidence` with:
-
-- a stable anchor such as `### evidence-1`;
-- the directly observed or derived claim;
-- portable setup, data shape, versions, parameters, and operating conditions that affect the result;
-- the result, qualification, uncertainty, and reproduction details when practical.
-
-Set `source_refs` to `embedded:evidence-1`. When an external source exists, add a stable DOI, arXiv,
-PMID, URN, or immutable HTTPS locator. When another synced managed note owns the source material, use
-`vault:record:<stable-record-id>#<anchor>` instead of its filename. When exact small immutable bytes
-matter and attachment is explicitly authorized, follow
-[Attach an immutable evidence artifact](attach-evidence-artifact.md) and add the printed
-`vault:artifact:sha256:<64hex>` reference.
-
-Do not copy complete conversations, hidden reasoning, secrets, unnecessary personal data, or
-proprietary source content. If the useful support cannot be made portable safely, keep the candidate
-unverified or defer and route it to the contextual owner.
-
-## Report the result
-
-Report:
-
-- candidate path and ID;
-- one-sentence claim;
-- `status: pending` and the current `review_reason`, noting how a prior disposition was addressed
-  when refining an existing draft;
-- evidence state;
-- possible canonical owner;
-- limitations blocking promotion;
-- material routed or skipped instead.
+Report candidate path and ID, one-sentence claim, `pending` status and current `review_reason`, evidence state,
+prospective canonical owner, promotion blockers, and material routed or skipped. For refinement, state how any prior
+disposition was addressed.
