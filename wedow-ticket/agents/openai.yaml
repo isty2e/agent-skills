@@ -1,0 +1,4 @@
+interface:
+  display_name: "wedow/ticket"
+  short_description: "Use wedow/ticket without CLI traps"
+  default_prompt: "Use $wedow-ticket to identify the local ticket CLI, operate the intended .tickets set safely, and verify every mutation."
