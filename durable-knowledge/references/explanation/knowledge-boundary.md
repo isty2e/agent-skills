@@ -1,122 +1,67 @@
-# Why knowledge is separate from contextual memory
+# Why Knowledge Is Separate From Contextual Memory
 
-Durable knowledge and native memory solve different retrieval problems. Treating them as one store
-makes both worse: contextual facts lose their owner, while reusable claims become buried in local
-history.
+Durable knowledge and native memory solve different retrieval problems. Combining them strips contextual facts of
+their owner and buries reusable claims in local history.
 
-## Context gives some facts their meaning
+## Context Owns Contextual Facts
 
-A preference such as “run Ruff with `--fix` first” is authoritative because a particular user stated
-it. A repository convention is useful because a particular codebase relies on it. A machine path is
-correct only on one environment. Removing the owner removes part of the fact's meaning or authority.
-
-These facts belong with that owner:
+A user preference is authoritative because that user stated it; a repository convention because that codebase relies
+on it; a machine path only within one environment. Keep these facts with their owners:
 
 - user preferences and standing instructions in user memory;
 - session intent in session state or a task plan;
-- repository invariants in architecture documentation, tests, or ADRs;
-- organization policy in organization-owned documentation;
+- repository invariants in tests, ADRs, or architecture docs;
+- organization policy in organization-owned docs;
 - machine facts in environment-scoped memory or configuration.
 
-Central knowledge is different. Its proposition should remain intelligible and reusable when
-incidental origin coordinates such as the working tree, file layout, ticket state, current task, or
-machine are removed. The scientific subject itself does not have to disappear.
+Durable propositions remain intelligible after incidental coordinates such as working tree, file layout, ticket,
+current task, and machine disappear. Semantically essential scientific scope remains.
 
-## Project origin is not project ownership
+## Origin Does Not Determine Ownership
 
-A repository may be where a theorem was proved or an experiment was run without owning the
-proposition's meaning. Separate three questions:
+Ask separately:
 
 1. Where was the result discovered?
-2. What scientific object, program, study, system, or operating regime gives it meaning?
-3. Which source owns the exact proof, artifact, wording, or current verification status?
+2. What program, study, system, domain, or regime gives it meaning?
+3. What source owns its exact proof, artifact, wording, or current status?
 
-The first answer does not determine the other two. A theorem about a named research system can remain
-specific to that system and still be durable knowledge when its definitions, assumptions,
-conclusion, and support are self-contained.
+A repository can host a theorem proof or experiment without owning the proposition's meaning. The repository,
+manuscript, or experiment system owns exact declarations, IDs, artifacts, wording, and status; the vault may own the
+self-contained theorem, mechanism, scoped result, distinction, or synthesis. Preserve scope, evidence state, and
+invalidation conditions without pretending the extraction replaces its source.
 
-## Artifact authority and semantic ownership coexist
+Portable does not mean universal. Keep real conditions such as named program, system, model family, distribution,
+version, period, checkpoint, regime, assumptions, and target quantity. Reuse within the same research program is
+enough. Ask whether a reader can evaluate the proposition without reconstructing incidental discovery context, not
+whether unrelated projects will reuse it.
 
-Repository and vault records need not compete as duplicate sources of truth:
+## The Vault Is A Slow Semantic Layer
 
-- the repository, manuscript, or experiment system owns exact source text, declaration and claim IDs,
-  proof status, run artifacts, and current wording;
-- the knowledge vault may own the extracted mathematical proposition, scientific mechanism, scoped
-  result, distinction, or synthesis.
+Optimize for future reasoning, not capture volume. Retain expensive-to-rediscover mechanisms, constraints, methods,
+decision rules, distinctions, theorems, and syntheses likely to change a future decision. Task completion, test counts,
+filenames, and raw conversation may be evidence but are not automatically knowledge; their source owns the evidence,
+while the vault stores a justified proposition and a portable locator.
 
-A later source change may invalidate or supersede the knowledge claim, but it does not make the
-semantic extraction repository trivia. The knowledge record must preserve its scope, evidence state,
-and invalidation conditions without pretending to replace the exact artifact.
-
-## Origin-separated does not mean universal
-
-Portable knowledge may still depend on real conditions. A claim can be scoped to:
-
-- a named research program, study, scientific system, or model family;
-- a scientific domain or data distribution;
-- a technology and version range;
-- a time period or experiment checkpoint;
-- an operating regime;
-- explicit assumptions or target quantities.
-
-These conditions belong inside the claim because they affect whether it is true or useful. Reuse in
-future work within the same research program is enough. The admission question is not “Will unrelated
-projects reuse this?” but “Can a reader understand and evaluate this proposition without reconstructing
-the incidental context in which it was discovered?”
-
-## The vault is a slow semantic layer
-
-The vault optimizes for future reasoning, not capture volume. It favors compact mechanisms,
-constraints, methods, decision rules, distinctions, theorems expressed through those semantic roles,
-and syntheses that are expensive to rediscover and likely to affect another decision.
-
-This excludes most activity history. A completed task, passing test count, current filename, or raw
-conversation may be useful evidence, but it is not automatically durable knowledge. The source
-system should retain the evidence; the vault retains only a justified proposition and a locator back
-to that evidence.
-
-## Candidates separate capture from belief
-
-Capture and integration have different authority:
+## Candidates Separate Capture From Belief
 
 ```text
-observation → candidate → human selection → canonical integration
+observation -> pending candidate -> selection -> canonical integration
 ```
 
-A candidate preserves a potentially reusable claim without pretending that its scope, evidence, or
-semantic owner has been settled. Capture therefore creates `pending`, never `ready`. Pending is an
-editable draft state: the same proposed proposition may be clarified, corrected, narrowed, or
-better supported without allocating a new candidate identity.
+Capture creates `pending`, an editable draft of one proposition, without claiming settled scope, support, or ownership.
+A human, explicit integration request, or policy selects one exact revision as `ready`. That revision freezes until
+returned to `pending`, revised, validated, and selected again. Curation then creates, merges, preserves conflict,
+defers, or rejects. This prevents opportunistic capture from silently changing shared knowledge.
 
-A human, an explicit user request to integrate a named non-applied candidate, or an explicit policy
-selects one exact claim-bearing revision by setting `ready`. That revision is frozen: a content edit
-first returns the candidate to `pending` and requires a new selection. The request may record the
-transition to `ready` in the same operation, but it does not bypass the lifecycle. Curation then
-decides whether to create, merge, preserve a conflict, defer, or reject. This separation keeps
-opportunistic agent capture from silently changing the shared semantic layer.
+## Canonical Does Not Mean Final Truth
 
-## Canonical notes are semantic owners, not final truth
+A canonical note is the current semantic owner for one topic, reconciling evidence, qualifications, counterexamples,
+and revisions. Its lifecycle records curation maturity, not certainty. Keep queue status, evidence state, and canonical
+lifecycle separate: they respectively answer where a claim is in review, how it is supported, and how mature the
+synthesis is.
 
-A canonical note is the current owner for one durable topic. It is where compatible evidence,
-qualifications, counterexamples, and revisions are reconciled into a coherent current model.
+## Obsidian Is A Projection
 
-Canonical status records curation maturity rather than certainty. A stable note can later become
-contested; a source-backed claim can still be narrow or wrong. Evidence state, canonical lifecycle,
-and candidate queue status remain separate because they answer different questions:
-
-- Where is the claim in the review process?
-- How is the claim supported?
-- How mature is the canonical synthesis?
-
-Keeping these axes separate prevents fluent prose, note age, or reviewer selection from being
-mistaken for truth.
-
-## Obsidian is a projection, not an owner
-
-Markdown and YAML are authoritative. Obsidian Properties and Bases offer a convenient human review
-surface, while agents and servers can operate directly on files. Desktop and headless clients may
-replicate equal local copies through Obsidian Sync, but the knowledge model does not depend on a
-running Obsidian process or any community plugin.
-
-This design keeps the vault portable across editors, agents, operating systems, and sync transports
-without creating separate semantic rules for each environment.
+Markdown and YAML are authoritative. Obsidian Properties, Bases, plugins, and sync clients provide review and transport
+surfaces without owning semantics. Agents and servers may operate directly on replicated files; no knowledge operation
+depends on a running Obsidian process.

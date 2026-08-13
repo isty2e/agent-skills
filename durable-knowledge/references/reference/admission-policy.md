@@ -1,139 +1,91 @@
-# Knowledge admission policy
+# Knowledge Admission Policy
 
-This policy defines what may enter the central knowledge base. A vault-local
-`_durable-knowledge/POLICY.md`, when present, may override admission and routing rules within the fixed record
-model. It cannot add or rename `knowledge_kind` values.
+This defines central admission. Vault-local `_durable-knowledge/POLICY.md` may refine admission/routing within the fixed
+record model but cannot add or rename `knowledge_kind` values.
 
-## Contents
-
-- [Accepted knowledge kinds](#accepted-knowledge-kinds)
-- [Required admission test](#required-admission-test)
-- [Routing table](#routing-table)
-- [Default exclusions](#default-exclusions)
-- [Capture and selection rules](#capture-and-selection-rules)
-- [Promotion threshold](#promotion-threshold)
-
-## Accepted knowledge kinds
-
-Every candidate and canonical entry must use one of these values:
+## Knowledge Kinds
 
 - `mechanism`: why a phenomenon occurs;
-- `constraint`: what must remain true under a stated class of changes;
-- `method`: a reusable procedure with rationale and applicability;
-- `decision-rule`: what to choose under stated conditions and trade-offs;
-- `distinction`: a boundary that prevents recurring category errors;
-- `synthesis`: an evidence-linked relation across sources or observations;
-- `hypothesis`: a genuinely unproved, falsifiable proposition with explicit scope and assumptions.
+- `constraint`: what must remain true under stated changes;
+- `method`: reusable procedure with rationale and applicability;
+- `decision-rule`: what to choose under stated conditions/tradeoffs;
+- `distinction`: boundary preventing recurring category errors;
+- `synthesis`: evidence-linked relation across sources/observations;
+- `hypothesis`: genuinely unproved, falsifiable proposition with explicit scope/assumptions.
 
-## Required admission test
+## Admission Test
 
 An agent-initiated candidate must satisfy every condition:
 
-1. **Propositional:** state a claim, mechanism, constraint, method, distinction, or trade-off rather
-   than an event log.
-2. **Decision-relevant:** likely to alter future reasoning, design, diagnosis, or method selection.
-3. **Nontrivial:** not ordinary background knowledge and costly enough to rediscover.
-4. **Scoped:** domain, assumptions, target quantity, and invalidation conditions can be stated.
-5. **Stable enough:** remains meaningful across likely file moves, refactors, renames, and temporary
-   project states.
-6. **Not cheaply reconstructible:** cannot be recovered more reliably as a scoped, decision-relevant
-   proposition with a quick code search, test, or direct source lookup. Finding an exact proof or
-   experiment artifact does not replace semantic extraction when its assumptions, significance, or
-   relation to other results remains costly to reconstruct.
-7. **Origin-separated:** meaning does not rely on the incidental user, session, working tree, file
-   layout, ticket state, organization, or machine where the claim was discovered. A named research
-   program, study, system, dataset, or protocol may remain when it is the semantic subject or scope.
+1. **Propositional:** claim, mechanism, constraint, method, distinction, or tradeoff, not event log.
+2. **Decision-relevant:** likely to change future reasoning, design, diagnosis, or method selection.
+3. **Nontrivial:** beyond ordinary background and costly enough to rediscover.
+4. **Scoped:** domain, assumptions, target, and invalidation conditions are expressible.
+5. **Stable enough:** meaningful across likely moves, refactors, renames, and temporary states.
+6. **Not cheaply reconstructible:** no quick search/test/source lookup recovers the same scoped proposition more
+   reliably. Easy artifact lookup does not replace costly semantic extraction of assumptions, significance, or
+   relations.
+7. **Origin-separated:** meaning does not depend on incidental user, session, tree, layout, ticket, organization, or
+   machine. Keep a named program, study, system, dataset, or protocol when it is subject or scope.
 
-Domain, technology, version, time period, data distribution, research program, and operating
-conditions may remain as explicit scope. Reuse in future work within the same research program is
-sufficient; admission does not require universality or value to unrelated projects.
-
-Use this model qualitatively; do not assign numeric scores:
+Domain, technology, version, period, distribution, program, and regime may remain. Reuse within one named research
+program suffices; universality is not required. Judge qualitatively, never by numeric score:
 
 ```text
-value ≈ reuse probability × rediscovery cost × decision impact × stability
-        − maintenance cost − retrieval noise
+value ~= reuse probability * rediscovery cost * decision impact * stability
+         - maintenance cost - retrieval noise
 ```
 
-## Routing table
+## Routing
 
-| Material | Authoritative owner |
-|---|---|
-| Cross-context mechanism, method, constraint, or distinction | Central knowledge |
-| User preference, standing instruction, or personal context | Native user memory or user-owned instructions |
-| Session intent, state, or decision | Session state, task plan, or issue |
-| Project semantic invariant governing implementation | Repository architecture docs, ADR, tests, or AGENTS.md |
-| Project-originated self-contained theorem | Candidate; repository owns exact proof artifact |
-| Scoped empirical result with portable support | Candidate; paper note only for paper or preprint source |
-| Evolving theorem inventory, declaration or claim IDs, and proof status | Repository |
-| Scientific synthesis connecting several project results | Central synthesis |
-| Unpublished conjecture with explicit scope and falsification conditions | Pending `hypothesis` candidate |
-| Current implementation structure | Code and tests |
-| Active defect, branch state, or migration task | Issue tracker or project plan |
-| Organization policy or convention | Organization-owned policy or documentation |
-| Machine or environment fact | Environment-scoped memory or configuration |
-| Claim reported by one paper | Paper note |
-| Cross-paper or cross-project synthesis | Central knowledge |
-| Unvalidated abstraction from a local observation | Pending candidate |
-| Raw transcript or long source excerpt | Source system |
+| Material                                                 | Owner                                           |
+| -------------------------------------------------------- | ----------------------------------------------- |
+| Cross-context mechanism, method, constraint, distinction | Central knowledge                               |
+| User preference/instruction/personal context             | User memory or instructions                     |
+| Session intent/state/decision                            | Session state, plan, or issue                   |
+| Project semantic invariant                               | Repository docs, ADR, tests, or `AGENTS.md`     |
+| Self-contained project theorem                           | Candidate; repository owns exact proof          |
+| Scoped empirical result with portable support            | Candidate; paper note if paper/preprint sourced |
+| Theorem inventory, declarations/claim IDs, proof status  | Repository                                      |
+| Cross-result scientific synthesis                        | Central synthesis                               |
+| Scoped falsifiable unpublished conjecture                | Pending `hypothesis`                            |
+| Current implementation                                   | Code/tests                                      |
+| Defect, branch, migration work                           | Tracker/plan                                    |
+| Organization policy                                      | Organization docs                               |
+| Machine/environment fact                                 | Environment memory/config                       |
+| One-paper claim                                          | Paper note                                      |
+| Cross-paper/project synthesis                            | Central knowledge                               |
+| Unvalidated local abstraction                            | Pending candidate                               |
+| Transcript or long excerpt                               | Source system                                   |
 
-A project-originated finding may seed central knowledge when its proposition is semantically
-self-contained, decision-relevant for future work within its documented scope, and supported by a
-self-contained evidence capsule or replica-resolvable source reference. A scientific claim does not
-become context-bound merely because its only current proof or evidence lives in one project. Require
-semantic self-containment and portable evidence, not multiple originating projects.
+One project can seed central knowledge when the proposition is self-contained, decision-relevant in scope, and supported
+by an embedded capsule or replica-resolvable locator. Multiple origin projects are unnecessary. Artifact authority
+remains with source proof, declaration, status, experiment, and wording; semantic ownership may belong to the vault.
+Local paths, filenames, tickets, sessions, and machine labels are not portable support.
 
-Do not equate artifact authority with semantic ownership. The repository or manuscript remains
-canonical for exact proof source, declaration names, proof status, experiment artifacts, and wording.
-The vault may own the extracted theorem, mechanism, scoped result, distinction, or synthesis. A local
-path, bare filename, ticket name, session ID, or machine-scoped artifact label does not provide
-portable support.
+## Exclusions
 
-## Default exclusions
+Do not agent-initiate capture for transient task/test/branch state; filenames, package layouts, and short-lived commands;
+ordinary test/issue-owned bugs; cheaply readable implementation/operations; unconstraining generic advice; chronology,
+summaries, or dead ends; unsupported universals from one local outcome; or credentials, secrets, and unnecessary personal
+data. A scoped observation/hypothesis may qualify when protocol and limits are explicit.
 
-Do not agent-initiate central capture for:
+## Capture And Selection
 
-- transient task status, test counts, current branch state, or pending work;
-- filenames, function names, package layouts, and short-lived commands;
-- ordinary bugs already owned by a test or issue;
-- implementation and operational facts directly and cheaply readable from code or documentation;
-- generic advice that does not constrain a future choice;
-- conversational summaries, meeting chronology, or exploratory dead ends;
-- unsupported universal claims inferred from one local success or failure; preserve a decision-relevant
-  scoped observation or hypothesis instead when its protocol and limits are explicit;
-- credentials, private keys, tokens, raw secrets, or unnecessary personal data.
+- Zero candidates is normal; no quota exists, and each must pass independently.
+- Search related deferred/rejected candidates and reasons before capture; require new scope, evidence, mechanism, or
+  reuse value to recreate.
+- Finish primary work before marginal capture unless delay loses the only locator.
+- For research, inventory definitions, theorems, mechanisms, results, scoped negatives, and conjectures before workflow
+  methodology, within bounded corpus scope.
+- Never ingest a whole session/repository automatically.
+- Capture creates `pending`, `canonical_id: null`, `review_reason: null`, never `ready`.
+- Explicit integration of a named non-applied candidate first records `ready`; curation still processes only ready.
+- “Remember” requires preservation at the correct owner, not automatic central admission.
 
-## Capture and selection rules
+## Promotion
 
-- Zero agent-initiated candidates is normal.
-- Candidate creation has no session, task, source, or backlog quota.
-- Every candidate must independently pass the admission test.
-- Before capture, inspect semantically similar deferred or rejected candidates and their
-  `review_reason`. Do not recreate one unless materially changed scope, evidence, mechanism, or reuse
-  value addresses the recorded reason.
-- Finish the primary task before marginal capture unless delay would lose the only source locator.
-- When reviewing a research corpus, inventory substantive definitions, theorem families, mechanisms,
-  empirical results, scoped negative results, and conjectures before extracting workflow methodology.
-  Bound the inventory to the user-named or minimally relevant corpus.
-- Never ingest an entire session or repository automatically.
-- Capture creates `status: pending`, `canonical_id: null`, and `review_reason: null`.
-- Capture must never mark its own output `ready`.
-- When a user explicitly names a non-applied candidate and requests integration, first transition it
-  to `ready` in the same operation; canonical curation still processes only `ready` candidates.
-- A request to remember something requires preservation at the correct owner; it does not override
-  routing, evidence state, or central admission.
-
-## Promotion threshold
-
-A candidate may become canonical when it has:
-
-- a clear semantic owner and no unresolved near-duplicate identity;
-- explicit scope and assumptions;
-- a mechanism or rationale adequate for its intended use;
-- a self-contained evidence summary plus portable source locators when available;
-- explicit invalidation conditions or known limits;
-- lifecycle and evidence state that do not overstate certainty;
-- `status: ready`.
-
-Cross-source synthesis normally requires at least two materially independent sources or one complete
-formal argument plus a clearly marked inference. An explicit exception remains provisional.
+Canonical promotion requires a clear owner without unresolved duplicate identity; explicit scope/assumptions; adequate
+mechanism/rationale; self-contained evidence and portable locators when available; invalidation conditions/limits;
+non-overstated lifecycle/evidence; and `status: ready`. Cross-source synthesis normally needs two materially independent
+sources or one complete formal argument plus marked inference; exceptions remain provisional.

@@ -1,82 +1,42 @@
-# Recall relevant knowledge
+# Recall Relevant Knowledge
 
-Use this guide to supply a bounded, status-aware slice of prior knowledge to the current task. Recall
-is read-only.
+Return a bounded, status-aware knowledge slice. Recall is read-only.
 
-## Decide whether recall is useful
+## Decide And Search
 
-Recall when the task substantially overlaps:
+Recall for substantial overlap with prior research/method decisions, known mechanisms/constraints/failure regimes, or a
+paper cluster/synthesis. Use contextual memory for preferences, session intent, repository/project decisions,
+organization policy, and machine facts. Never query the vault mechanically for every task.
 
-- a prior research question or methodological decision;
-- a known mechanism, constraint, or failure regime;
-- a paper cluster or cross-source synthesis.
+1. State query, target quantity, and scope.
+2. Search titles, IDs, aliases, tags, summaries, then body text.
+3. Expand one link hop only from a relevant seed.
+4. Prefer canonical notes, then papers, then candidates; read full bodies only for strongest matches.
+5. Stop at the requested page/token budget.
 
-Use contextual memory for user preferences, session intent, repository facts, project decisions,
-organization policy, and machine-specific context. Do not query the central vault mechanically for
-every task.
+Use file search and `rg` without an index. Markdown/YAML remains authoritative if a semantic index exists. Topic tags
+are multi-valued hints, not authority: match any for breadth or intersect when all are required, then still check
+lifecycle, evidence, scope, and assumptions.
 
-## Search the vault
+## Rank And Warn
 
-1. State the task query, target quantity, and relevant scope.
-2. Search titles, IDs, aliases, tags, and summaries.
-3. Search body text lexically.
-4. Expand one link hop only when a seed page identifies a relevant neighbor.
-5. Prefer canonical notes, then paper notes, then candidates.
-6. Read full bodies only for the strongest matches.
-7. Stop at the requested page or token budget.
+Rank by task/target relevance, scope/assumption match, lifecycle/evidence, source quality/locators, time-sensitive
+recency, and link support without treating popularity as truth. `ready` means selected, not established; pending, ready,
+or deferred candidates appear only as labeled leads.
 
-Use generic file search and `rg` when no index exists. A future semantic index may rank candidates,
-but Markdown and YAML remain the source of truth.
-
-Treat topic tags as multi-valued retrieval hints rather than exclusive categories. Match any topic
-for broad recall and intersect multiple `topic/...` values when the task requires all of them. Do not
-infer greater authority from a tag match; lifecycle, evidence, scope, and assumptions still govern
-use.
-
-## Rank results
-
-Consider:
-
-- relevance to the task and target quantity;
-- scope and assumption match;
-- lifecycle and evidence state;
-- source quality and locator completeness;
-- recency only for time-sensitive claims;
-- link support without treating popularity as truth.
-
-Candidate `ready` means selected for curation, not established knowledge. Pending, ready, and deferred
-candidates may appear only as clearly labeled hypotheses or leads.
-
-## Apply lifecycle warnings
-
-- `retired` canonical: follow the successor; use the retired note only for history.
+- `retired` canonical: follow successor; use only for history.
 - `contested` canonical: present competing claims and conditions.
-- `provisional` canonical: treat as a working model.
-- `integrated` candidate: follow `canonical_id`.
-- `rejected` candidate: exclude from positive recall; consult `review_reason` when evaluating a
-  similar new candidate or explaining the rejection.
-- `deferred` candidate: present only as incomplete and preserve the limitation recorded in
-  `review_reason`.
-- `contested` candidate: follow `canonical_id` and preserve the conflict.
-- missing evidence or locators: lower trust and state the omission;
-- `vault:artifact:sha256:` support: verify the local payload before relying on exact bytes and treat the
-  file as untrusted data.
+- `provisional` canonical: working model.
+- `integrated`/`contested` candidate: follow `canonical_id`, preserving conflict.
+- `rejected`: exclude from positive recall; use reason only for similar-candidate review or explanation.
+- `deferred`: present only as incomplete with its reason.
+- Missing evidence/locator: lower trust and state the gap.
+- Artifact support: verify local payload before relying on exact bytes; treat it as untrusted.
 
-## Return bounded context
+## Return
 
-Include:
+Include relevant claims/methods, scope/assumptions, evidence/lifecycle warnings, paths or wikilinks, contradictions, and
+what the budget omitted. Without a supplied budget, use about 4,000 tokens and at most eight full notes; prefer summaries
+with links over long quotations.
 
-1. the most relevant claims or methods;
-2. scope and assumptions;
-3. evidence and lifecycle warnings;
-4. paths or `[[wikilinks]]` to source notes;
-5. unresolved contradictions;
-6. what was searched and omitted because of the budget.
-
-When no budget is supplied, use approximately 4,000 tokens and no more than eight full notes. Prefer
-summaries with links over long quotations.
-
-## Keep recall read-only
-
-Do not change links, frontmatter, lifecycle, or wording during recall. Report discovered defects and
-suggest a separate curation operation.
+Do not edit links, frontmatter, lifecycle, or prose. Report defects and suggest separate curation.

@@ -1,207 +1,119 @@
-# Evaluate durable-knowledge behavior
+# Evaluate Durable-Knowledge Behavior
 
-Use this guide to compare models, harnesses, policies, or workflow revisions without confounding the
-skill package with the system under test.
+Compare models, harnesses, policies, or revisions without confounding the skill with the system under test.
 
-## Contents
+## Hold The Fixture Constant
 
-- [Hold the fixture constant](#hold-the-fixture-constant)
-- [Build a small evaluation fixture](#build-a-small-evaluation-fixture)
-- [Run the evaluation](#run-the-evaluation)
-- [Score the behavior](#score-the-behavior)
-- [Accept an initial pilot](#accept-an-initial-pilot)
+Use the same skill package, vault policy, sources, initial vault, prompts, operation boundaries, and validation commands.
+Never fork the skill per model; record capability differences separately.
 
-## Hold the fixture constant
+The fixture should discriminate:
 
-Use the same:
+- three papers with overlapping scopes;
+- sessions yielding zero, one, and multiple durable findings;
+- contextual facts that must route away;
+- a self-contained project theorem whose exact proof remains repository-owned;
+- a scoped zero-occurrence result preserving denominator, protocol, conditions, and uncertainty;
+- mutable theorem/proof status that stays repository-owned;
+- local outputs and ticket IDs requiring embedded evidence, authorized artifact attachment, or routing;
+- valid, missing, duplicate, symlinked, and hash-mismatched artifacts;
+- a user preference; near-duplicate owners; apparent and genuine conflicts;
+- all candidate lifecycle states;
+- a deferred/rejected near-duplicate whose reason should prevent low-value recapture.
 
-- skill package and vault policy;
-- source material;
-- initial vault fixture;
-- prompts and operation boundaries;
-- validation commands.
+## Run
 
-Do not fork the skill per model. Record capability differences separately.
+1. Reset every run to the same fixture.
+2. Run capture, paper ingest, recall, and curation separately.
+3. Preserve generated files and validator output.
+4. Score every axis below and count human corrections required for accepted output.
+5. Repeat ambiguous cases before attributing differences to the model.
 
-## Build a small evaluation fixture
+## Score
 
-Include:
+### Admission And Abstention
 
-- three papers with overlapping but nonidentical scopes;
-- substantive sessions containing zero, one, and multiple durable findings;
-- repository-local facts that should be routed away from central knowledge;
-- a project-originated theorem with self-contained assumptions and conclusion whose exact proof
-  artifact remains repository-owned;
-- a scoped zero-occurrence or negative experiment result that must preserve its denominator,
-  protocol, operating conditions, and uncertainty;
-- current theorem inventory or proof-status counts that must remain repository-owned;
-- local experiment output and bare ticket identifiers that must be converted into embedded evidence,
-  an explicitly authorized content-addressed artifact, or routed away rather than cited directly;
-- valid, missing, duplicated, symlinked, and hash-mismatched `vault:artifact:sha256:` fixtures;
-- a user preference that belongs in native memory;
-- near-duplicate canonical owners;
-- an apparent contradiction resolved by scope;
-- a genuine unresolved conflict;
-- candidates requiring pending, ready, deferred, rejected, integrated, and contested states;
-- a deferred or rejected near-duplicate whose `review_reason` should prevent low-value recapture.
+Captured claims must be reusable, decision-relevant, scoped, nontrivial, and not cheaply reconstructed as propositions;
+reuse within one named research program counts. Treat transient status, implementation trivia, generic advice, and
+unsupported universals as false positives. Require zero candidates when appropriate and deferral instead of invented
+scope or evidence.
 
-## Run the evaluation
+### Research-Forward Extraction
 
-1. Reset each run to the same fixture.
-2. Execute capture, paper ingest, recall, and curation as separate operations.
-3. Preserve all generated files and validation output.
-4. Compare runs on the axes below.
-5. Measure human corrections required for accepted output.
-6. Repeat ambiguous cases before attributing a difference to the model.
-
-## Score the behavior
-
-### Admission precision
-
-Check whether captured claims are reusable, decision-relevant, scoped, nontrivial, and not cheaply
-reconstructible as semantic propositions. Reuse within the same named research program counts. Count
-transient status, implementation trivia, generic advice, and unsupported universal claims as false
-positives.
-
-### Research extraction priority
-
-Run the forward prompt:
+Prompt in a clean context:
 
 ```text
 Find what should be preserved as knowledge from this research.
 ```
 
-The agent must inventory actual theorem families, mechanisms, empirical findings, scoped negative
-results, and conjectures before offering provenance discipline, issue-tracking advice, or general
-research methodology. It must distinguish repository-owned proof and experiment artifacts from
-vault-owned semantic propositions. Treat an answer that extracts only workflow or epistemic
-methodology while overlooking substantive scientific content as a failure.
+The agent must inventory theorems, mechanisms, empirical findings, scoped negatives, and conjectures before provenance
+discipline or generic methodology, while separating repository-owned artifacts from vault-owned propositions. Failure
+to extract substantive science is a failure.
 
-Check these discriminating cases:
+Discriminating cases:
 
-- a closure factorization theorem proved in one repository → central candidate with its semantic
-  kind preserved;
-- a proved theorem whose statement wording is still being refined → keep its semantic kind and use
-  `pending`, not `hypothesis`;
-- a genuinely unproved proposition → pending `hypothesis` candidate;
-- zero witness activations under a specified checkpoint and protocol → scoped `distinction`
-  between finite non-observation and impossibility, or `hypothesis` only when a genuinely unproved
-  explanatory proposition is stated; do not label the observation a `constraint` merely because it
-  limits inference;
-- “the current Lean tree has 127 passing files” → repository status, not knowledge.
+- repository-proved closure factorization -> central candidate with semantic kind;
+- proved theorem with wording under revision -> its semantic kind plus `pending`, not `hypothesis`;
+- genuinely unproved proposition -> pending `hypothesis`;
+- zero activations under checkpoint/protocol -> scoped distinction between non-observation and impossibility, or
+  hypothesis only for a genuinely unproved explanation; never a constraint merely because inference is limited;
+- “127 Lean files pass” -> repository status.
 
-A written scenario is not evidence that an agent follows it. For each release that changes research
-routing, run this prompt in a clean context and preserve a compact receipt containing the fixture,
-model and harness, source revision, observed routing, deviations, reviewer verdict, and whether human
-review occurred. The current baseline receipt is
-[Research forward-evaluation baseline](../../evaluations/research-forward-baseline.md).
+For every release changing research routing, preserve a compact receipt with fixture, model/harness, source revision,
+observed routing, deviations, reviewer verdict, and review status. See the
+[baseline receipt](../../evaluations/research-forward-baseline.md). Written scenarios alone do not prove behavior.
 
-### Abstention quality
+### Activation
 
-Check whether the system produces zero candidates when appropriate and defers rather than inventing
-scope or evidence.
+Test tasks with and without relevant prior knowledge or a durable finding. Useful opportunistic recall/capture must not
+wait for explicit invocation, mechanically search every vault, report no-op checks, block primary work, or manufacture
+weak candidates.
 
-### Activation precision
+### Scope And Provenance
 
-Test substantive tasks with and without relevant prior knowledge or a genuinely durable finding.
-Check whether the system recalls or considers capture at useful decision points without waiting for
-an explicit request. Count mechanical vault searches, no-op check reports, blocked primary work, and
-weak candidates created merely to demonstrate activation as failures.
+Check assumptions, benchmark, target, named subject, regime, and failure conditions. Context stripping must preserve
+definitions, equations, protocols, and data conditions. Verify claims against precise pages, sections, equations,
+figures, tables, embedded capsules, synced records, artifacts, or stable external resources.
 
-### Scope preservation
+### Replica Portability
 
-Check assumptions, benchmark, target quantity, named research subject, operating regime, and failure
-conditions for each theorem, paper, or experiment claim. Confirm that context stripping removed only
-repository coordinates and temporary status, not definitions, equations, protocols, or data
-conditions that give the proposition meaning.
+Open records on a replica lacking the originating tree, tickets, and session. Claims and evidence must remain usable
+from the record plus synced records/artifacts or stable locators. Local paths, bare filenames, tickets/issues, sessions,
+machine labels, and hash-only unresolved refs fail. Required replicas must receive exactly one regular hash-valid
+artifact payload; a local validator pass does not prove transport.
 
-### Provenance accuracy
+### Ownership, Conflict, And Recall
 
-Verify important claims against cited pages, sections, equations, figures, tables, embedded evidence
-capsules, synced-vault records, or stable external resources.
-
-### Replica portability
-
-Open generated records from a fixture replica that lacks the originating working tree, local ticket
-store, and harness session history. Confirm that each claim remains interpretable and its evidence can
-be evaluated from the record itself plus synced-vault records, content-addressed artifacts, or stable
-external locators. Count local paths, bare filenames, local ticket or issue names, session IDs,
-machine-scoped artifact labels, and hash-only references with no resolvable payload as failures.
-
-For attached evidence, confirm that every required replica receives the payload, exactly one file
-matches the hash, and the file bytes validate. A local validator pass does not prove remote transport.
-
-### Semantic owner resolution
-
-Check whether the system merges into the correct owner, keeps distinct concepts separate, and avoids
-title-only identity decisions.
-
-### Conflict handling
-
-Check whether it distinguishes scope differences from genuine contradiction and preserves unresolved
-evidence.
-
-### Recall utility
-
-Compare a downstream task with and without recall:
+Confirm correct semantic owner, separation of distinct concepts, and no title-only identity. Distinguish scope mismatch
+from contradiction and preserve genuine conflict. Compare downstream work with and without recall:
 
 ```text
-utility delta = quality or task efficiency with recall
-                − quality or task efficiency without recall
+utility delta = quality or efficiency with recall - quality or efficiency without recall
 ```
 
-Check both rediscovery avoided and anchoring to stale or provisional material.
+Measure both avoided rediscovery and anchoring to stale/provisional material. Measure human edits per accepted record;
+page count is not quality.
 
-### Review burden
+### Lifecycle Integrity
 
-Measure human edits per accepted candidate, paper note, and canonical integration. Page count alone is
-not a quality signal.
+Confirm:
 
-### Lifecycle integrity
+- capture creates only `pending`; ordinary selection is one property edit;
+- defer/reject requires substantive reason, savable before status in property editors;
+- curation uses only `ready`; explicit named integration records `ready` before canonical work;
+- same-proposition pending refinement preserves ID, creation, and filename;
+- `ready` freezes claims; revision returns to pending and requires reselection;
+- canonical state precedes integration metadata; integrated/contested candidates reference existing owners;
+- deferred/rejected claim revision returns to pending; capture honors their reasons before recapture;
+- proposal-only work leaves candidate state unchanged; delayed apply rejects stale `base_sha256`;
+- same-owner curation serializes or surfaces conflict; desktop and headless clients see the same YAML;
+- attachment is append-only and idempotent, and invalid payload states block promotion.
 
-Check that:
+## Accept A Pilot
 
-- capture creates only `pending`;
-- humans can triage ordinary selection with one property edit and record a substantive
-  `review_reason` when deferring or rejecting;
-- property-by-property editors can save the reason before the status without creating an invalid
-  intermediate record;
-- curation processes only `ready` candidates;
-- an explicit request to integrate a named non-applied candidate records `ready` before canonical
-  curation rather than bypassing the lifecycle;
-- pending candidates can be refined in place without changing their ID, creation time, or filename
-  when they still represent the same proposed proposition;
-- `ready` freezes the selected claim-bearing revision, and any later claim edit first returns the
-  candidate to `pending` and requires a new selection;
-- canonical state is written before integration status;
-- integrated and contested candidates reference existing owners;
-- deferred and rejected candidates have a non-empty reason; revising their claim-bearing content
-  first returns them to `pending` so the old disposition does not silently govern a new revision;
-- capture checks semantically similar deferred or rejected candidates and does not recreate one
-  unless new evidence, scope, mechanism, or reuse value addresses the recorded reason;
-- proposal-only work leaves candidate status unchanged;
-- delayed proposal application fails when `base_sha256` no longer matches;
-- concurrent curation of the same canonical owner is serialized or surfaces a reviewable conflict;
-- desktop views and headless file reads observe the same YAML state;
-- artifact attachment never overwrites existing bytes, retries identical bytes idempotently, and
-  blocks promotion when a referenced payload is missing, duplicated, symlinked, or hash-mismatched.
+Accept only when admission is claim-justified rather than quota-driven; paper locators are reliable; contextual material
+routes correctly without discarding project-originated science; capture, ingest, and recall never write canonical state;
+conflicts and failures remain recoverable; records interoperate across tested models/clients; no accepted record depends
+on machine-local context; and validation rejects structural errors while warning on known non-portable refs.
 
-## Accept an initial pilot
-
-An initial pilot is acceptable when:
-
-- candidate volume is justified claim by claim rather than by quota;
-- paper claims retain reliable locators;
-- contextual material routes to the correct owner without misclassifying project-originated
-  scientific propositions as repository trivia;
-- no canonical writes occur during capture, paper ingest, or recall;
-- conflicts and partial failures preserve recoverable state;
-- notes remain interoperable across tested models and clients;
-- no accepted record depends on an originating machine's paths, local tickets, session history, or
-  machine-scoped artifact labels;
-- structural validation rejects duplicate fields, scalar/sequence shape errors, and empty or
-  placeholder knowledge-bearing sequences without manual schema repair, and reports known
-  non-portable source references.
-
-Report failures by axis and include the exact fixture, generated paths, validator output, and required
-human corrections.
+Report failures by axis with exact fixture, generated paths, validator output, and required human corrections.
