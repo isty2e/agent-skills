@@ -18,6 +18,12 @@ explicit conflict.
 
 Process only candidates with `status: ready`.
 
+`ready` selects and freezes the current claim-bearing revision: `title`, `knowledge_kind`,
+`evidence_state`, `scope`, `assumptions`, `invalidation_conditions`, `source_refs`, and the note body.
+Tags and review metadata remain mutable because they do not redefine the proposed claim. If frozen
+content needs revision, first set `status: pending`, keep `canonical_id: null`, update the timestamp,
+then edit and validate the draft. It must be selected as `ready` again before integration.
+
 When a user explicitly names a non-applied candidate and requests integration, select it in the same
 operation before canonical curation:
 
@@ -33,11 +39,13 @@ Humans may triage queue state in Obsidian, another Markdown editor, or a script:
 
 ```text
 pending  → ready | deferred | rejected
-deferred → ready
-rejected → ready
+ready    → pending | deferred | rejected
+deferred → pending | ready
+rejected → pending | ready
 ```
 
-These review transitions leave `canonical_id: null` and do not rewrite candidate claim provenance.
+Returning to `pending` withdraws the prior selection or disposition so the draft may be revised.
+Other review transitions leave `canonical_id: null` and do not rewrite the frozen candidate claim.
 A transition to `deferred` or `rejected` must also set a substantive `review_reason`. When a UI saves
 properties separately, set `review_reason` before changing `status`; reasons are allowed on other
 states so the intermediate record remains valid. When moving a candidate to `ready`, clear or revise

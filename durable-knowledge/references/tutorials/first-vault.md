@@ -99,14 +99,20 @@ human-readable `title` is a clickable link even though the filename remains the 
 candidate ID, and its topics appear in the **Topics** column. In another Markdown editor, open the
 candidate file directly.
 
-Change only the review status:
+While the candidate is `pending`, correct or refine the same proposed claim in place as needed. Keep
+its ID, creation time, and filename, update `updated`, and validate the draft. If the edit would turn
+it into a materially different proposition, create a new candidate instead.
+
+When the draft is ready for integration, change the review status:
 
 ```yaml
 status: ready
 ```
 
 Leave `canonical_id: null` and `review_reason: null`. The `ready` state authorizes an ordinary
-canonical create or merge; it does not authorize retirement or edits to human-owned notes.
+canonical create or merge and freezes the selected claim-bearing revision. To revise it afterward,
+first return it to `pending`, edit and validate it, then select it again. The `ready` state does not
+authorize retirement or edits to human-owned notes.
 
 ## 4. Integrate the candidate
 

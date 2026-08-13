@@ -41,9 +41,11 @@ canonical human-readable label. The first H1 heading must exactly mirror `title`
 readers and metadata-aware Obsidian surfaces show the same name. Stable identity remains in `id`;
 changing a title must not change its ID or filename.
 
-A candidate title describes the proposed claim and remains provenance after capture. A canonical
-title names the long-lived semantic owner and may therefore be narrower, broader, or otherwise
-refined during authorized curation. Preserve useful prior canonical names in `aliases`.
+A candidate title describes the proposed claim. It may be refined while the candidate is `pending`
+and still represents the same proposition. Once the candidate leaves `pending`, the title is part of
+the reviewed claim revision and is frozen until the candidate returns to `pending`. A canonical title
+names the long-lived semantic owner and may therefore be narrower, broader, or otherwise refined
+during authorized curation. Preserve useful prior canonical names in `aliases`.
 
 Paper titles identify the cited work. Proposal titles describe the proposed action and conventionally
 start with `Proposal:`.
@@ -111,8 +113,8 @@ separate from the extracted proposition's semantic ownership.
 
 | Status | Meaning | `canonical_id` | `review_reason` |
 |---|---|---|---|
-| `pending` | Captured but not selected | `null` | Optional |
-| `ready` | Selected for semantic integration | `null` | Optional |
+| `pending` | Editable draft, not selected | `null` | Optional |
+| `ready` | Selected frozen revision for semantic integration | `null` | Optional |
 | `deferred` | Retained for later evidence, scope, or ownership review | `null` | Required |
 | `rejected` | Excluded from active integration | `null` | Required |
 | `integrated` | Incorporated into the referenced canonical owner | Existing canonical ID | Optional |
@@ -123,22 +125,33 @@ create only `pending`. An explicit user request to integrate a named non-applied
 as a transition to `ready` before canonical curation. Set `integrated` or `contested` only after the
 canonical write succeeds.
 
-Authorized review or curation may update only these candidate fields:
+While `status: pending`, an editor may refine the claim-bearing fields and body when the record still
+represents the same proposed proposition. Preserve these identity fields:
 
 ```text
-status
-canonical_id
-review_reason
-tags
-updated
+id
+record_type
+created
+filename
 ```
 
-`review_reason` records why the current or most recent review disposition was chosen. It is a
-single substantive scalar, not a second claim body. `deferred` and `rejected` require a non-empty
-reason. Other states may retain one when it remains useful, but reviewers should clear or revise
-stale rationale when the disposition changes.
+Update `updated` for every draft revision. A materially different main proposition, semantic owner,
+or claim split requires a new candidate rather than repurposing the existing identity.
 
-The original body, observation, source references, and evidence qualifiers remain provenance.
+Leaving `pending` freezes `title`, `knowledge_kind`, `evidence_state`, `scope`, `assumptions`,
+`invalidation_conditions`, `source_refs`, and the note body. Before changing frozen content on a
+`ready`, `deferred`, or `rejected` candidate, transition it to `pending`; this withdraws the prior
+selection or disposition and requires a new review. `integrated` and `contested` candidates are
+immutable provenance and are never reopened for claim edits.
+
+Authorized review or curation may update `status`, `canonical_id`, `review_reason`, `tags`, and
+`updated` without redefining the claim. `review_reason` records why the current or most recent review
+disposition was chosen. It is a single substantive scalar, not a second claim body. `deferred` and
+`rejected` require a non-empty reason. Other states may retain one when it remains useful, but
+reviewers should clear or revise stale rationale when the disposition changes.
+
+Once a candidate leaves `pending`, its body, observation, source references, and evidence qualifiers
+belong to the frozen reviewed revision.
 
 ## Evidence state
 
@@ -173,21 +186,22 @@ Lifecycle records curation maturity. Do not infer `stable` from age, backlinks, 
 
 ```text
 pending  → ready | deferred | rejected
-ready    → integrated | contested | deferred | rejected
-deferred → ready
-rejected → ready
+ready    → pending | integrated | contested | deferred | rejected
+deferred → pending | ready
+rejected → pending | ready
 ```
 
 A transition to `deferred` or `rejected` sets `review_reason` and `updated` with the status change.
 When an editor persists one property at a time, set the reason before the status; reasons are allowed
-on other states so the intermediate record remains valid. A transition back to `ready` clears or
-revises rationale that no longer applies. These changes affect review metadata only and must not
-rewrite the candidate body.
+on other states so the intermediate record remains valid. A transition to `pending` must be persisted
+before claim-bearing edits so another replica never observes newly revised content as already
+selected. A later transition back to `ready` clears or revises rationale that no longer applies.
 
 `integrated` and `contested` are terminal descriptions of an applied canonical effect. Reconsidering
 the underlying knowledge occurs through new evidence and curation, not by rewriting candidate
-provenance. `rejected` is excluded from the active queue but remains reviewable; it is not a terminal
-provenance state. Naming a non-applied candidate for integration never bypasses this graph: the same
+provenance. `rejected` is excluded from the active queue but remains reviewable; return it to
+`pending` before revising its claim, or move it directly to `ready` when the unchanged revision is
+reconsidered. Naming a non-applied candidate for integration never bypasses this graph: the same
 operation first records the applicable transition to `ready`.
 
 ## Claim shape

@@ -47,7 +47,7 @@ without requiring unsupported-file syncing on every replica.
 
 | Root | Owner | Default agent permission |
 |---|---|---|
-| `Knowledge/Candidates/**` | Shared review queue | Append pending candidates; review or curation updates managed metadata |
+| `Knowledge/Candidates/**` | Shared review queue | Create or refine pending drafts; review or curation updates managed metadata |
 | `Knowledge/Papers/**` | Source-grounded notes | Create or update from the identified source |
 | `Knowledge/Canonical/**` | Reviewed knowledge layer | Read; write only for `ready` candidates |
 | `Knowledge/Artifacts/artifact-sha256-*` | Evidence snapshots | Explicit or policy-authorized append only |
@@ -56,10 +56,16 @@ without requiring unsupported-file syncing on every replica.
 | `_durable-knowledge/Proposals/**` | Review artifacts | Create for preview, delay, retirement, or risk |
 | Everything else | Human or external owner | Read and link only unless the user names the exact target |
 
-For an existing candidate, review or authorized curation may change only `status`, `canonical_id`,
-`review_reason`, `tags`, and `updated`. Topic tags and `review_reason` are mutable curation metadata;
-treat all other fields and body content as provenance. Deferred and rejected candidates require a
-substantive `review_reason` explaining the disposition.
+For an existing candidate, claim-bearing fields and body content may change only while
+`status: pending`, and only while preserving the same proposed proposition. Preserve `id`,
+`record_type`, `created`, and the filename; update `updated`. Once the candidate leaves `pending`,
+its claim-bearing revision is frozen. Return a ready, deferred, or rejected candidate to `pending`
+before changing that revision, then require a new review. Integrated and contested claim revisions
+are immutable.
+
+Review or authorized curation may change `status`, `canonical_id`, `review_reason`, `tags`, and
+`updated` without reopening the claim. Topic tags and `review_reason` are mutable curation metadata.
+Deferred and rejected candidates require a substantive `review_reason` explaining the disposition.
 
 `status: ready` authorizes ordinary create or merge under `Knowledge/Canonical/`. It does not
 authorize conflict, retirement, unrelated canonical changes, or edits to human-owned notes. When an
@@ -103,12 +109,12 @@ Frontmatter timestamps remain ISO-8601 UTC values. Existing IDs without the rand
 valid; the validator preserves that compatibility and checks completed records for duplicate IDs.
 IDs are stable after creation. Renaming a file must not change its ID.
 
-Candidate titles are immutable provenance after capture. Canonical titles may change during
-authorized curation without changing the canonical ID; retain useful former names in `aliases`.
-Paper titles identify their source, and proposal titles describe their proposed action. Legacy
-records without `title` remain valid and fall back to their filenames in metadata-aware views. A
-deliberate schema migration may copy an existing first H1 into a missing `title` without otherwise
-changing candidate provenance.
+Candidate titles may be refined while `status: pending`; after selection they follow the candidate
+revision freeze. Canonical titles may change during authorized curation without changing the
+canonical ID; retain useful former names in `aliases`. Paper titles identify their source, and
+proposal titles describe their proposed action. Legacy records without `title` remain valid and fall
+back to their filenames in metadata-aware views. A deliberate schema migration may copy an existing
+first H1 into a missing `title` without otherwise changing candidate claim content.
 
 ## Frontmatter subset
 
@@ -311,7 +317,9 @@ python <skill>/scripts/validate.py --vault <vault>
 ```
 
 Validation checks structural contracts, not semantic truth, source quality, reviewer identity, or
-semantic equivalence.
+semantic equivalence. It validates the current snapshot and cannot prove whether a candidate was
+edited before or after a lifecycle transition. Enforce the pending-only claim-edit rule through the
+write workflow and use Git or another history layer when revision auditability matters.
 
 ## Replication model
 
@@ -343,6 +351,9 @@ Concurrency control is a lightweight operating convention, not a distributed loc
 skill does not create lock files, leases, or a coordination service.
 
 - Multiple clients may append candidates with unique IDs and filenames.
+- Persist a transition back to `pending` before revising claim-bearing candidate content. This
+  ordering prevents another replica from observing a changed claim under stale `ready`, `deferred`,
+  or `rejected` authorization metadata.
 - Repeated or concurrent attachment of identical artifact bytes converges on one hash directory even
   when source extensions differ. A conflicting existing hash path fails without overwrite.
 - Only one curation transaction may modify a given canonical note at a time.
