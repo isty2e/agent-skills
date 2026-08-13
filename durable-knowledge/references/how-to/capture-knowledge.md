@@ -31,22 +31,27 @@ When the task asks what a research project or corpus has learned, first follow
    - `SKIP` — no durable candidate;
    - `ROUTE` — preserve the material at its contextual owner;
    - `CAPTURE` — write one candidate;
+   - `REFINE` — revise an existing pending candidate that still represents the same proposed
+     proposition;
    - `DEFER` — the abstraction lacks enough evidence, scope, or rationale.
 5. For `CAPTURE`, instantiate the vault override of `candidate.md` or
    `assets/templates/candidate.md`. Generate the candidate ID using the vault contract's random-suffix
    format and use the full ID as the filename stem.
-6. Write one concise semantic `title` and mirror it exactly in the first H1 heading. Do not expose the
+6. For `REFINE`, require `status: pending`. Preserve the candidate's `id`, `record_type`, `created`,
+   and filename. If the main proposition, semantic owner, or required claim split changes
+   materially, use `CAPTURE` for a new candidate instead of repurposing the existing identity.
+7. Write one concise semantic `title` and mirror it exactly in the first H1 heading. Do not expose the
    timestamp, random suffix, ticket name, or activity-log wording in the title.
-7. Assign zero or more relevant `topic/<lowercase-kebab-case>` tags. Reuse equivalent existing tags;
+8. Assign zero or more relevant `topic/<lowercase-kebab-case>` tags. Reuse equivalent existing tags;
    add a new topic freely when no equivalent exists. Include every materially relevant topic without
    choosing a primary tag.
-8. Separate the actual observation or source claim from the proposed generalization.
-9. Record scope, assumptions, mechanism or rationale, a self-contained evidence summary, portable
+9. Separate the actual observation or source claim from the proposed generalization.
+10. Record scope, assumptions, mechanism or rationale, a self-contained evidence summary, portable
    source references, and invalidation conditions. When equations or symbolic notation make a
    relationship more precise, use them and define their symbols, domains, assumptions, and prose
    interpretation nearby.
-10. Record the likely semantic owner or the search terms used when none was found.
-11. Write the note under `Knowledge/Candidates/` with:
+11. Record the likely semantic owner or the search terms used when none was found.
+12. For `CAPTURE`, write the note under `Knowledge/Candidates/` with:
 
    ```yaml
    status: pending
@@ -54,9 +59,12 @@ When the task asks what a research project or corpus has learned, first follow
    review_reason: null
    ```
 
-12. Run structural validation.
+13. For `REFINE`, update `updated` after the content change and retain `status: pending`.
+14. Run structural validation.
 
-Capture must not set `ready`, merge canonical notes, or broaden the task into curation.
+Capture and refinement must not set `ready`, merge canonical notes, or broaden the task into
+curation. Do not revise a ready, deferred, or rejected candidate in place: return it to `pending`
+before editing so the previous selection or disposition cannot silently apply to new content.
 
 ## Choose candidate granularity
 
@@ -119,7 +127,8 @@ Report:
 
 - candidate path and ID;
 - one-sentence claim;
-- `status: pending` and `review_reason: null`;
+- `status: pending` and the current `review_reason`, noting how a prior disposition was addressed
+  when refining an existing draft;
 - evidence state;
 - possible canonical owner;
 - limitations blocking promotion;

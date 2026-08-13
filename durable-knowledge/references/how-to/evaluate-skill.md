@@ -169,10 +169,14 @@ Check that:
 - curation processes only `ready` candidates;
 - an explicit request to integrate a named non-applied candidate records `ready` before canonical
   curation rather than bypassing the lifecycle;
+- pending candidates can be refined in place without changing their ID, creation time, or filename
+  when they still represent the same proposed proposition;
+- `ready` freezes the selected claim-bearing revision, and any later claim edit first returns the
+  candidate to `pending` and requires a new selection;
 - canonical state is written before integration status;
 - integrated and contested candidates reference existing owners;
-- deferred and rejected candidates have a non-empty reason while their body and original provenance
-  remain unchanged;
+- deferred and rejected candidates have a non-empty reason; revising their claim-bearing content
+  first returns them to `pending` so the old disposition does not silently govern a new revision;
 - capture checks semantically similar deferred or rejected candidates and does not recreate one
   unless new evidence, scope, mechanism, or reuse value addresses the recorded reason;
 - proposal-only work leaves candidate status unchanged;

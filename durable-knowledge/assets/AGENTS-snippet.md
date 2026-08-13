@@ -43,8 +43,13 @@ context-complete propositions. Preserve semantically essential research scope an
 state while removing incidental origin coordinates.
 
 Never let background capture interrupt the primary task. Background capture creates only `pending`
-candidates and must never set `ready` or mutate canonical knowledge. Curate only `ready` candidates.
+candidates and must never set `ready` or mutate canonical knowledge. A pending candidate is an
+editable draft: refine the same proposed claim in place while preserving its ID, creation time, and
+filename. Curate only `ready` candidates, and treat their claim-bearing fields and body as frozen.
+Before revising a ready, deferred, or rejected candidate, return it to `pending`; after revision it
+must be selected again before integration. Integrated and contested candidate claim revisions remain
+immutable.
 When a user explicitly names a non-applied candidate and requests integration, record that selection
 by setting it to `ready` in the same operation before canonical curation. Deferred and rejected
-candidates require a substantive `review_reason`; this mutable review metadata must not rewrite the
-candidate body or original provenance.
+candidates require a substantive `review_reason`; tags and review metadata may change without
+rewriting the frozen claim revision.

@@ -112,9 +112,10 @@ retrieved records and zero new candidates are normal.
     content, or transcripts.
 13. **Keep capture selective.** Zero agent-initiated candidates is normal. There is no numeric quota;
     every candidate must independently pass admission.
-14. **Separate capture from selection.** Capture creates only `pending`. A human, explicit user
-    request, or vault policy selects material for integration by setting the candidate to `ready`
-    before canonical curation.
+14. **Separate drafting from selection.** Capture creates only `pending`. A pending candidate is an
+    editable draft of one proposed claim. A human, explicit user request, or vault policy selects
+    one exact claim-bearing revision for integration by setting the candidate to `ready`; that
+    revision is frozen until it is returned to `pending` and reviewed again.
 15. **Keep review portable.** Markdown and YAML are authoritative. Obsidian Properties and Bases are
     optional projections.
 16. **Write canonical state first.** Set a candidate to `integrated` or `contested` only after the
@@ -188,15 +189,21 @@ different contents, it must stop without overwriting either file.
 Operation permissions:
 
 - Bootstrap: create only the missing scaffolding described above.
-- Capture: append under `Knowledge/Candidates/` only.
+- Capture: create a pending candidate or refine an existing pending draft under
+  `Knowledge/Candidates/`. Preserve `id`, `record_type`, `created`, and the filename while revising
+  the same proposed claim; update `updated`. A materially different proposition requires a new
+  candidate.
 - Paper ingest: write the identified paper note and optional pending candidates.
 - Artifact attach: append one immutable content-addressed payload only when explicitly requested or
   authorized by vault policy; never overwrite or execute it.
 - Recall: no writes.
-- Curate: process only `ready` candidates. When an explicit user request names a non-applied
-  candidate for integration, first set it to `ready` in the same operation; then write canonical
-  state, reconcile candidate tags when needed, and update `status`, `canonical_id`, `review_reason`,
-  and `updated`. A `deferred` or `rejected` disposition requires a substantive `review_reason`.
+- Curate: process only `ready` candidates. Treat the claim-bearing fields and body of a ready
+  candidate as frozen. If they need revision, set the candidate to `pending` before editing and
+  require a new `ready` selection before integration. When an explicit user request names a
+  non-applied candidate for integration, first set it to `ready` in the same operation; then write
+  canonical state, reconcile candidate tags when needed, and update `status`, `canonical_id`,
+  `review_reason`, and `updated`. A `deferred` or `rejected` disposition requires a substantive
+  `review_reason`.
 - Proposals: write only when preview, delay, retirement, human-owned targets, or risk justifies one.
 
 Never expand the write surface merely because filesystem access is available.
@@ -229,13 +236,16 @@ Before reporting a write as complete:
    typed lifecycle or evidence semantics;
 6. confirm every `deferred` or `rejected` candidate has a substantive `review_reason` and that any
    retained reason still describes the current review disposition;
-7. confirm the evidence summary is self-contained and every source reference is replica-resolvable;
-8. for each `vault:artifact:sha256:` reference, confirm the payload is immutable, hash-valid, and
+7. confirm claim-bearing candidate edits occurred only while `status: pending`; if a reviewed
+   candidate was revised, confirm it was returned to `pending` before the edit and selected again
+   before integration;
+8. confirm the evidence summary is self-contained and every source reference is replica-resolvable;
+9. for each `vault:artifact:sha256:` reference, confirm the payload is immutable, hash-valid, and
    available on every replica required to evaluate the evidence;
-9. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
+10. confirm no new or modified record depends on a local path, bare filename, local ticket or issue
    name, session ID, or machine-scoped artifact label;
-10. run `scripts/validate.py --vault <vault>` when Python is available and resolve warnings for new or
+11. run `scripts/validate.py --vault <vault>` when Python is available and resolve warnings for new or
     modified records;
-11. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
+12. distinguish created, integrated, proposed, skipped, routed, and uncertain results.
 
 Do not claim integration when only a candidate, review transition, or proposal exists.

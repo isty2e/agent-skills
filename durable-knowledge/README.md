@@ -1,4 +1,4 @@
-# durable-knowledge skill — draft 0.5.1
+# durable-knowledge skill — draft 0.5.2
 
 `durable-knowledge` is a portable Agent Skill for maintaining a sparse Markdown knowledge base with
 human review, optional Obsidian views, grounded paper notes, and bounded recall.
@@ -154,6 +154,14 @@ Reviewers normally change `status`, record disposition rationale, and may refine
 - `pending` or `ready` → `rejected` with a non-empty `review_reason` to remove it from the active queue;
 - add, remove, or normalize `topic/...` tags without rewriting candidate claim provenance.
 
+`pending` is the editable draft state. Refine its title, claim, scope, assumptions, evidence, and
+invalidation conditions in place when they still describe the same proposed proposition, preserving
+the candidate ID, creation time, and filename. `ready` selects one exact claim-bearing revision and
+freezes it. Before changing the claim-bearing content of a ready, deferred, or rejected candidate,
+return it to `pending`, make the revision, validate it, and select it again. Integrated and contested
+candidate claim revisions remain immutable provenance; represent later changes through new evidence
+and curation.
+
 Before creating a candidate, inspect semantically similar deferred or rejected candidates and their
 `review_reason`. Create a duplicate claim only when new scope, evidence, mechanism, or reuse value
 materially addresses the recorded reason.
@@ -294,5 +302,8 @@ durable-knowledge/
 - Candidates already marked `deferred` or `rejected` must add a substantive `review_reason` before
   validation under draft 0.3.0 or later; other existing candidate states remain compatible without
   the field.
+- Validation checks only the current file snapshot. It cannot prove that claim-bearing edits occurred
+  while a candidate was `pending`; use the documented write order and a history layer when that
+  audit trail matters.
 - Bootstrap does not overwrite an existing customized `candidate-review.base`; upgrades must merge
   the bundled `review_reason` property and review-view columns deliberately.

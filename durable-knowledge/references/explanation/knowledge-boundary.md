@@ -84,13 +84,16 @@ observation → candidate → human selection → canonical integration
 ```
 
 A candidate preserves a potentially reusable claim without pretending that its scope, evidence, or
-semantic owner has been settled. Capture therefore creates `pending`, never `ready`.
+semantic owner has been settled. Capture therefore creates `pending`, never `ready`. Pending is an
+editable draft state: the same proposed proposition may be clarified, corrected, narrowed, or
+better supported without allocating a new candidate identity.
 
 A human, an explicit user request to integrate a named non-applied candidate, or an explicit policy
-selects a candidate by setting `ready`. The request may record that transition in the same operation,
-but it does not bypass the lifecycle. Curation then decides whether to create, merge, preserve a
-conflict, defer, or reject. This separation keeps opportunistic agent
-capture from silently changing the shared semantic layer.
+selects one exact claim-bearing revision by setting `ready`. That revision is frozen: a content edit
+first returns the candidate to `pending` and requires a new selection. The request may record the
+transition to `ready` in the same operation, but it does not bypass the lifecycle. Curation then
+decides whether to create, merge, preserve a conflict, defer, or reject. This separation keeps
+opportunistic agent capture from silently changing the shared semantic layer.
 
 ## Canonical notes are semantic owners, not final truth
 
