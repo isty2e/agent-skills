@@ -7,6 +7,7 @@
 - Review kind:
 - Base:
 - Head:
+- Review files:
 - Initial worktree state:
 - User constraints:
 - Forbidden actions:
@@ -59,7 +60,7 @@ A failed wrapper or gate blocks final delivery. Diagnose or replace the orchestr
 - [ ] No tracked child or wrapper remains active
 - [ ] Supervisor and intercom pending queues are empty; completion/control notices are drained
 - [ ] No later notice arrived after this pass; otherwise reset closure
-- [ ] Exact base/head, worktree state, and required checks were reconfirmed
+- [ ] Applicable target identity was reconfirmed: exact base/head for Git and captured snapshots for review files
 - [ ] Local validation followed the session's rerun and authorization policy
 - [ ] Every candidate was independently adjudicated, deduplicated, and scope-classified
 - [ ] Out-of-scope findings remain reportable but disposition-neutral

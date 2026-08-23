@@ -3,8 +3,8 @@
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream, createWriteStream } from "node:fs";
-import { mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
-import { isAbsolute, join, resolve } from "node:path";
+import { copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
+import { basename, dirname, isAbsolute, join, resolve } from "node:path";
 import { pipeline } from "node:stream/promises";
 import { pathToFileURL } from "node:url";
 
@@ -34,6 +34,7 @@ function requireStringArray(value, label) {
 }
 
 function normalizeTarget(target) {
+  if (target === undefined) return undefined;
   if (!target || typeof target !== "object" || Array.isArray(target)) {
     throw new TypeError("target must be an object");
   }
@@ -53,28 +54,77 @@ function materialPaths(materialDir) {
   return {
     directory: materialDir,
     manifestPath: join(materialDir, "review-material.json"),
+    reviewFilesDirectory: join(materialDir, "review-files"),
     changedFilesPath: join(materialDir, "changed-files.txt"),
     diffStatPath: join(materialDir, "diff-stat.txt"),
     diffPath: join(materialDir, "review.patch"),
   };
 }
 
-function buildLaneTask({ target, cwd, constraints, materials, requiredSkills, lane }) {
-  return [
+function normalizeReviewFiles(value, cwd, materials) {
+  if (value === undefined) return [];
+  return requireStringArray(value, "reviewFiles").map((path, index) => {
+    const sourcePath = resolve(cwd, path);
+    return {
+      sourcePath,
+      snapshotPath: join(
+        materials.reviewFilesDirectory,
+        String(index + 1).padStart(3, "0"),
+        basename(sourcePath),
+      ),
+    };
+  });
+}
+
+function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requiredSkills, lane }) {
+  const gitOnly = target !== undefined && reviewFiles.length === 0;
+  const lines = [
     "Read-only review lane.",
-    `Repository: ${target.repository}`,
-    `Working directory: ${cwd}`,
-    `Exact base: ${target.base}`,
-    `Exact head: ${target.head}`,
+  ];
+  if (target) {
+    lines.push(`Repository: ${target.repository}`);
+  }
+  lines.push(`Working directory: ${cwd}`);
+  if (target) {
+    lines.push(
+      `Exact base: ${target.base}`,
+      `Exact head: ${target.head}`,
+    );
+  }
+  lines.push(
     "",
-    "Parent-captured review material (read these first; do not ask the parent to provide a diff):",
+    gitOnly
+      ? "Parent-captured review material (read these first; do not ask the parent to provide a diff):"
+      : "Parent-captured review material (read these first):",
     `- Material manifest: ${materials.manifestPath}`,
-    `- Changed files: ${materials.changedFilesPath}`,
-    `- Diff summary: ${materials.diffStatPath}`,
-    `- Full patch: ${materials.diffPath}`,
+  );
+  if (target) {
+    lines.push(
+      `- Changed files: ${materials.changedFilesPath}`,
+      `- Diff summary: ${materials.diffStatPath}`,
+      `- Full patch: ${materials.diffPath}`,
+    );
+  }
+  for (const reviewFile of reviewFiles) {
+    lines.push(`- Review file snapshot: ${reviewFile.snapshotPath} (source: ${reviewFile.sourcePath})`);
+  }
+  lines.push(
     "- Use the read tool with offsets when an artifact is large.",
-    "- Do not run git diff, git show, or git log. The parent has already captured the exact immutable comparison.",
-    "- If a material file is unavailable or inconsistent, return EVIDENCE_UNAVAILABLE as the terminal report instead of asking for pasted diff content.",
+  );
+  if (target) {
+    lines.push("- Do not run git diff, git show, or git log. The parent has already captured the exact immutable comparison.");
+  }
+  if (reviewFiles.length > 0) {
+    lines.push(
+      "- If tool output is truncated, continue reading with offsets; truncation is not evidence absence.",
+      "- Captured review-file snapshots define the reviewed target even if live source files later differ.",
+      "- You may inspect repository context needed to assess them, but do not substitute live versions or silently expand the reviewed target.",
+    );
+  }
+  lines.push(
+    gitOnly
+      ? "- If a material file is unavailable or inconsistent, return EVIDENCE_UNAVAILABLE as the terminal report instead of asking for pasted diff content."
+      : "- If material is unavailable or inconsistent, return EVIDENCE_UNAVAILABLE instead of asking for pasted content.",
     "",
     "Required routed skills:",
     ...requiredSkills.map((skill) => `- ${skill}`),
@@ -94,7 +144,8 @@ function buildLaneTask({ target, cwd, constraints, materials, requiredSkills, la
     "List verification limits only; do not promote speculation to findings.",
     "",
     `Decision lane: ${lane.task}`,
-  ].join("\n");
+  );
+  return lines.join("\n");
 }
 
 export function normalizeReviewPacket(packet) {
@@ -107,6 +158,10 @@ export function normalizeReviewPacket(packet) {
   const materials = materialPaths(materialDir);
   const model = requireString(packet.model, "model");
   const target = normalizeTarget(packet.target);
+  const reviewFiles = normalizeReviewFiles(packet.reviewFiles, cwd, materials);
+  if (!target && reviewFiles.length === 0) {
+    throw new TypeError("review packet requires target, reviewFiles, or both");
+  }
   const timeoutMs = packet.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const constraints = requireStringArray(packet.constraints, "constraints");
   const reviewSkills = [...new Set(requireStringArray(packet.reviewSkills, "reviewSkills"))];
@@ -141,6 +196,7 @@ export function normalizeReviewPacket(packet) {
       skill: requiredSkills.join(", "),
       task: buildLaneTask({
         target,
+        reviewFiles,
         cwd,
         constraints,
         materials,
@@ -168,7 +224,8 @@ export function normalizeReviewPacket(packet) {
     materialDir,
     materials,
     model,
-    target,
+    ...(target === undefined ? {} : { target }),
+    reviewFiles,
     constraints,
     reviewSkills,
     lanes,
@@ -281,41 +338,64 @@ export async function captureReviewMaterial(packet) {
   const normalized = normalizeReviewPacket(packet);
   await mkdir(normalized.materialDir, { recursive: true, mode: 0o700 });
 
-  for (const [label, objectId] of [["base", normalized.target.base], ["head", normalized.target.head]]) {
-    const resolvedCommit = await runGitText({ cwd: normalized.cwd, args: ["rev-parse", "--verify", `${objectId}^{commit}`] });
-    if (resolvedCommit !== objectId) throw new Error(`target.${label} did not resolve to the exact supplied commit`);
+  let gitFiles;
+  if (normalized.target) {
+    for (const [label, objectId] of [["base", normalized.target.base], ["head", normalized.target.head]]) {
+      const resolvedCommit = await runGitText({ cwd: normalized.cwd, args: ["rev-parse", "--verify", `${objectId}^{commit}`] });
+      if (resolvedCommit !== objectId) throw new Error(`target.${label} did not resolve to the exact supplied commit`);
+    }
+
+    const common = ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", normalized.target.base, normalized.target.head, "--"];
+    await runGitCapture({
+      cwd: normalized.cwd,
+      args: ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", "--name-status", normalized.target.base, normalized.target.head, "--"],
+      outputPath: normalized.materials.changedFilesPath,
+    });
+    await runGitCapture({
+      cwd: normalized.cwd,
+      args: ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", "--stat", "--summary", normalized.target.base, normalized.target.head, "--"],
+      outputPath: normalized.materials.diffStatPath,
+    });
+    await runGitCapture({
+      cwd: normalized.cwd,
+      args: [...common.slice(0, 4), "--find-copies", "--full-index", "--unified=80", ...common.slice(4)],
+      outputPath: normalized.materials.diffPath,
+    });
+
+    const [changedFiles, diffStat, patch] = await Promise.all([
+      fileEvidence(normalized.materials.changedFilesPath),
+      fileEvidence(normalized.materials.diffStatPath),
+      fileEvidence(normalized.materials.diffPath),
+    ]);
+    gitFiles = { changedFiles, diffStat, patch };
   }
 
-  const common = ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", normalized.target.base, normalized.target.head, "--"];
-  await runGitCapture({
-    cwd: normalized.cwd,
-    args: ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", "--name-status", normalized.target.base, normalized.target.head, "--"],
-    outputPath: normalized.materials.changedFilesPath,
-  });
-  await runGitCapture({
-    cwd: normalized.cwd,
-    args: ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", "--stat", "--summary", normalized.target.base, normalized.target.head, "--"],
-    outputPath: normalized.materials.diffStatPath,
-  });
-  await runGitCapture({
-    cwd: normalized.cwd,
-    args: [...common.slice(0, 4), "--find-copies", "--full-index", "--unified=80", ...common.slice(4)],
-    outputPath: normalized.materials.diffPath,
-  });
+  let capturedReviewFiles = [];
+  if (normalized.reviewFiles.length > 0) {
+    await mkdir(normalized.materials.reviewFilesDirectory, { recursive: true, mode: 0o700 });
+    capturedReviewFiles = await Promise.all(normalized.reviewFiles.map(async ({ sourcePath, snapshotPath }) => {
+      const source = await stat(sourcePath);
+      if (!source.isFile()) throw new TypeError(`reviewFiles source must be a regular file: ${sourcePath}`);
+      await mkdir(dirname(snapshotPath), { recursive: true, mode: 0o700 });
+      await copyFile(sourcePath, snapshotPath);
+      const snapshot = await stat(snapshotPath);
+      return { sourcePath, path: snapshotPath, bytes: snapshot.size };
+    }));
+  }
 
-  const [changedFiles, diffStat, patch] = await Promise.all([
-    fileEvidence(normalized.materials.changedFilesPath),
-    fileEvidence(normalized.materials.diffStatPath),
-    fileEvidence(normalized.materials.diffPath),
-  ]);
   const manifest = {
     version: 1,
     capturedAt: new Date().toISOString(),
-    repository: normalized.target.repository,
     cwd: normalized.cwd,
-    base: normalized.target.base,
-    head: normalized.target.head,
-    files: { changedFiles, diffStat, patch },
+    ...(normalized.target === undefined ? {} : {
+      repository: normalized.target.repository,
+      base: normalized.target.base,
+      head: normalized.target.head,
+    }),
+    files: {
+      ...(gitFiles === undefined ? {} : gitFiles),
+      ...(capturedReviewFiles.length === 0 ? {} : { reviewFiles: capturedReviewFiles }),
+    },
   };
   await writeFile(normalized.materials.manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, { mode: 0o600 });
   return { normalized, manifest };
