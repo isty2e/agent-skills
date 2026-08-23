@@ -1,0 +1,51 @@
+{
+  "cwd": "/absolute/path/to/repository",
+  "materialDir": "/absolute/path/to/review-artifacts/pr-123/wave-001",
+  "model": "openai-codex/gpt-5.6-luna",
+  "target": {
+    "repository": "owner/repository#123",
+    "base": "0123456789abcdef0123456789abcdef01234567",
+    "head": "89abcdef0123456789abcdef0123456789abcdef"
+  },
+  "timeoutMs": 7200000,
+  "mission": {
+    "title": "PR #123 review"
+  },
+  "reviewSkills": [
+    "code-review-vector"
+  ],
+  "constraints": [
+    "Do not edit, commit, push, comment, merge, publish, or release.",
+    "Do not run tests, builds, formatters, or probes unless the parent explicitly authorizes a genuinely new check.",
+    "Do not access or modify the issue tracker unless the user explicitly authorizes it for this review.",
+    "Do not spawn nested subagents."
+  ],
+  "lanes": [
+    {
+      "key": "correctness-lifecycle",
+      "agent": "luna-max-reviewer",
+      "routedSkills": [
+        "invariant-driven-design",
+        "operational-invariant-audit"
+      ],
+      "task": "Trace the changed lifecycle and report introduced correctness or fail-closed defects only."
+    },
+    {
+      "key": "compatibility-public-contract",
+      "agent": "luna-max-reviewer",
+      "routedSkills": [
+        "compatibility-audit"
+      ],
+      "task": "Audit public, durable, CLI, and migration compatibility against real consumers."
+    },
+    {
+      "key": "tests-operations",
+      "agent": "luna-max-reviewer",
+      "routedSkills": [
+        "operational-invariant-audit",
+        "verification-before-completion"
+      ],
+      "task": "Audit regression coverage, cancellation, resource bounds, portability, and operational invariants."
+    }
+  ]
+}
