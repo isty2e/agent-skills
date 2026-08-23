@@ -107,6 +107,7 @@ export function normalizeReviewPacket(packet) {
   const materials = materialPaths(materialDir);
   const model = requireString(packet.model, "model");
   const target = normalizeTarget(packet.target);
+  const timeoutMs = packet.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const constraints = requireStringArray(packet.constraints, "constraints");
   const reviewSkills = [...new Set(requireStringArray(packet.reviewSkills, "reviewSkills"))];
   if (!reviewSkills.includes("code-review-vector")) {
@@ -146,6 +147,7 @@ export function normalizeReviewPacket(packet) {
         requiredSkills,
         lane: { task: requireString(lane.task, `lanes[${index}].task`) },
       }),
+      timeoutMs,
     };
     if (lane.cwd !== undefined && requireAbsolutePath(lane.cwd, `lanes[${index}].cwd`) !== cwd) {
       throw new TypeError(`lanes[${index}].cwd must equal the packet cwd`);
@@ -171,8 +173,7 @@ export function normalizeReviewPacket(packet) {
     reviewSkills,
     lanes,
     context: "fresh",
-    chatProgress: packet.chatProgress ?? "off",
-    timeoutMs: packet.timeoutMs ?? DEFAULT_TIMEOUT_MS,
+    timeoutMs,
     ...(packet.mission === undefined ? {} : { mission: packet.mission }),
     ...(packet.control === undefined ? {} : { control: packet.control }),
   };
@@ -190,7 +191,6 @@ function buildSubagentRequestFromNormalized(normalized) {
     workflowScript: buildWorkflowFromNormalized(normalized),
     async: true,
     context: normalized.context,
-    chatProgress: normalized.chatProgress,
     cwd: normalized.cwd,
     model: normalized.model,
     timeoutMs: normalized.timeoutMs,
