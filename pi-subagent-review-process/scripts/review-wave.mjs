@@ -181,7 +181,7 @@ export function normalizeReviewPacket(packet) {
 function buildWorkflowFromNormalized(normalized) {
   return [
     `const lanes = ${JSON.stringify(normalized.lanes)};`,
-    "return await runs.all(lanes);",
+    "return runs.all(lanes);",
   ].join("\n");
 }
 

@@ -10,19 +10,20 @@
 - Initial worktree state:
 - User constraints:
 - Forbidden actions:
+- Required current-head checks:
 
 ## Runtime preflight
 
 - [ ] `subagent({ action: "list" })` completed
-- [ ] Selected reviewer agent is executable and not disabled
-- [ ] Effective model and thinking are observable and match the session requirement
-- [ ] Parent-captured `review-material.json`, changed-file list, stat, and patch match the exact base/head
-- [ ] Every lane prompt contains readable material paths and forbids requesting or running `git diff`
-- [ ] Shared `reviewSkills` includes `code-review-vector`; every lane has explicit vector-specific `routedSkills`
-- [ ] `materialDir` is unique to this wave and is not shared with an earlier or concurrent wave
-- [ ] Review packet generated from `scripts/review-wave.mjs`
-- [ ] Generated workflow is exactly one `return await runs.all(lanes)` fanout
-- Top-level run id:
+- [ ] Selected reviewers are executable and enabled
+- [ ] Effective model and thinking match the session requirement
+- [ ] Packet starts from `assets/review-wave.example.json` with an unused absolute `materialDir`
+- [ ] Shared `reviewSkills` and lane-specific `routedSkills` cover the intended decisions
+- [ ] `scripts/review-wave.mjs` generated the immutable material and launch request
+- Review packet:
+- Generated request:
+- Material directory:
+- Wrapper run id:
 - Mission id:
 - Async directory:
 - Status path:
@@ -33,20 +34,17 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | | | | | | | prepared | | no | |
 
-## Parent evidence and candidate ledger
+## Parent evidence and candidates
 
 | candidate id | source lane/direct | scope class | approval relevant | mechanism | impact | current status | independent adjudication | root-cause owner |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | | | in-scope/out-of-scope | yes/no | | | open | | |
 
-Allowed candidate states: `open`, `confirmed`, `rejected`, `duplicate`, `pre-existing`, `needs-decision`. `approval relevant` must be `no` for every out-of-scope or pre-existing finding.
+Allowed states: `open`, `confirmed`, `rejected`, `duplicate`, `pre-existing`, `needs-decision`. Every out-of-scope or pre-existing finding has approval relevance `no`.
 
-## Terminal receipt phase
+## Machine gate
 
-- [ ] Top-level workflow state is `completed`, not failed, stopped, detached, or merely fleet-empty
-- [ ] Top-level status has no wrapper error and contains the directly awaited lane receipts in `workflow.value`
-- [ ] Every expected lane has exactly one terminal status step
-- [ ] Every lane has a child run id and a structured final output with in-scope, out-of-scope, and residual-risk sections
+- [ ] Wrapper completed successfully
 - [ ] `scripts/review-gate.mjs` passed after its settling interval
 - [ ] Machine-gate receipt copied below
 
@@ -54,21 +52,18 @@ Allowed candidate states: `open`, `confirmed`, `rejected`, `duplicate`, `pre-exi
 {}
 ```
 
-A failed wrapper—including `unawaited runs.run`—blocks final delivery even when child files exist. Resolve or replace the orchestration; do not salvage it into an approval.
+A failed wrapper or gate blocks final delivery. Diagnose or replace the orchestration; do not salvage child files into approval.
 
-## Quiescence and parent closure phase
+## Parent closure
 
 - [ ] No tracked child or wrapper remains active
-- [ ] `subagent_supervisor({ action: "pending" })` is empty
-- [ ] `intercom({ action: "pending" })` is empty
-- [ ] Delayed completion/control notices have been consumed
-- [ ] No new notice arrived after this closure pass; if one arrives, reset this section
-- [ ] Exact base/head and worktree state were reconfirmed
-- [ ] Required current-head CI/check evidence was reconfirmed
-- [ ] Local validation followed the session's no-rerun/authorization policy
-- [ ] Every candidate was independently adjudicated, deduplicated, and assigned a scope class
-- [ ] Out-of-scope findings are retained for reporting but excluded from disposition logic
-- [ ] Every prior finding was retained only if it still reproduces
+- [ ] Supervisor and intercom pending queues are empty; completion/control notices are drained
+- [ ] No later notice arrived after this pass; otherwise reset closure
+- [ ] Exact base/head, worktree state, and required checks were reconfirmed
+- [ ] Local validation followed the session's rerun and authorization policy
+- [ ] Every candidate was independently adjudicated, deduplicated, and scope-classified
+- [ ] Out-of-scope findings remain reportable but disposition-neutral
+- [ ] Every retained prior finding still reproduces
 - [ ] Residual risks and excluded evidence are recorded
 
 ## Final disposition
@@ -76,10 +71,10 @@ A failed wrapper—including `unawaited runs.run`—blocks final delivery even w
 State: `blocked | request-changes | approve | no-disposition`
 
 - In-scope findings affecting disposition:
-- Out-of-scope findings reported separately with no disposition effect:
+- Out-of-scope findings reported separately:
 - Rejected candidates:
 - Verification evidence:
 - Residual risks:
 - Exactly one final report delivered: [ ]
 
-Do not label a post-final child message as a “late review.” Its arrival proves the closure phase was premature; retract the disposition and reopen the ledger.
+A post-final child message means closure was premature. Retract the disposition and reopen this ledger.
