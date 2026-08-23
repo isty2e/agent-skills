@@ -143,7 +143,10 @@ export function validateReviewRun({
     machineGatePassed: true,
     finalDispositionAuthorized: false,
     runId: status.runId,
-    target: normalized.target,
+    ...(normalized.target === undefined ? {} : { target: normalized.target }),
+    ...(normalized.reviewFiles.length === 0
+      ? {}
+      : { reviewFiles: normalized.reviewFiles.map(({ sourcePath }) => sourcePath) }),
     terminalAt: settledAt,
     settleMs,
     receipts: expectedKeys.map((key) => {
@@ -158,7 +161,9 @@ export function validateReviewRun({
       };
     }),
     remainingManualChecks: [
-      "Reconfirm the exact base/head and worktree state.",
+      normalized.target !== undefined && normalized.reviewFiles.length === 0
+        ? "Reconfirm the exact base/head and worktree state."
+        : "Reconfirm the exact reviewed material and worktree state.",
       "Confirm no active subagent fleet remains.",
       "Confirm subagent_supervisor and intercom pending queues are empty.",
       "Consume delayed completion/control notices; any new notice resets the closure pass.",
