@@ -3,7 +3,7 @@
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
-import { normalizeReviewPacket } from "./review-wave.mjs";
+import { normalizeReviewPacket, RECEIPT_SECTIONS } from "./review-wave.mjs";
 
 const DEFAULT_SETTLE_MS = 30_000;
 const SUCCESS_STATES = new Set(["complete", "completed"]);
@@ -16,14 +16,18 @@ function resultSucceeded(result) {
   return result?.success === true || result?.ok === true;
 }
 
+function parseReceiptSections(output) {
+  return [...output.matchAll(/^# ([^\r\n]+?)[ \t]*\r?$/gm)].map((match) => match[1]);
+}
+
 function requireTerminalOutput(result, key) {
   if (typeof result?.output !== "string" || result.output.trim() === "") {
     throw new Error(`${key}: missing terminal output`);
   }
-  if (!/^## In-scope findings\s*$/m.test(result.output)
-    || !/^## Out-of-scope findings\s*$/m.test(result.output)
-    || !/^## Residual risks\s*$/m.test(result.output)) {
-    throw new Error(`${key}: terminal report is missing required in-scope/out-of-scope/residual-risk sections`);
+  const sections = parseReceiptSections(result.output);
+  if (sections.length !== RECEIPT_SECTIONS.length
+    || sections.some((section, index) => section !== RECEIPT_SECTIONS[index])) {
+    throw new Error(`${key}: terminal report must contain exactly the required level-1 sections in order`);
   }
   if (/\bEVIDENCE_UNAVAILABLE\b/.test(result.output)) {
     throw new Error(`${key}: review evidence is unavailable`);
