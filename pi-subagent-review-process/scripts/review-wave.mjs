@@ -13,6 +13,12 @@ const OBJECT_ID_PATTERN = /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/;
 const DEFAULT_TIMEOUT_MS = 7_200_000;
 const MAX_GIT_STDERR_BYTES = 64 * 1024;
 
+export const RECEIPT_SECTIONS = Object.freeze([
+  "In-scope findings",
+  "Out-of-scope findings",
+  "Residual risks",
+]);
+
 function requireString(value, label) {
   if (typeof value !== "string" || value.trim() === "") {
     throw new TypeError(`${label} must be a non-empty string`);
@@ -77,6 +83,7 @@ function normalizeReviewFiles(value, cwd, materials) {
 }
 
 function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requiredSkills, lane }) {
+  const [inScopeSection, outOfScopeSection, residualRisksSection] = RECEIPT_SECTIONS;
   const gitOnly = target !== undefined && reviewFiles.length === 0;
   const lines = [
     "Read-only review lane.",
@@ -136,11 +143,12 @@ function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requi
     "- Use supervisor/intercom only for a blocking decision or a meaningful progress checkpoint.",
     "",
     "Terminal report contract:",
-    "## In-scope findings",
+    "Use exactly the following three level-1 ATX headings, in this order, each on its own line. Do not add a document title or another level-1 heading.",
+    `# ${inScopeSection}`,
     "List concrete evidence-backed findings within the overall reviewed change boundary that can affect approval, or write NO FINDING. The lane focus organizes review work but does not redefine overall review scope; report a material cross-lane finding here and notify the parent.",
-    "## Out-of-scope findings",
+    `# ${outOfScopeSection}`,
     "List concrete evidence-backed findings discovered during the lane that are outside the reviewed change boundary or pre-existing. These must be reported but must not affect approval. Write NO FINDING when empty.",
-    "## Residual risks",
+    `# ${residualRisksSection}`,
     "List verification limits only; do not promote speculation to findings.",
     "",
     `Decision lane: ${lane.task}`,
