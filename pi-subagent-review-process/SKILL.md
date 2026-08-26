@@ -17,7 +17,7 @@ compatibility: Requires Pi with pi-subagents workflowScript, Node.js, subagent s
    node scripts/review-wave.mjs review-packet.json > review-request.json
    ```
 
-   `reviewFiles` paths are relative to `cwd` or absolute and must name regular files. Omit `target` for file-only review. Captured snapshots define the target; reviewers may inspect needed repository context but must not substitute live files or expand scope. Treat generator rejection as blocking and run its `workflowScript` unchanged: preserve the generated `return runs.all(lanes)` because current `pi-subagents` may falsely reject `return await runs.all(lanes)`. For commit ranges, prohibit `git diff`, `git show`, and `git log`.
+   `reviewFiles` paths are relative to `cwd` or absolute and must name regular files. Omit `target` for file-only review. Captured snapshots define the target; reviewers may inspect needed repository context but must not substitute live files or expand scope. Treat generator rejection as blocking and run its `workflowScript` unchanged; do not hand-edit the generated terminal `return runs.all(lanes)`. For commit ranges, prohibit `git diff`, `git show`, and `git log`.
 5. Launch the returned `workflowScript` once as an async fresh-context fanout. Record wrapper, mission, child, async, status, model, and thinking evidence.
 6. Keep the main session available for user and subagent communication: do not call `subagent_wait()` while the wave is active. Continue parent review, answer supervisor/intercom requests, share evidence, and steer drift; then yield so Pi can wake the session. Delayed notification does not justify polling or a duplicate wave.
 7. On wake, collect the wrapper result from the completion notice or durable status; timeout is not completion.
