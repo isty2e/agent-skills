@@ -2,11 +2,11 @@
 
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { createReadStream, createWriteStream } from "node:fs";
+import { createReadStream, createWriteStream, realpathSync } from "node:fs";
 import { copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, isAbsolute, join, resolve } from "node:path";
 import { pipeline } from "node:stream/promises";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 const KEY_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/;
 const OBJECT_ID_PATTERN = /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/;
@@ -417,7 +417,10 @@ export async function runCli(args = process.argv.slice(2)) {
   process.stdout.write(`${JSON.stringify(buildSubagentRequestFromNormalized(normalized), null, 2)}\n`);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1]
+  && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])
+) {
   runCli().catch((error) => {
     process.stderr.write(`${error.stack ?? error}\n`);
     process.exitCode = 1;

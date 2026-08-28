@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
+import { realpathSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 import { normalizeReviewPacket, RECEIPT_SECTIONS } from "./review-wave.mjs";
 
@@ -204,7 +205,10 @@ export async function runCli(args = process.argv.slice(2)) {
   process.stdout.write(`${JSON.stringify(validateReviewRun({ packet, status, results, settleMs }), null, 2)}\n`);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1]
+  && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])
+) {
   runCli().catch((error) => {
     process.stderr.write(`${error.stack ?? error}\n`);
     process.exitCode = 1;
