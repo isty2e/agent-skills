@@ -3,7 +3,11 @@
 set -euo pipefail
 umask 077
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+if ! SCRIPT_PATH="$(readlink -f -- "${BASH_SOURCE[0]}")"; then
+    echo "[https-throttle] could not resolve the wrapper path" >&2
+    exit 2
+fi
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd -P)"
 PYTHON_BIN="${HTTPS_THROTTLE_PYTHON:-python3}"
 RUNTIME_PARENT="${HTTPS_THROTTLE_RUNTIME_DIR:-${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}}"
 LIMIT_MIB_PER_SEC=""

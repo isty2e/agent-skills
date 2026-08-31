@@ -109,6 +109,107 @@ class BandwidthProxyTest(unittest.TestCase):
             self.assertNotEqual(completed.returncode, 0)
             self.assertEqual(ready_file.read_text(), "sentinel\n")
 
+    def test_proxy_refuses_to_follow_an_existing_ready_file_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            directory = Path(temporary_directory)
+            target = directory / "target"
+            target.write_text("sentinel\n")
+            ready_file = directory / "proxy-ready"
+            ready_file.symlink_to(target)
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-I",
+                    str(_PROXY_SCRIPT),
+                    "--limit-mib-per-sec",
+                    "2",
+                    "--ready-file",
+                    str(ready_file),
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=5,
+            )
+
+            self.assertNotEqual(completed.returncode, 0)
+            self.assertTrue(ready_file.is_symlink())
+            self.assertEqual(target.read_text(), "sentinel\n")
+
+    def test_proxy_sets_ready_permissions_without_path_chmod(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            ready_file = Path(temporary_directory) / "proxy-ready"
+            probe = """
+import os
+import runpy
+import sys
+from pathlib import Path
+
+namespace = runpy.run_path(sys.argv[1], run_name="https_throttle_probe")
+
+def reject_path_chmod(*args: object, **kwargs: object) -> None:
+    raise AssertionError("ready-file permissions must use the open descriptor")
+
+os.chmod = reject_path_chmod
+Path.chmod = reject_path_chmod
+namespace["_write_ready_file"](Path(sys.argv[2]), "redacted")
+"""
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-I",
+                    "-c",
+                    probe,
+                    str(_PROXY_SCRIPT),
+                    str(ready_file),
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=5,
+            )
+
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertEqual(stat.S_IMODE(ready_file.stat().st_mode), 0o600)
+            self.assertEqual(ready_file.read_text(), "redacted\n")
+
+    def test_wrapper_resolves_proxy_when_invoked_through_symlinks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            directory = Path(temporary_directory)
+            bin_directory = directory / "bin"
+            bin_directory.mkdir()
+            wrapper_link = bin_directory / "https-throttle"
+            wrapper_link.symlink_to(_WRAPPER_SCRIPT)
+            runtime_directory = directory / "runtime target"
+            runtime_directory.mkdir()
+            runtime_link = directory / "runtime-link"
+            runtime_link.symlink_to(runtime_directory, target_is_directory=True)
+            environment = os.environ.copy()
+            environment["HTTPS_THROTTLE_PYTHON"] = sys.executable
+            completed = subprocess.run(
+                [
+                    "bash",
+                    str(wrapper_link),
+                    "--limit-mib-per-sec",
+                    "2",
+                    "--runtime-parent",
+                    str(runtime_link),
+                    "--",
+                    sys.executable,
+                    "-I",
+                    "-c",
+                    "pass",
+                ],
+                env=environment,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertEqual(list(runtime_directory.iterdir()), [])
+            self.assertIn("[https-throttle] final", completed.stderr)
+
     def test_wrapper_preserves_child_exit_and_removes_runtime_credentials(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             runtime_parent = Path(temporary_directory)

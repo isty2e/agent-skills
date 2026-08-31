@@ -262,8 +262,8 @@ def _write_ready_file(path: Path, proxy_url: str) -> None:
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
     descriptor = os.open(path, flags, 0o600)
     with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        os.fchmod(handle.fileno(), 0o600)
         handle.write(f"{proxy_url}\n")
-    path.chmod(0o600)
 
 
 async def _serve(options: _ProxyOptions) -> None:
