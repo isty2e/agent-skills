@@ -6,6 +6,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
 
 - [`durable-knowledge`](durable-knowledge/) — Maintain a sparse, portable Markdown knowledge base
   with human review, optional Obsidian views, grounded paper notes, and bounded recall.
+- [`https-throttle`](https-throttle/) — Limit aggregate receive bandwidth for proxy-aware HTTPS commands with a
+  rootless authenticated localhost proxy.
 - [`pi-subagent-review-process`](pi-subagent-review-process/) — Run gated Pi subagent code-review fanout with
   parent-captured diffs or files, structured receipts, scope-separated findings, and quiescence-checked closure.
 - [`typst-author`](typst-author/) — Create, edit, troubleshoot, and validate Typst documents using authoritative
