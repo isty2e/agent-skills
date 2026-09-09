@@ -1,26 +1,31 @@
 # Measurement And Attribution
 
-Reuse runtime events and approved task records. Runtime owns usage/lifecycle facts; the parent owns assessment. Record
-available facts without requiring unsupported fields or inventing values.
+Runtime owns usage/lifecycle facts; the parent owns collection and assessment. Keep compact experience in the approved
+project file, normally `.agents/delegation.md`; link detailed runtime records. Record available facts without requiring
+unsupported fields or inventing values.
+
+## Collect Without A Reminder
+
+Before the first delegation, identify exposed result, status, artifact, and attributable parent-usage sources; reuse the
+plan until the host changes. For each attempt:
+
+1. create the pending record under the skill's launch-precondition rule;
+2. read returned usage, then make one bounded exposed lookup for missing fields;
+3. after verification or repair, add effective settings, use, acceptance, parent burden, and next choice;
+4. before reporting, reconcile known attempts and confirm the save or disclose the gap.
+
+Retain source, units, inclusion scope, and whether lookup was attempted. Distinguish not reported, no exposed lookup,
+lookup failure, unavailable attribution, and skipped collection. Do not poll, scan unrelated sessions, retry without new
+evidence, or relaunch work to recreate metrics.
 
 ## Start With The Decision Record
 
-For ordinary work, link the task and any attempts to a compact record:
-
-- the candidate, primary expected benefit, acceptable extra burden, and direct/delegated choice with its selection basis
-- reported effective settings and any requested/effective differences
-- evidence/artifact references, execution outcome, parent assessment, and final acceptance
-- available usage/time, failures and repair burden, with unknowns and attribution limits
-- whether the original expectation was met, the supporting evidence, and the next choice: keep, adjust, revert, or
-  gather more evidence; link any local hint revision.
-
-Reuse existing task records and references rather than copying them into a second log. The project hint file retains
-current choices and concise evidence, not every execution record. For a representative candidate kept with the parent,
-record why, actual burden if observed, and when to reconsider delegation. Do not record every direct operation or run a
-child merely to populate a baseline. An unrun alternative has an estimate, not an observed outcome.
-
-The skill's first-run example illustrates this record. Use the detail below when establishing collection or making
-comparisons; a short routine record is not evidence for claims it cannot support.
+Use [the template](../templates/delegation.md) to keep decision ID and scope, expectation and selection basis, intended and
+effective settings, attempts/status, artifacts, measurements and missing reasons, parent assessment, and next choice.
+Record every launch attempt, including failures, cancellations, and unused results, even when no hint changes. For a
+representative delegation decision kept with the parent, record the reason, observed burden, and revisit condition. Link
+full artifacts instead of copying transcripts, and keep essential facts locally. Do not invent pre-run expectations,
+record routine direct work, or launch a child merely to populate a baseline.
 
 ## Add Detail For Comparisons
 
@@ -30,11 +35,11 @@ Record task/delegation ID, linked attempts, and available facts needed to recons
   burden, relevant scope/verification difficulty, routine/experimental selection, and selection basis/source: local
   measurement, operator report, vendor guidance, or proposed trial.
 - **Configuration:** Host/version, parent/child identities, profile/settings version, requested/effective
-  model/provider/version or unresolved alias, effort, service tier, fresh/fork/resume, permissions/limits, and override
-  reason.
+  model/provider/version or unresolved alias, skill revision, effort, service tier, fresh/fork/resume, concurrency,
+  permissions/limits, and override reason.
 - **Execution:** Start/end, terminal status, attempts/fallback/descendants, and artifact/check references.
 - **Usage:** Input/output and reported cache/reasoning categories with inclusion semantics, currency/cost source or
-  quota measure, and completeness/missing fields.
+  quota measure, completeness/missing fields, collection attempts/sources/outcomes, and missing-value reasons.
 - **Parent:** Contract assessment, use/disposition, evidence, usefulness, repair burden/diagnosis, expectation versus
   outcome, next choice or hint revision, and later corrections.
 
@@ -81,6 +86,8 @@ time, and failure/timeout counts. Divide all observed costs, including failures,
 report undefined, total cost, and failures. Preserve completeness caveats. Show child assessment alongside final
 acceptance so parent repairs do not hide failure.
 
-Keep source records separate from derived summaries. Deduplicate delivered results by stable event/attempt IDs. Without
-durable storage or usable telemetry, retain permitted notes and disclose limits. Use [tuning.md](tuning.md) to interpret
-these observations before changing routing.
+Keep observations distinct from derived hints even in the same file. Deduplicate by decision/run/attempt IDs, including
+membership retained in consolidated summaries. Preserve counts and missingness; do not pool incompatible settings or
+accounting coverage. Report pending/unassessed runs separately and state the terminal cohort used for acceptance rates.
+A completed-cohort rate must not conceal excluded observations. Use [tuning.md](tuning.md) before consolidating or
+changing routing; missing records preclude a claim of complete capture.

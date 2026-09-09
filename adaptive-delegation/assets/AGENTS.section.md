@@ -1,24 +1,22 @@
 ## Delegation
 
-At substantive task decomposition—not every tool call—consider independent evidence-gathering, verification, or
-implementation units for delegation. Candidate present, returned-work assessment, or delegation tuning: load and apply
-`adaptive-delegation`. Neither a candidate nor activation requires spawning.
+At substantive task decomposition—not every tool call—consider independent research, verification, or implementation.
+When a candidate exists, a subagent attempt changes state, or experience is reviewed, load and apply
+`adaptive-delegation` without another request. Activation does not require spawning. Record every launch attempt and
+representative delegation decisions kept with the parent, not routine direct work.
 
-Project hints: use project-root `.agents/delegation.md` unless project instructions name another file. Read applicable
-hints before work/settings choices. The parent may create/update within the boundaries below; preserve existing content
-and follow repository write/sharing policy. Learned project choices belong here, not in the shared skill.
+Keep current choices and compact observations in project-root `.agents/delegation.md` unless project instructions name
+another file. The parent may create or update the authorized file within repository policy without per-run reapproval;
+preserve human content and do not silently change destinations.
 
-- Before dispatch: compare direct execution including briefing, verification, integration, repair; name primary expected
-  benefit (including any bounded experiment's information goal) and acceptable extra burden under user priorities.
-- Preserve the accepted correctness boundary and parent-only duties. Parent owns decomposition, decisions, integration,
-  acceptance; verify child evidence/artifacts.
-- Resolve model, effort, context, permissions, limits from authorized runtime settings. Do not silently inherit
-  expensive parent setup, switch providers, or mistake prompting for enforcement.
-- Bound each child: objective, authoritative context, instructions, output evidence/artifact, stops. Avoid conflicting
-  writes, redundant work, unauthorized nested delegation.
-- Keep reported statistics and evidence-backed parent assessment, including failures/repair. Distinguish unknowns from
-  zeros, measurements from estimated savings; avoid unnecessary confidential logs.
-- After substantive use: compare result/expectation; keep, adjust, or revert local routing, or gather more evidence.
-  Parent may revise approved local hints within existing models, pins, budgets, experiment scope; preserve previous
-  choice/recheck condition. Observations authorize neither shared-guidance edits, permission expansion, nor weaker
-  acceptance.
+- Before dispatch, compare direct execution with total delegation burden; state the expected benefit and acceptable cost.
+  Save a pending observation. If this would violate a clean-checkout or other launch precondition, retain it in permitted
+  session state, launch once, then persist the attempt or failure immediately.
+- Keep decomposition, decisions, integration, and acceptance with the parent. Bound child scope, settings, permissions,
+  limits, evidence, and stops; avoid conflicting writes and unauthorized nested delegation.
+- On results, failures, or cancellations, read returned statistics and make one bounded exposed lookup for missing fields.
+  After verification or repair, update the observation even when no hint changes.
+- Before reporting or handoff, reconcile known attempts, confirm persistence or disclose the gap, and compare outcome with
+  the original expectation. Missing telemetry does not block the task result and is never zero.
+- Revise project hints only within authorized models, budgets, and experiment scope. Observations do not authorize shared
+  guidance changes, publication, permission expansion, or weaker acceptance.

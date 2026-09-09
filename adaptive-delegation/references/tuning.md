@@ -40,31 +40,29 @@ failures/cancellations and relevant tail cost/time, not just successful means. S
 establish no quality loss. When evidence is insufficient, retain the candidate and name what observation would change
 the choice rather than manufacture a ranking.
 
-## 3. Revise Scoped Hints Within Authority
+## 3. Retain Experience And Revise Hints Within Authority
 
-The parent owns hint updates; children may supply evidence or proposals. Within the approved local scope, the parent may
-keep, adjust, or revert a hint without seeking permission for each update. Eligible changes include choosing direct
-work, repartitioning, revising handoffs, and selecting allowed context, model/effort, or concurrency settings. Hints
-cannot override pins, budgets, permissions, acceptance, or governing instructions. Changes outside that scope require
-authorization rather than a self-assessment score.
+The coordinating parent owns records for its delegation tree; descendants return evidence. Within authorized project
+scope, the parent may keep, adjust, or revert choices about direct work, partition, handoff, context, model/effort, or
+concurrency. Hints cannot override instructions, pins, budgets, permissions, or acceptance.
 
 ### Use One Project File
 
-Resolve the hint path from project instructions. When they adopt the default, use `.agents/delegation.md` relative to
-the project root they govern, not the shell's current directory. Honor an explicitly designated alternative instead of
-creating a second file. If the project root or authority is unclear, clarify before writing; without an approved file,
-keep session-local notes and disclose the persistence limit.
+Resolve the path from project instructions once per session: normally project-root `.agents/delegation.md`, never a
+second ad hoc destination. Follow the skill's launch-precondition rule when initializing it from the
+[template](../templates/delegation.md). Read before editing, preserve human content, reconcile concurrent changes, and
+confirm the write. Without an approved writable path, retain permitted session evidence and disclose the gap.
 
-Read the existing file before editing and preserve unrelated entries and human-authored content. If absent and creation
-is authorized, initialize it from the [project hint template](../templates/delegation.md) when there is a useful
-observation to retain. An empty file supplies no learned preference. Never overwrite an existing file with the template;
-reconcile concurrent edits rather than replacing another session's work. Local update authority does not authorize
-committing, publishing, or changing tracking policy.
+Keep current hints and compact attempt observations together. Preserve stable decision/run IDs, facts apart from
+interpretation, pending assessments, and essential context when detailed links may expire. Do not store credentials,
+full transcripts, or unnecessary confidential material. Local write authority does not authorize commits, publication,
+tracking changes, or host configuration.
 
-Keep current routing decisions with concise evidence, counterevidence, and rollback context, not an append-only run log.
-Link approved task records for detail; retain enough evidence in each hint to interpret it if a temporary report
-expires. Local hints guide choices; editing the host's execution configuration still requires authority for that
-surface.
+### Consolidate Without Erasing Evidence
+
+Merge only comparable observations. Preserve membership or IDs, counts and denominators, settings/skill scope, accounting
+coverage, missingness, failures, corrections, and counterevidence. Keep pending entries identifiable; never convert
+estimates into measurements or derive unsupported rates or quantiles.
 
 ### Revise And Recheck
 
@@ -93,3 +91,13 @@ investigate context, decomposition, and verification.
 Review compact summaries after a useful batch or material failure, not full histories per launch. Stop at the experiment
 budget and report uncertainty. Savings never weaken correctness, permissions, confidentiality, or parent-only duties.
 Return out-of-authority changes to the governing decision process.
+
+## 4. Review Project Experience For Shared Guidance
+
+Only in a separate authorized maintenance task, compare selected projects' approved observations and hints; do not sweep
+home directories or cross confidentiality boundaries. Group compatible task, settings, and skill revisions while
+retaining failures, repair, missingness, coverage, and contrary evidence.
+
+A shared-skill proposal records its evidence, affected instruction, expected benefit, uncertainty, and recheck or
+rollback. Submit it for explicit review; local records never authorize publication or automatic promotion. Insufficient
+evidence calls for a narrower claim or a more informative observation, not an invented improvement.

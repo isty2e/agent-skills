@@ -1,51 +1,47 @@
 # Adaptive Delegation
 
-Choose whether and how to delegate to subagents, then use observed results to improve project-local routing.
+Choose whether and how to delegate, then use observed cost, time, and parent repair to improve project-local choices.
 
 ## Setup
 
 1. Make this directory available through your host's supported skill path.
 2. Merge [assets/AGENTS.section.md](assets/AGENTS.section.md) into the project instructions your host reads. Do not
-   replace the existing instructions wholesale.
+   replace existing instructions wholesale.
 3. Use authorized local settings for models, tools, permissions, and budgets.
-4. Keep local hints in `.agents/delegation.md` at the project root. To use another file, name it in project
-   instructions; do not maintain both.
+4. Keep current hints and compact observations in project-root `.agents/delegation.md`, or in the one alternative named
+   by project instructions.
 
-Load the skill when substantive task decomposition reveals an independent delegation candidate, when assessing returned
-work, or when tuning delegation. Compare delegation with direct execution; loading the skill does not require spawning.
+The skill description covers delegation decisions, dispatch, results, failures, cancellations, and experience review.
+Once adopted as project instructions, the supplied section authorizes the parent to create or update the designated file
+within repository policy without per-run reapproval. Installing the skill alone creates no hook or write authority.
 
 ## Project-Local Learning
 
-The shared skill defines the procedure. `.agents/delegation.md` holds learned project choices. Adopting the supplied
-section in project instructions allows the parent agent to create and update that file within those instructions and
-repository write policy.
+Record every launch attempt and representative delegation decisions kept with the parent, not routine direct work. Start
+a pending observation before dispatch. If that would violate a launch precondition such as a clean checkout, keep the
+fields in permitted session state and persist them immediately after the attempt. Add returned statistics, one bounded
+lookup for missing fields, and the parent's verified assessment. Missing values stay unknown with a reason; unchanged
+hints, failures, cancellations, and unused results still count as experience.
 
-Start from [templates/delegation.md](templates/delegation.md) when there is a useful observation to retain. Do not
-replace an existing file with the template. Keep current choices, scope, evidence and counterevidence, recheck
-conditions, and the previous choice for rollback—not a full execution log. File tracking, commits, and sharing require
-the corresponding repository policy and authority.
+Keep observations and current hints together without copying transcripts. Preserve human content, reconcile concurrent
+edits, and consolidate only without losing covered IDs, failures, missingness, or contrary evidence. Recording does not
+authorize commits, publication, permission changes, or weaker acceptance. If the approved destination is unavailable,
+disclose the gap; the task result need not fail.
 
-Before execution, state the primary expected benefit and acceptable extra burden. Afterward, assess the evidence and
-parent repair effort, then keep, adjust, or revert the local choice. Recheck changes on the next applicable task; weak
-evidence does not require a change. If no local file and update authority are approved, use permitted session-local
-notes and disclose the persistence limit.
-
-Local adjustments cover direct-versus-delegated work, task partition, handoff, context, and allowed execution settings.
-Changing the shared skill, governing instructions, permissions, budgets, or acceptance criteria requires separate
-authorization. The guide does not establish that a routing choice improves quality, latency, or cost; evaluate those
-outcomes in the adopting project.
+A separate authorized review may compare selected projects' records and propose shared-skill changes. Local recording
+never publishes or promotes those changes automatically. Actual no-reminder behavior depends on the host; use the
+[recording check](evaluations/recording.md) before relying on unattended capture.
 
 ## Documents
 
-- [SKILL.md](SKILL.md): candidate selection, execution settings, handoff and recovery, assessment, and a first-run
-  example.
-- [references/model-starting-points.md](references/model-starting-points.md): conditional model-specific starts when
-  local evidence is insufficient.
-- [references/measurement.md](references/measurement.md): routine records, comparison detail, and cost/time attribution.
-- [references/tuning.md](references/tuning.md): diagnosis, project hint updates, rechecks, and rollback.
-- [templates/delegation.md](templates/delegation.md): a starting format for project-local hints.
+- [SKILL.md](SKILL.md): decision, execution, recording, assessment, and learning workflow.
+- [references/model-starting-points.md](references/model-starting-points.md): conditional model-specific starting points.
+- [references/measurement.md](references/measurement.md): fields, attribution, and comparisons.
+- [references/tuning.md](references/tuning.md): project-file ownership, consolidation, hint updates, and shared review.
+- [templates/delegation.md](templates/delegation.md): project hints and compact observations.
+- [evaluations/recording.md](evaluations/recording.md): static contract and no-reminder host checks.
 
-Read references at the decision points named in the skill rather than adding all of them to the routine prompt.
+Read references only at the decision points named in the skill.
 
 ## License
 
