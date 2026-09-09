@@ -1,7 +1,31 @@
 # Measurement And Attribution
 
-Reuse runtime events and approved task records. Runtime owns usage/lifecycle facts; the parent owns assessment. Record
-available facts without requiring unsupported fields or inventing values.
+Runtime owns usage/lifecycle facts; the parent owns collection and assessment. Keep compact experience in the approved
+project file, normally `.agents/delegation.md`; link detailed runtime records. Record available facts without requiring
+unsupported fields or inventing values.
+
+## Collect Without A Reminder
+
+Identify exposed result/status/artifact sources and parent-usage coverage before the session's first delegation; reuse
+that lookup plan until relevant host/settings changes. Resolve the approved project file under [tuning.md](tuning.md).
+
+1. **Before dispatch:** save a project-unique decision ID, scope, expectation, and intended settings as pending. If the
+   write would violate an enforced launch precondition such as a clean source checkout, keep those fields in permitted
+   session state, launch once, then persist immediately with the returned attempt ID or failure. Never weaken the
+   precondition. Attach later child/attempt IDs; record launch failure even without a child ID.
+2. **Result/failure/cancellation:** read returned usage, then make one bounded exposed lookup for missing fields. Retain
+   source, outcome, units, and inclusion scope. Do not poll for telemetry or scan unrelated sessions. Update late facts
+   under existing IDs; notifications are not executions.
+3. **After verification/repair:** add the parent assessment, effective settings, actual use, final acceptance or pending
+   reason, and next choice to the same entry. Read exposed attributable parent usage; do not guess missing costs.
+4. **Before reporting/handoff:** reconcile known runs and records; confirm the save or disclose its failure. Revisit
+   pending entries on the next activation without relaunching work. If a runtime inventory is exposed, compare against
+   it; otherwise report checked cases rather than claiming full capture.
+
+Record whether collection was attempted. For each missing metric distinguish not reported by the checked source, no
+exposed lookup, lookup failure, attribution unavailable, or not attempted. Skipping a lookup does not prove missing
+telemetry. Do not repeat failed lookups without new evidence. Missing metrics or persistence do not block the work
+result: preserve permitted session evidence and disclose the gap; do not silently choose another persistent location.
 
 ## Start With The Decision Record
 
@@ -14,10 +38,11 @@ For ordinary work, link the task and any attempts to a compact record:
 - whether the original expectation was met, the supporting evidence, and the next choice: keep, adjust, revert, or
   gather more evidence; link any local hint revision.
 
-Reuse existing task records and references rather than copying them into a second log. The project hint file retains
-current choices and concise evidence, not every execution record. For a representative candidate kept with the parent,
-record why, actual burden if observed, and when to reconsider delegation. Do not record every direct operation or run a
-child merely to populate a baseline. An unrun alternative has an estimate, not an observed outcome.
+Retain this compact record for every launch attempt, not only successful or informative runs, in the same project file
+as current hints. Use [the template](../templates/delegation.md); update it even if the hint stays unchanged. Link full
+artifacts without copying transcripts or depending on expiring links for essential facts. Do not retrospectively invent
+pre-run expectations. For a representative direct choice, retain why, observed burden, and when to reconsider. Do not
+record every direct operation or launch a child to populate a baseline. An unrun alternative is not an observed outcome.
 
 The skill's first-run example illustrates this record. Use the detail below when establishing collection or making
 comparisons; a short routine record is not evidence for claims it cannot support.
@@ -30,11 +55,11 @@ Record task/delegation ID, linked attempts, and available facts needed to recons
   burden, relevant scope/verification difficulty, routine/experimental selection, and selection basis/source: local
   measurement, operator report, vendor guidance, or proposed trial.
 - **Configuration:** Host/version, parent/child identities, profile/settings version, requested/effective
-  model/provider/version or unresolved alias, effort, service tier, fresh/fork/resume, permissions/limits, and override
-  reason.
+  model/provider/version or unresolved alias, skill revision, effort, service tier, fresh/fork/resume, concurrency,
+  permissions/limits, and override reason.
 - **Execution:** Start/end, terminal status, attempts/fallback/descendants, and artifact/check references.
 - **Usage:** Input/output and reported cache/reasoning categories with inclusion semantics, currency/cost source or
-  quota measure, and completeness/missing fields.
+  quota measure, completeness/missing fields, collection attempts/sources/outcomes, and missing-value reasons.
 - **Parent:** Contract assessment, use/disposition, evidence, usefulness, repair burden/diagnosis, expectation versus
   outcome, next choice or hint revision, and later corrections.
 
@@ -81,6 +106,8 @@ time, and failure/timeout counts. Divide all observed costs, including failures,
 report undefined, total cost, and failures. Preserve completeness caveats. Show child assessment alongside final
 acceptance so parent repairs do not hide failure.
 
-Keep source records separate from derived summaries. Deduplicate delivered results by stable event/attempt IDs. Without
-durable storage or usable telemetry, retain permitted notes and disclose limits. Use [tuning.md](tuning.md) to interpret
-these observations before changing routing.
+Keep observations distinct from derived hints even in the same file. Deduplicate by decision/run/attempt IDs, including
+membership retained in consolidated summaries. Preserve counts and missingness; do not pool incompatible settings or
+accounting coverage. Report pending/unassessed runs separately and state the terminal cohort used for acceptance rates.
+A completed-cohort rate must not conceal excluded observations. Use [tuning.md](tuning.md) before consolidating or
+changing routing; missing records preclude a claim of complete capture.
