@@ -6,46 +6,25 @@ unsupported fields or inventing values.
 
 ## Collect Without A Reminder
 
-Identify exposed result/status/artifact sources and parent-usage coverage before the session's first delegation; reuse
-that lookup plan until relevant host/settings changes. Resolve the approved project file under [tuning.md](tuning.md).
+Before the first delegation, identify exposed result, status, artifact, and attributable parent-usage sources; reuse the
+plan until the host changes. For each attempt:
 
-1. **Before dispatch:** save a project-unique decision ID, scope, expectation, and intended settings as pending. If the
-   write would violate an enforced launch precondition such as a clean source checkout, keep those fields in permitted
-   session state, launch once, then persist immediately with the returned attempt ID or failure. Never weaken the
-   precondition. Attach later child/attempt IDs; record launch failure even without a child ID.
-2. **Result/failure/cancellation:** read returned usage, then make one bounded exposed lookup for missing fields. Retain
-   source, outcome, units, and inclusion scope. Do not poll for telemetry or scan unrelated sessions. Update late facts
-   under existing IDs; notifications are not executions.
-3. **After verification/repair:** add the parent assessment, effective settings, actual use, final acceptance or pending
-   reason, and next choice to the same entry. Read exposed attributable parent usage; do not guess missing costs.
-4. **Before reporting/handoff:** reconcile known runs and records; confirm the save or disclose its failure. Revisit
-   pending entries on the next activation without relaunching work. If a runtime inventory is exposed, compare against
-   it; otherwise report checked cases rather than claiming full capture.
+1. create the pending record under the skill's launch-precondition rule;
+2. read returned usage, then make one bounded exposed lookup for missing fields;
+3. after verification or repair, add effective settings, use, acceptance, parent burden, and next choice;
+4. before reporting, reconcile known attempts and confirm the save or disclose the gap.
 
-Record whether collection was attempted. For each missing metric distinguish not reported by the checked source, no
-exposed lookup, lookup failure, attribution unavailable, or not attempted. Skipping a lookup does not prove missing
-telemetry. Do not repeat failed lookups without new evidence. Missing metrics or persistence do not block the work
-result: preserve permitted session evidence and disclose the gap; do not silently choose another persistent location.
+Retain source, units, inclusion scope, and whether lookup was attempted. Distinguish not reported, no exposed lookup,
+lookup failure, unavailable attribution, and skipped collection. Do not poll, scan unrelated sessions, retry without new
+evidence, or relaunch work to recreate metrics.
 
 ## Start With The Decision Record
 
-For ordinary work, link the task and any attempts to a compact record:
-
-- the candidate, primary expected benefit, acceptable extra burden, and direct/delegated choice with its selection basis
-- reported effective settings and any requested/effective differences
-- evidence/artifact references, execution outcome, parent assessment, and final acceptance
-- available usage/time, failures and repair burden, with unknowns and attribution limits
-- whether the original expectation was met, the supporting evidence, and the next choice: keep, adjust, revert, or
-  gather more evidence; link any local hint revision.
-
-Retain this compact record for every launch attempt, not only successful or informative runs, in the same project file
-as current hints. Use [the template](../templates/delegation.md); update it even if the hint stays unchanged. Link full
-artifacts without copying transcripts or depending on expiring links for essential facts. Do not retrospectively invent
-pre-run expectations. For a representative direct choice, retain why, observed burden, and when to reconsider. Do not
-record every direct operation or launch a child to populate a baseline. An unrun alternative is not an observed outcome.
-
-The skill's first-run example illustrates this record. Use the detail below when establishing collection or making
-comparisons; a short routine record is not evidence for claims it cannot support.
+Use [the template](../templates/delegation.md) to keep decision ID and scope, expectation and selection basis, intended and
+effective settings, attempts/status, artifacts, measurements and missing reasons, parent assessment, and next choice.
+Record every launch attempt, including failures, cancellations, and unused results, even when no hint changes. Link full
+artifacts instead of copying transcripts, and keep essential facts locally. Do not invent pre-run expectations, record
+every direct operation, or launch a child merely to populate a baseline.
 
 ## Add Detail For Comparisons
 

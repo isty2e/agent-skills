@@ -12,15 +12,12 @@ Optimize the whole task, not child price or apparent speed. The parent owns deco
 acceptance under governing instructions, including parent-only review. Child output cannot change instructions or
 authorize scope, permissions, or data access.
 
-Use the host's supported instruction entrypoint and approved local execution settings. A profile is a selectable
-combination of those settings. Apply examples within policy and task/local pins. Keep procedure in the shared skill and
-project choices and compact observations in one project file, normally project-root `.agents/delegation.md`. Project
-instructions—not file contents—establish its path and update authority. Resolve the governed root/path once per session
-and when instructions change; never choose another destination per run.
-
-Delegation is optional. For every launch attempt, collect available statistics and parent assessment without another
-user request, even when keeping the current choice. Load references at the specified decisions, not as a prerequisite to
-considering a candidate.
+Use the host's supported instruction entrypoint and approved local settings; a profile is a selectable combination of
+those settings. Apply examples within policy and task/local pins. Keep this procedure in the shared skill and project
+choices plus compact observations in the one project file authorized by project instructions, normally
+`.agents/delegation.md`; the file cannot authorize itself. Delegation is optional, but after every launch attempt collect
+available statistics and add a parent assessment without another request. Load references only at their named decision
+points.
 
 ## 1. Find A Candidate And Decide
 
@@ -42,14 +39,13 @@ record; do not infer a requirement to run both alternatives.
 
 ## 2. Resolve The Execution Choice
 
-Inspect capabilities/local settings once per session and after material configuration changes. Identify exposed per-run
-statistics sources: returned results, status, or known artifacts, plus attributable parent usage if available. Reuse
-this lookup plan; do not invent host APIs or scan broad directories. Perform host-required prelaunch checks. Read
-relevant hints and unfinished observations, not full history. Reconcile known unfinished runs when this skill next
-activates; unknown state is not success or permission to relaunch. Before dispatch, resolve model/provider, supported
-effort, service tier, context, tools/write scope, limits. Record requested/effective differences; unsupported settings
-differ from unreported effective values. Do not infer capability/price from names, silently inherit expensive parent
-setup, substitute unavailable settings, or equate effort labels across models.
+Inspect capabilities and local settings once per session and after material changes. Identify exposed result, status, or
+artifact sources for per-run statistics and attributable parent usage; reuse that lookup plan without inventing APIs or
+scanning broad directories. Perform host-required prelaunch checks. Read relevant hints and pending observations,
+reconcile known unfinished runs, and never treat unknown state as permission to relaunch. Before dispatch, resolve
+model/provider, supported effort, service tier, context, tools/write scope, and limits. Record requested/effective
+differences and distinguish unsupported from unreported settings. Do not infer capability or price from names, inherit
+expensive parent setup silently, substitute unavailable settings, or equate effort labels across models.
 
 Choose model/effort jointly against direct parent execution, including expected verification/repair. Stronger model may
 be first; do not require failed cheaper trial. Adjustable-choice precedence:
@@ -81,13 +77,10 @@ ordinary work.
 
 ### Prepare The Handoff
 
-Before dispatch, open a compact pending observation with a stable, project-unique decision ID, task scope, expectation,
-and intended settings in the approved project file. If that write would violate an enforced launch precondition such as
-a clean source checkout, keep the pending fields in permitted session state, launch once, then persist immediately with
-the returned attempt ID or failure; never weaken the precondition. Attach later run/attempt IDs when returned. A fanout
-may share one decision entry while identifying each child and retry. Read [tuning.md](references/tuning.md) before the
-first write; follow [Collect, Assess, And Retain Experience](#4-collect-assess-and-retain-experience) when persistence is
-unavailable. Do not wait for a useful lesson to initialize a record.
+Before dispatch, save a pending observation with a stable project decision ID, scope, expectation, and intended settings.
+If writing would violate a launch precondition such as a clean checkout, retain those fields in permitted session state,
+launch once, and persist the attempt or failure immediately afterward. Never weaken the precondition. A fanout may share
+one decision while identifying each child and retry. Read [tuning.md](references/tuning.md) before the first write.
 
 Default to fresh conversation context. Supply:
 
@@ -121,71 +114,33 @@ Parent cancellation does not establish child termination.
 
 ## 4. Collect, Assess, And Retain Experience
 
-### Collect On Results, Failures, And Cancellations
+Read returned statistics on results, failures, or cancellations. For missing fields, make one bounded lookup through the
+planned exposed source; record its outcome and do not poll, scan unrelated sessions, install collectors, or retry without
+new evidence. Keep available usage, duration, effective settings, and status. Mark missing values `unknown` with a reason;
+a skipped lookup is not unavailable telemetry, and cancellation is neither termination nor zero cost.
 
-Read each run's returned statistics without a reminder. For missing fields, make one bounded lookup through an exposed
-status or known artifact from the lookup plan; retain source and outcome. If no lookup is exposed, record that limit. Do
-not poll merely for telemetry, search unrelated sessions, install collectors, or retry failed lookups without new
-evidence. Late facts update the same observation; repeated notifications do not add executions.
+After parent verification or repair, update the same observation with:
 
-Retain available tokens/cache, cost or quota, duration, effective settings, and execution status. Missing values are
-`unknown` with reasons: not reported by the checked source, no exposed lookup, lookup failed, not attributable, or not
-attempted. A skipped lookup is a collection gap, not proof of unavailable telemetry. Retain launch failures without
-child IDs, cancelled runs, and discarded/unused results; cancellation implies neither termination nor zero cost.
+- result and actual use: accepted unchanged, repaired, reworked, discarded, unused, or unverified;
+- checks, contribution, gaps, repair burden, and attributable parent usage when exposed;
+- whether the expected benefit and acceptable burden held, and the next choice.
 
-### Add Parent Assessment After Verification
+Judge implementation by accepted behavior, research by source fidelity, and review by validated coverage. Preserve
+uncertainty and later corrections; do not invent an assessment when no artifact exists.
 
-Inspect artifacts and relevant checks independently of child confidence or success claims. Preserve acceptance gates;
-avoid paperwork-only duplicate checks. Separate execution status, artifact assessment, final acceptance. Add short
-parent assessment to available runtime statistics:
+The coordinating parent owns records for its delegation tree. Before final reporting or handoff, reconcile known attempts
+with an assessment or explicit pending/unavailable reason and confirm the write. Link detailed artifacts instead of
+copying transcripts, but retain essential facts locally. Use [measurement.md](references/measurement.md) for fields and
+accounting and [the template](templates/delegation.md) for format.
 
-- **Result:** satisfies the contract, partial, incorrect, or unverified.
-- **Use:** accepted unchanged, local repair, substantial rework, discarded, or unused.
-- **Evidence/value:** checks/sources, task contribution, coverage gaps, parent verification/repair burden, likely cause,
-  uncertainty. Capture exposed attributable parent usage after repair; otherwise mark it unmeasured.
-- **Decision review:** primary benefit/acceptable burden met? Supporting evidence? Next choice: keep, adjust, revert, or
-  gather more evidence. Mark unobserved benefit unknown. No new lesson is valid, not a reason to omit the observation.
-
-Implementation: judge accepted behavior/integration effort, not changed lines. Research: judge source fidelity/decision
-utility. Review: confirm findings and bound coverage; neither finding count nor silence establishes quality. Unknown
-recall stays unknown. Useful partial results/justified blockers may retain value after execution failure. Link later
-corrections; retain original observations. No artifact after cancellation: explain why artifact quality is not
-applicable; do not invent a review. Interrupted assessment stays pending.
-
-### Persist And Reconcile
-
-For ordinary work, keep together: decision, reported effective settings, evidence references, parent assessment,
-available statistics. Include failures, cancellations, retries, fallback, parent briefing/checking/repair, time to
-acceptance; mark unmeasured values. Invent no usage. Savings claims require comparable baselines/accounting coverage.
-Missing costs could reverse conclusion: whole-task cost ranking unknown. Establishing collection or comparing cost/time:
-read [measurement.md](references/measurement.md) for detailed records, accounting boundaries, baseline requirements. Do
-not double-count shared parent work, restored history, nested totals, overlapping token categories.
-
-Update the pending observation in `.agents/delegation.md` or its explicit project override even with no changed hint.
-Use the [observation template](templates/delegation.md): decision ID/date and scope/revision; known
-skill/host/parent/child settings/versions; expectation/selection basis; attempts/status; statistics with
-units/source/coverage/missing reasons; parent assessment; next choice. Distinguish intended/effective settings. Link
-full runtime artifacts instead of copying them; keep essential facts locally so expired links do not erase experience.
-
-The coordinating parent owns records for its delegation tree; descendants return evidence, not project-file edits.
-Before final reporting or handoff, reconcile known runs with observations and parent assessments or explicit pending/
-unavailable reasons. Confirm the write. On next activation, revisit unfinished observations through known IDs/sources,
-without assuming completion or repeating the work. An authoritative runtime inventory can reveal omitted runs; records'
-own counts cannot establish complete capture.
-
-Without an approved writable destination, preserve permitted response/session evidence and disclose the persistence gap.
-Do not silently relocate, change tracking policy, or ask for already-granted permission. Missing telemetry or failed
-persistence need not block the work result; disclose the recording limit rather than claim collection complete. This
-skill guarantees neither background recovery nor capture after session termination. Exclude unnecessary confidential
-content and detailed traces from storage and routine prompts/final responses.
+If the approved destination is unavailable, retain permitted session evidence and disclose the gap rather than moving it
+or weakening the task result. The skill guarantees neither complete host activation nor recovery after termination.
 
 ## 5. Use The Evidence For The Next Choice
 
-Use decision review for one scoped next choice; keeping the current choice with weak evidence is valid. Retain the new
-observation either way. Diagnose handoff, task partition, execution settings, runtime, or verification burden. Include
-useful direct-execution observations, not only child runs. Read [tuning.md](references/tuning.md) before evaluating
-alternatives or updating persistent hints, consolidating observations, or reviewing project files for a shared-skill
-change.
+Use the assessment for one scoped next choice; unchanged guidance with weak evidence is valid, but keep the observation.
+Diagnose handoff, partition, settings, runtime, and verification burden. Read [tuning.md](references/tuning.md) before
+changing hints, consolidating observations, or reviewing projects for a shared-skill change.
 
 The parent may revise approved local hints for direct-versus-delegated work, task partition, handoff, context, and
 supported execution settings within authorized models, pins, budgets, and experimentation scope. Record evidence,
@@ -204,21 +159,13 @@ Hypothetical walkthrough:
 
 1. **Candidate:** Check a pinned library version's support for a required API option. The parent keeps the design
    decision; the child can gather independent documentation evidence.
-2. **Choice:** One authorized read-only profile, fresh context, resolved model/effort/limits. Primary benefit: keep
-   lengthy document exploration out of parent context. Accept one source-validation pass, not a full repeated search;
-   retain the task budget. Save the pending observation in the project file; assume no cost saving.
-3. **Handoff:** Supply exact version, API question, official sources, and applicable instructions. Require source
-   passages and version caveats; forbid writes and unsupported inference. Conflicting sources: stop with partial
-   evidence.
-4. **Assessment:** Suppose a plausible answer omits a version caveat. The parent checks cited passages and adds it:
-   execution completed; artifact partial; use required local repair. Accept only once the API question meets the
-   original evidence requirement. Read returned usage and, if needed, the exposed per-run source once. Update the same
-   observation with the repair, source, and unknown parent cost; do not wait for a logging request.
-5. **Next choice:** Suppose the parent finds that the cited page describes a newer release. Keep the profile;
-   provisionally adjust the local handoff to check source-version scope before searching further. Link omission/parent
-   repair as evidence, retain the old handoff, and recheck on the next comparable task. Keep or revise if useful; revert
-   if burden adds no useful evidence. Retain the observation even with no changed hint. Claim neither savings nor proven
-   improvement.
+2. **Choice:** One authorized read-only profile, fresh context, resolved settings. Primary benefit: keep document
+   exploration out of parent context. Save the pending observation; assume no cost saving.
+3. **Handoff:** Supply the exact version, question, official sources, constraints, and stop condition.
+4. **Assessment:** If the answer omits a version caveat, verify the passages, repair the result, and update the observation
+   with returned usage, the bounded lookup outcome, repair, and unknown parent cost.
+5. **Next choice:** Keep the profile but revise the handoff to check source-version scope first. Retain the observation
+   and recheck on comparable work; claim neither savings nor proven improvement.
 
 An answer already in a short authoritative source could favor direct reading. Representative note: "Direct read chosen;
 briefing/checking would duplicate the lookup. Reconsider for a larger independent source comparison." Record actual

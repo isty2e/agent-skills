@@ -42,43 +42,27 @@ the choice rather than manufacture a ranking.
 
 ## 3. Retain Experience And Revise Hints Within Authority
 
-The coordinating parent owns records for its delegation tree; descendants supply evidence or proposals, not project-file
-edits. Within the approved local scope, the parent may keep, adjust, or revert a hint without seeking permission for
-each update. Eligible changes include choosing direct work, repartitioning, revising handoffs, and selecting allowed
-context, model/effort, or concurrency settings. Hints cannot override pins, budgets, permissions, acceptance, or
-governing instructions. Changes outside that scope require authorization rather than a self-assessment score.
+The coordinating parent owns records for its delegation tree; descendants return evidence. Within authorized project
+scope, the parent may keep, adjust, or revert choices about direct work, partition, handoff, context, model/effort, or
+concurrency. Hints cannot override instructions, pins, budgets, permissions, or acceptance.
 
 ### Use One Project File
 
-Resolve the path once per session and after project-instruction changes. Use `.agents/delegation.md` relative to the
-governed project root, not the shell directory or skill installation, unless project instructions designate another
-file. No approved root/path or writable destination: disclose the gap and preserve permitted session evidence; never
-silently choose another persistent location. Clarify genuinely missing authority before writing, not on each run after
-it was granted.
+Resolve the path from project instructions once per session: normally project-root `.agents/delegation.md`, never a
+second ad hoc destination. Follow the skill's launch-precondition rule when initializing it from the
+[template](../templates/delegation.md). Read before editing, preserve human content, reconcile concurrent changes, and
+confirm the write. Without an approved writable path, retain permitted session evidence and disclose the gap.
 
-Before the first delegated dispatch, initialize an absent authorized file from the
-[template](../templates/delegation.md) with a pending observation; useful novelty is not required. If writing the file
-would violate an enforced launch precondition such as a clean source checkout, retain the pending fields in permitted
-session state, launch once, then persist immediately with the returned attempt ID or failure. Never weaken the
-precondition. Read before editing. Preserve unrelated/human content and extend old hints-only files without replacing
-them. Re-read and reconcile known concurrent edits before saving; confirm the update. Local write authority does not
-authorize committing, publishing, changing tracking policy, or host settings.
-
-Keep current hints and compact observations in the same file. One current choice per scoped decision retains evidence,
-counterevidence, previous choice, and recheck conditions. Every launch attempt contributes an observation with a stable,
-project-unique decision ID and linked child/attempt IDs: include failures, cancellations, unused/discarded results,
-unknown metrics, and pending assessments. Keeping a choice unchanged does not waive recording. Preserve facts separately
-from diagnoses and proposed rules. Link full runtime records, but keep essential facts locally when links may expire. Do
-not copy credentials, full transcripts, or unnecessary confidential source; sharing requires separate authorization.
+Keep current hints and compact attempt observations together. Preserve stable decision/run IDs, facts apart from
+interpretation, pending assessments, and essential context when detailed links may expire. Do not store credentials,
+full transcripts, or unnecessary confidential material. Local write authority does not authorize commits, publication,
+tracking changes, or host configuration.
 
 ### Consolidate Without Erasing Evidence
 
-Consolidate repetitive comparable observations in the project file, not a second log. Preserve covered identities or an
-exact retained membership reference, counts/denominators, task/settings/skill-version scope, accounting coverage,
-missingness, and material failures/corrections/counterevidence. Keep pending entries identifiable until resolved or
-explicitly unrecoverable. Merge only compatible groups; never turn estimates into measured totals, derive quantiles from
-means, or claim rates without retained constituent outcomes. Unchanged-choice success may add evidence without a new
-rule. No size cap justifies discarding contrary evidence.
+Merge only comparable observations. Preserve membership or IDs, counts and denominators, settings/skill scope, accounting
+coverage, missingness, failures, corrections, and counterevidence. Keep pending entries identifiable; never convert
+estimates into measurements or derive unsupported rates or quantiles.
 
 ### Revise And Recheck
 
@@ -110,17 +94,10 @@ Return out-of-authority changes to the governing decision process.
 
 ## 4. Review Project Experience For Shared Guidance
 
-In a separate requested or otherwise authorized maintenance task, read selected projects' approved files. Do not sweep
-home directories or share company/personal records across boundaries without authorization. This is not a mandatory
-per-run pass.
+Only in a separate authorized maintenance task, compare selected projects' approved observations and hints; do not sweep
+home directories or cross confidentiality boundaries. Group compatible task, settings, and skill revisions while
+retaining failures, repair, missingness, coverage, and contrary evidence.
 
-Read observations and current hints. Compare task/settings/skill-version groups with failures, parent repair,
-missingness, and coverage; a hint alone is not a benchmark. Distinguish project requirements from repeatable lessons
-about partition, handoff, context, model/effort, collection, or verification. Narrow reversible proposals need neither
-universal rankings nor statistical significance, but all claims remain bounded by evidence.
-
-For a proposed skill/reference change retain supporting/contrary observations, affected instruction, expected benefit,
-uncertainty, and subsequent-work check or rollback condition. Use sanitized summaries and authorized references. Submit
-shared changes for explicit review under repository policy; local recording never authorizes automatic publication or
-promotion of hints. Preserve prior skill revisions when attributing later outcomes. Insufficient evidence: report the
-gap or propose an informative observation rather than inventing an improvement.
+A shared-skill proposal records its evidence, affected instruction, expected benefit, uncertainty, and recheck or
+rollback. Submit it for explicit review; local records never authorize publication or automatic promotion. Insufficient
+evidence calls for a narrower claim or a more informative observation, not an invented improvement.
