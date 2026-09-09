@@ -22,9 +22,10 @@ evidence, or relaunch work to recreate metrics.
 
 Use [the template](../templates/delegation.md) to keep decision ID and scope, expectation and selection basis, intended and
 effective settings, attempts/status, artifacts, measurements and missing reasons, parent assessment, and next choice.
-Record every launch attempt, including failures, cancellations, and unused results, even when no hint changes. Link full
-artifacts instead of copying transcripts, and keep essential facts locally. Do not invent pre-run expectations, record
-every direct operation, or launch a child merely to populate a baseline.
+Record every launch attempt, including failures, cancellations, and unused results, even when no hint changes. For a
+representative delegation decision kept with the parent, record the reason, observed burden, and revisit condition. Link
+full artifacts instead of copying transcripts, and keep essential facts locally. Do not invent pre-run expectations,
+record routine direct work, or launch a child merely to populate a baseline.
 
 ## Add Detail For Comparisons
 

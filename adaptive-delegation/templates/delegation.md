@@ -32,7 +32,9 @@ reasons explicit.
 - Settings: <host/skill/parent; intended and effective child model, effort, context, concurrency, limits>
 - Attempts: <child/run IDs, status, retries, fallbacks, cancellation, artifacts>
 - Measurements: <usage, cost/quota, duration, parent burden; units, source, coverage, lookup outcome, unknown reasons>
-- Assessment: <result, actual use, checks, contribution, repair, uncertainty>
+- Artifact result: <contract satisfied, partial, incorrect, or unverified; evidence and uncertainty>
+- Use: <accepted unchanged, local repair, substantial rework, discarded, or unused>
+- Task acceptance: <accepted, rejected, or pending; checks and remaining gaps>
 - Next: <expectation met or unknown; keep, adjust, revert, or gather evidence; hint/recheck reference>
 ```
 

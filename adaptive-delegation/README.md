@@ -12,15 +12,16 @@ Choose whether and how to delegate, then use observed cost, time, and parent rep
    by project instructions.
 
 The skill description covers delegation decisions, dispatch, results, failures, cancellations, and experience review.
-Direct execution remains valid; installing the skill creates no hook or write authority.
+Once adopted as project instructions, the supplied section authorizes the parent to create or update the designated file
+within repository policy without per-run reapproval. Installing the skill alone creates no hook or write authority.
 
 ## Project-Local Learning
 
-Record every launch attempt, not every direct operation. Start a pending observation before dispatch. If that would
-violate a launch precondition such as a clean checkout, keep the fields in permitted session state and persist them
-immediately after the attempt. Add returned statistics, one bounded lookup for missing fields, and the parent's verified
-assessment. Missing values stay unknown with a reason; unchanged hints, failures, cancellations, and unused results
-still count as experience.
+Record every launch attempt and representative delegation decisions kept with the parent, not routine direct work. Start
+a pending observation before dispatch. If that would violate a launch precondition such as a clean checkout, keep the
+fields in permitted session state and persist them immediately after the attempt. Add returned statistics, one bounded
+lookup for missing fields, and the parent's verified assessment. Missing values stay unknown with a reason; unchanged
+hints, failures, cancellations, and unused results still count as experience.
 
 Keep observations and current hints together without copying transcripts. Preserve human content, reconcile concurrent
 edits, and consolidate only without losing covered IDs, failures, missingness, or contrary evidence. Recording does not

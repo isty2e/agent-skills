@@ -121,12 +121,15 @@ a skipped lookup is not unavailable telemetry, and cancellation is neither termi
 
 After parent verification or repair, update the same observation with:
 
-- result and actual use: accepted unchanged, repaired, reworked, discarded, unused, or unverified;
-- checks, contribution, gaps, repair burden, and attributable parent usage when exposed;
-- whether the expected benefit and acceptable burden held, and the next choice.
+- **Artifact result:** contract satisfied, partial, incorrect, or unverified.
+- **Use:** accepted unchanged, local repair, substantial rework, discarded, or unused.
+- **Task acceptance:** accepted, rejected, or pending, with checks, contribution, gaps, repair burden, and attributable
+  parent usage when exposed.
+- **Decision review:** whether the expected benefit and acceptable burden held, and the next choice.
 
-Judge implementation by accepted behavior, research by source fidelity, and review by validated coverage. Preserve
-uncertainty and later corrections; do not invent an assessment when no artifact exists.
+Judge implementation by accepted behavior and research by source fidelity. For review work, finding count or silence does
+not establish quality; validate findings and coverage. Unknown recall stays unknown. Preserve uncertainty and later
+corrections, and do not invent an artifact assessment when none exists.
 
 The coordinating parent owns records for its delegation tree. Before final reporting or handoff, reconcile known attempts
 with an assessment or explicit pending/unavailable reason and confirm the write. Link detailed artifacts instead of

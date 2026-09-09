@@ -1,12 +1,13 @@
 ## Delegation
 
 At substantive task decomposition—not every tool call—consider independent research, verification, or implementation.
-When a candidate exists, a subagent attempt changes state, or experience is reviewed, apply `adaptive-delegation` without
-another request. Activation does not require spawning; record actual launch attempts, not direct-only work.
+When a candidate exists, a subagent attempt changes state, or experience is reviewed, load and apply
+`adaptive-delegation` without another request. Activation does not require spawning. Record every launch attempt and
+representative delegation decisions kept with the parent, not routine direct work.
 
 Keep current choices and compact observations in project-root `.agents/delegation.md` unless project instructions name
-another file. The parent may update the authorized file within repository policy; preserve human content and do not
-silently change destinations.
+another file. The parent may create or update the authorized file within repository policy without per-run reapproval;
+preserve human content and do not silently change destinations.
 
 - Before dispatch, compare direct execution with total delegation burden; state the expected benefit and acceptable cost.
   Save a pending observation. If this would violate a clean-checkout or other launch precondition, retain it in permitted
