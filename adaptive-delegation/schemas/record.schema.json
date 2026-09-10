@@ -1,0 +1,551 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:adaptive-delegation:staged-record:1",
+  "$ref": "#/$defs/record",
+  "$defs": {
+    "seconds": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Observed duration in seconds; omit if not attributable. No automatic timing."
+    },
+    "count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Reported token count. Omission/null is unknown, never zero."
+    },
+    "model": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 160,
+      "description": "Provider-qualified model ID as reported; no catalog lookup.",
+      "pattern": "\\S"
+    },
+    "effort": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 40,
+      "description": "Native effort label, not a cross-model capability scale.",
+      "pattern": "\\S"
+    },
+    "context": {
+      "enum": ["fresh", "fork", "resume", "unknown", null],
+      "description": "Conversation context mode; not filesystem isolation or cache reuse."
+    },
+    "task_type": {
+      "enum": ["lookup", "summarize", "investigate", "implement", "review", "verify", "other"],
+      "description": "Primary purpose of this delegated task."
+    },
+    "difficulty": {
+      "enum": ["routine", "reasoning_required", "open_ended", null],
+      "description": "Pre-run estimate. Do not relabel after seeing failure."
+    },
+    "selection_reason": {
+      "enum": ["default", "previous_results", "exploration", "explicit_instruction", "unknown"],
+      "description": "Why this model/effort was selected, not an output verdict."
+    },
+    "status": {
+      "enum": ["running", "completed", "failed", "cancelled", "unknown"],
+      "description": "Observed execution state; a stop request alone is not cancelled."
+    },
+    "quality": {
+      "enum": ["meets_requirements", "incomplete", "incorrect", "unverified", "no_output"],
+      "description": "Parent assessment of the original output, before parent repair."
+    },
+    "use": {
+      "enum": [
+        "used_as_is",
+        "used_after_local_fix",
+        "used_after_major_rework",
+        "rejected",
+        "not_used",
+        "pending",
+        "no_output"
+      ],
+      "description": "Actual use; major rework means substantially re-solving the delegated problem."
+    },
+    "note": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Optional exception/correction note, at most 200 characters.",
+      "pattern": "\\S"
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$",
+      "maxLength": 80
+    },
+    "run_id": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 160,
+      "description": "Native run ID. Omit when a launch failed before receiving an ID.",
+      "pattern": "\\S"
+    },
+    "prepare_input": {
+      "type": "object",
+      "properties": {
+        "project_name": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Optional project alias; defaults to the supplied project-root name."
+        },
+        "workspace_task": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 240,
+          "description": "Short parent task title, reused from the request."
+        },
+        "group_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "host": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Host name supplied by caller. No automatic host discovery."
+        },
+        "skill_revision": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Known skill revision; no repository scan."
+        },
+        "parent_model": {
+          "$ref": "#/$defs/model"
+        },
+        "parent_effort": {
+          "$ref": "#/$defs/effort"
+        },
+        "task_description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400,
+          "description": "Reuse the short delegated task description; no acceptance reference."
+        },
+        "task_type": {
+          "$ref": "#/$defs/task_type"
+        },
+        "task_domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60,
+            "description": ""
+          },
+          "uniqueItems": true,
+          "maxItems": 8,
+          "description": "Optional domain tags, e.g. software,numerical_analysis."
+        },
+        "estimated_difficulty": {
+          "$ref": "#/$defs/difficulty"
+        },
+        "requested_child_model": {
+          "$ref": "#/$defs/model"
+        },
+        "requested_child_effort": {
+          "$ref": "#/$defs/effort"
+        },
+        "requested_context": {
+          "$ref": "#/$defs/context"
+        },
+        "model_selection_reason": {
+          "$ref": "#/$defs/selection_reason"
+        }
+      },
+      "required": ["task_description", "task_type", "requested_child_model"],
+      "additionalProperties": false
+    },
+    "record_run_input": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "$ref": "#/$defs/run_id"
+        },
+        "execution_status": {
+          "$ref": "#/$defs/status"
+        },
+        "child_model": {
+          "$ref": "#/$defs/model"
+        },
+        "child_effort": {
+          "$ref": "#/$defs/effort"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "elapsed_seconds": {
+          "$ref": "#/$defs/seconds"
+        },
+        "input_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "output_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "cache_read_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "cache_write_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "input_token_scope": {
+          "enum": ["includes_cache", "excludes_cache", "unknown"],
+          "description": "Meaning of input_tokens: all input, uncached-only, or unknown."
+        },
+        "cost_amount": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Observed cost value. No live pricing or quota conversion."
+        },
+        "cost_currency": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Z]{3}$",
+          "description": "Currency code, for example USD."
+        },
+        "cost_basis": {
+          "enum": ["reported_charge", "host_estimate", "unverified_indicator", null],
+          "description": "Origin/meaning of the reported monetary value."
+        },
+        "metrics_source": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Short supplied source label, not a required evidence document."
+        },
+        "missing_metrics_reason": {
+          "enum": ["not_reported", "no_exposed_lookup", "lookup_failed", "not_attributable", "not_collected", null],
+          "description": "Default reason for missing metrics in this attempt."
+        },
+        "requested_child_model": {
+          "$ref": "#/$defs/model"
+        },
+        "requested_child_effort": {
+          "$ref": "#/$defs/effort"
+        },
+        "requested_context": {
+          "$ref": "#/$defs/context"
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "assess_input": {
+      "type": "object",
+      "properties": {
+        "output_quality": {
+          "$ref": "#/$defs/quality"
+        },
+        "output_use": {
+          "$ref": "#/$defs/use"
+        },
+        "note": {
+          "$ref": "#/$defs/note"
+        },
+        "parent_work_seconds": {
+          "$ref": "#/$defs/seconds"
+        },
+        "parent_recording_seconds": {
+          "$ref": "#/$defs/seconds"
+        }
+      },
+      "required": ["output_quality", "output_use"],
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "elapsed_seconds": {
+          "$ref": "#/$defs/seconds",
+          "description": "Observed attempt duration, in seconds. Never inferred from prepare/assess timestamps."
+        },
+        "input_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "output_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "cache_read_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "cache_write_tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "input_token_scope": {
+          "enum": ["includes_cache", "excludes_cache", "unknown"],
+          "description": "includes_cache = total input; excludes_cache = uncached input; unknown = do not derive a cache ratio."
+        },
+        "cost_amount": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Observed cost value. No live pricing or quota conversion."
+        },
+        "cost_currency": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Z]{3}$",
+          "description": "Currency code, for example USD."
+        },
+        "cost_basis": {
+          "enum": ["reported_charge", "host_estimate", "unverified_indicator", null],
+          "description": "Origin/meaning of the reported monetary value."
+        },
+        "metrics_source": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Short supplied source label, not a required evidence document."
+        },
+        "missing_metrics_reason": {
+          "enum": ["not_reported", "no_exposed_lookup", "lookup_failed", "not_attributable", "not_collected", null],
+          "description": "Default reason for missing metrics in this attempt."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "parent_metrics": {
+      "type": "object",
+      "properties": {
+        "parent_work_seconds": {
+          "$ref": "#/$defs/seconds"
+        },
+        "parent_recording_seconds": {
+          "$ref": "#/$defs/seconds"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "model_settings": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "$ref": "#/$defs/model"
+        },
+        "effort": {
+          "$ref": "#/$defs/effort"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "child_settings": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "$ref": "#/$defs/model"
+        },
+        "effort": {
+          "$ref": "#/$defs/effort"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "assessment": {
+      "type": "object",
+      "properties": {
+        "output_quality": {
+          "$ref": "#/$defs/quality"
+        },
+        "output_use": {
+          "$ref": "#/$defs/use"
+        },
+        "note": {
+          "$ref": "#/$defs/note"
+        },
+        "assessed_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "required": ["output_quality", "output_use", "assessed_at"],
+      "additionalProperties": false
+    },
+    "assessment_change": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "previous": {
+          "$ref": "#/$defs/assessment"
+        },
+        "reason": {
+          "$ref": "#/$defs/note"
+        }
+      },
+      "required": ["at", "previous", "reason"],
+      "additionalProperties": false
+    },
+    "attempt": {
+      "type": "object",
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "run_id": {
+          "$ref": "#/$defs/run_id"
+        },
+        "retry_of": {
+          "$ref": "#/$defs/identifier"
+        },
+        "execution_status": {
+          "$ref": "#/$defs/status"
+        },
+        "child": {
+          "$ref": "#/$defs/child_settings"
+        },
+        "metrics": {
+          "$ref": "#/$defs/metrics"
+        },
+        "assessment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/assessment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assessment_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assessment_change"
+          }
+        },
+        "requested_child": {
+          "$ref": "#/$defs/child_settings"
+        }
+      },
+      "required": ["attempt_id", "run_id", "execution_status", "child", "metrics", "assessment", "requested_child"],
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "adaptive-delegation/staged-record"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "project_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": ""
+        },
+        "workspace_task": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 240,
+          "description": "Short parent task title, reused from the request."
+        },
+        "group_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "host": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Host name supplied by caller. No automatic host discovery."
+        },
+        "skill_revision": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Known skill revision; no repository scan."
+        },
+        "parent": {
+          "$ref": "#/$defs/model_settings"
+        },
+        "task": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 400,
+              "description": "Reuse the short delegated task description; no acceptance reference."
+            },
+            "type": {
+              "$ref": "#/$defs/task_type"
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "description": ""
+              },
+              "uniqueItems": true,
+              "maxItems": 8,
+              "description": "Optional domain tags, e.g. software,numerical_analysis."
+            },
+            "estimated_difficulty": {
+              "$ref": "#/$defs/difficulty"
+            }
+          },
+          "required": ["description", "type", "domains", "estimated_difficulty"],
+          "additionalProperties": false
+        },
+        "requested_child": {
+          "$ref": "#/$defs/child_settings"
+        },
+        "model_selection_reason": {
+          "$ref": "#/$defs/selection_reason"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attempt"
+          }
+        },
+        "parent_metrics": {
+          "$ref": "#/$defs/parent_metrics"
+        }
+      },
+      "required": [
+        "format",
+        "schema_version",
+        "record_id",
+        "revision",
+        "created_at",
+        "updated_at",
+        "project_name",
+        "parent",
+        "task",
+        "requested_child",
+        "model_selection_reason",
+        "attempts",
+        "parent_metrics"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

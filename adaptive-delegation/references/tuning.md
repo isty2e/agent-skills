@@ -29,6 +29,10 @@ runs and representative cases kept with the parent. Direct work can reveal its o
 context was already at hand. Unperformed briefing or integration remains estimated; an unrun child provides no measured
 counterfactual. Use [measurement.md](measurement.md) for comparison boundaries and attribution.
 
+Do not treat the current choice as proven optimal merely because alternatives lack universal evidence. Repeated major
+rework or rejection can justify a narrowly scoped alternative on the next ordinary task. Record intentional trials as
+`model_selection_reason: exploration`; do not manufacture an experiment on every run or enforce model-diversity quotas.
+
 Test alternatives on a small, explicitly budgeted share of eligible reversible tasks within authority. Where feasible,
 vary one suspected factor with unchanged requirements/acceptance. Additional duplicate runs need an information goal and
 experiment allowance. Compare existing settings too; alternative failure is not global disqualification.
@@ -49,20 +53,29 @@ concurrency. Hints cannot override instructions, pins, budgets, permissions, or 
 ### Use One Project File
 
 Resolve the path from project instructions once per session: normally project-root `.agents/delegation.md`, never a
-second ad hoc destination. Follow the skill's launch-precondition rule when initializing it from the
-[template](../templates/delegation.md). Read before editing, preserve human content, reconcile concurrent changes, and
-confirm the write. Without an approved writable path, retain permitted session evidence and disclose the gap.
+second ad hoc destination. Follow the skill's launch-precondition rule. The recorder initializes its block without
+replacing existing text; the [template](../templates/delegation.md) is optional for human hints. Read before editing
+hints, preserve human content, reconcile concurrent changes, and confirm the write. Without an approved writable path,
+retain permitted session evidence and disclose the gap.
 
 Keep current hints and compact attempt observations together. Preserve stable decision/run IDs, facts apart from
 interpretation, pending assessments, and essential context when detailed links may expire. Do not store credentials,
 full transcripts, or unnecessary confidential material. Local write authority does not authorize commits, publication,
 tracking changes, or host configuration.
 
+The script alone updates its managed JSONL block. Use `assess --correction-reason` for a changed parent verdict and
+`record-run` for late scalar facts. A terminal attempt is not reopened; explicitly start a continuation/retry. Direct
+choices can remain short prose outside the block. Do not generate a second narrative per structured record.
+
 ### Consolidate Without Erasing Evidence
 
-Merge only comparable observations. Preserve membership or IDs, counts and denominators, settings/skill scope, accounting
-coverage, missingness, failures, corrections, and counterevidence. Keep pending entries identifiable; never convert
-estimates into measurements or derive unsupported rates or quantiles.
+Consolidate human hints and summaries, not raw managed records. This tool provides no deletion or compaction command.
+Use summaries derived from record IDs without rewriting the underlying attempts. A future data migration needs its own
+scope and validation; do not manually replace the managed block with an aggregate.
+
+Merge only comparable observations. Preserve membership or IDs, counts and denominators, settings/skill scope,
+accounting coverage, missingness, failures, corrections, and counterevidence. Keep pending entries identifiable; never
+convert estimates into measurements or derive unsupported rates or quantiles.
 
 ### Revise And Recheck
 
@@ -97,6 +110,10 @@ Return out-of-authority changes to the governing decision process.
 Only in a separate authorized maintenance task, compare selected projects' approved observations and hints; do not sweep
 home directories or cross confidentiality boundaries. Group compatible task, settings, and skill revisions while
 retaining failures, repair, missingness, coverage, and contrary evidence.
+
+Use the recorder's `export` only when gathering an authorized batch. Exported staged JSON retains the fields already
+collected; do not rewrite it as a long case report. It is separate from a central repository's legacy format and
+requires an approved destination. No export operation grants Git synchronization or publication authority.
 
 A shared-skill proposal records its evidence, affected instruction, expected benefit, uncertainty, and recheck or
 rollback. Submit it for explicit review; local records never authorize publication or automatic promotion. Insufficient
