@@ -22,6 +22,23 @@ Check the skill, project section, references, and template together:
   hand-edit the managed block. Consolidate human summaries without deleting attempt evidence.
 - Shared guidance changes require a separate authorized review; local records are not published automatically.
 
+## Read-Only Boundary And Routing Cases
+
+Review these against the skill, adopted project section, and model starting points together. These are expected policy
+outcomes, not executed model tests or authorization to launch paid work.
+
+| Input or situation                                                    | Expected outcome                                                                                                                       |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| "Implement this feature"; no implementation-delegation request        | Parent implements; independent read-only evidence work may be considered. No permission question merely to delegate.                   |
+| "Use subagents where useful" or "make it faster"                      | Not permission for a child to implement, even with a writer profile or favorable hint.                                                 |
+| Reviewer offers a text-only patch, new tests, or snapshot updates     | Implementation boundary applies; parent implements unless the user explicitly requested that delegation.                               |
+| Existing tests or a disposable probe produce isolated logs            | Read-only candidate if project artifacts/external state remain unchanged; no auto-fix or snapshot acceptance.                          |
+| User explicitly asks a child to implement one component               | Consider only that scope, still checking budget, isolation, acceptance, and parent repair burden; no automatic fanout.                 |
+| Routine lookup versus conflicting sources or hard numerical reasoning | Choose task-appropriate model/effort; neither one cheap default nor universal maximum effort.                                          |
+| A cheap read-only attempt repeatedly misses causal paths              | Diagnose handoff/capability, then change reading scope/model/effort or keep the work; do not escalate into unrequested implementation. |
+| Parent already has the answer or must repeat the whole investigation  | Prefer direct work unless a distinct justified benefit exists; same-model capability is not a benefit.                                 |
+| Old hints recommend a writer; schema accepts `task_type: implement`   | Preserve records but apply current launch policy. Schema acceptance is not authorization.                                              |
+
 ## Local Script Check
 
 Run `python -m unittest discover -s tests -v` from the skill directory. Tests use synthetic temporary records, not model
@@ -34,14 +51,16 @@ This does not test network filesystems, every operating system, or concurrent no
 1. In an approved test project, adopt the skill and project section; record host and skill revisions.
 2. Give an ordinary substantive task without mentioning delegation, telemetry, or logging. Confirm that the skill is
    considered; direct execution is allowed but does not test post-launch recording.
-3. Run an ordinary delegated task. Check that `prepare`, `record-run`, and `assess` were called without a reminder, and
+3. Use an already-needed read-only delegation, with model/effort chosen for its reasoning difficulty. Check that
+   `prepare`, `record-run`, and `assess` were called without a reminder, and
    compare native run IDs and supplied metrics to the staged record, including expected benefit and usefulness. No
    child-side collector is required. Reuse existing failures or cancellations rather than manufacturing costly ones.
 4. In a fresh session, check that hint applicability matches the actual settings or handoff, including a scoped reason
    when a hint is not applied, and that the new outcome is recorded. Reconcile unfinished observations without
    relaunching work to recreate metrics.
 5. Report activation, collection, persistence, application, and assessment separately as observed, not observed, or not
-   exercised. Claim complete capture only when an authoritative runtime inventory supports it.
+   exercised. Also note whether the child stayed within the read-only boundary and whether the parent avoided repeating
+   its exploration. Claim complete capture only when an authoritative runtime inventory supports it.
 
 For the next already-needed real delegation, use its existing transcript to note only: whether recording occurred
 without a reminder; whether flag corrections, ID mistakes, or recording retries repeated; and whether the saved purpose,

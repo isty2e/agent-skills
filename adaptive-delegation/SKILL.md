@@ -1,9 +1,9 @@
 ---
 name: adaptive-delegation
 description: >-
-  Use at substantive task decomposition with an independent research, verification, or implementation candidate, before
-  subagent dispatch, on subagent results/failures/cancellations, or when reviewing project experience. Decide
-  whether/how to delegate; use staged local records for statistics and parent feedback without a separate reminder.
+  Use when decomposing substantive work with an independent read-only candidate, before subagent dispatch, on results,
+  failures or cancellations, or when reviewing experience. Choose model/effort by reading-task difficulty; require an
+  explicit user request for implementation delegation. Record statistics and parent feedback without a reminder.
 ---
 
 # Adaptive Delegation
@@ -24,18 +24,33 @@ full schema on ordinary runs.
 
 ## 1. Find A Candidate And Decide
 
-At substantive task decomposition, look once for independent evidence-gathering, verification, or implementation work. A
-candidate triggers a decision, not a spawn quota. Prefer tools for deterministic work. Compare direct execution with a
-bounded child, including briefing, reading, checking, integration, and repair. Before dispatch, name the primary
+At substantive task decomposition, look once for independent read-only evidence-gathering, diagnosis, or verification.
+A candidate triggers a decision, not a spawn quota. Prefer tools for deterministic work. Compare direct execution with a
+bounded child, including briefing, reading, checking, integration, repair, and recording. Before dispatch, name the primary
 expected benefit: total cost, completion time, context isolation, independent evidence, or bounded information gain.
 Honor user priorities and limits across dimensions; one benefit alone need not justify the tradeoff. Save the primary
 reason as `expected_delegation_benefit` in `prepare`, not an acceptance document or per-run essay. Do not redefine the
 expectation after seeing the outcome. Same-model capability alone is no benefit; one child proves neither parallel
 speedup nor savings.
 
-Keep coupled design and unresolved contracts with the parent unless judgment is explicitly delegated within authority.
-Delegate implementation when decisions/acceptance are sufficiently settled and checking avoids re-solving the task.
-Distinguish executing a specified probe from designing it.
+### Read-Only By Default; Implementation Only On Explicit User Request
+
+Keep implementation with the parent. Delegate it only when the user explicitly requests subagent implementation for the
+relevant task or scope. A request to implement a feature, generic permission to use subagents, a model pin, writable
+tools, or a learned hint is not that request. Otherwise work directly; do not ask merely to broaden delegation. Apply
+this boundary regardless of model, effort, or cost/speed goal. An explicit request permits consideration, not automatic
+spawning: still settle scope, acceptance, verification/repair burden, and permissions.
+
+Read-only children return evidence, diagnosis, or candidate findings, not implementation artifacts. New code, tests,
+configuration or maintained-documentation changes, refactors, and patches remain implementation even when returned as
+text for the parent to apply. Existing checks and bounded disposable probes may produce isolated scratch/log files,
+but must not change project artifacts or external state; test execution is not permission to fix code or update snapshots. Fix directions are
+allowed; implementing them stays with the parent unless explicitly requested as above.
+
+For cost reduction, delegate only when concise, checkable evidence can spare parent exploration. If verification would
+repeat essentially the same work, prefer direct execution; read-only alone proves no saving. Return relevant sources,
+observations, and uncertainty instead of a long transcript or unsupported all-clear. Keep coupled design and unresolved
+contracts with the parent; distinguish running a specified probe from designing a discriminating one.
 
 If direct execution is preferable, use it. For a representative candidate seriously considered but not selected, call
 `record-direct` once with the existing task description/type and a short `direct_reason`. It needs no child model,
@@ -52,8 +67,10 @@ model/provider, supported effort, service tier, context, tools/write scope, and 
 differences and distinguish unsupported from unreported settings. Do not infer capability or price from names, inherit
 expensive parent setup silently, substitute unavailable settings, or equate effort labels across models.
 
-Choose model/effort jointly against direct parent execution, including expected verification/repair. Stronger model may
-be first; do not require failed cheaper trial. Adjustable-choice precedence:
+After the delegation boundary is satisfied, choose model/effort jointly by reasoning difficulty and parent verification
+burden, not by read-only status or document length alone. Stronger models may be first; compare their moderate effort
+with a cheaper model's deeper effort and direct parent execution. Do not require a failed cheaper trial or default every
+reading task to the same inexpensive configuration. Adjustable-choice precedence:
 
 1. Honor policy and explicit task/local pins; hints/examples cannot override.
 2. Read applicable hints from the project-designated file with supporting evidence; consider current-session
@@ -65,12 +82,18 @@ be first; do not require failed cheaper trial. Adjustable-choice precedence:
 4. No usable starting point: use the hypotheses below for a conservative reversible authorized trial, or work directly.
    Invent no ranking.
 
-Fallback hypotheses—not portable effort values:
+Read-only starting hypotheses—not portable effort values or a mandatory escalation ladder:
 
-- Exact extraction/specified trace or probe: least costly adequately supported option; modest reasoning when sufficient.
-- Semantic exploration/bounded implementation: capable option, manageable checking/repair, model-specific balanced
-  setting.
-- Difficult bounded reasoning/adversarial review: relevant reasoning/review capability; deeper effort when justified.
+- Routine lookup, extraction, or specified checks: an adequate low-cost profile; low effort for mechanical work, medium
+  when source/version interpretation is needed and the model supports it.
+- Multi-file tracing, conflicting sources, or semantic synthesis: a reasoning-capable profile at model-specific medium
+  or high; compare stronger moderate-effort options rather than repeatedly repairing a weak default.
+- Difficult bounded diagnosis, scientific/mathematical reasoning, or adversarial review: strong domain/reasoning
+  capability at a justified higher effort; retain with the parent when checking would require solving it again.
+
+A summary can be intellectually difficult despite being read-only. Higher effort is not a guaranteed repair or a reason
+to use maximum effort everywhere. Narrow the question, change model/effort, or work directly when evidence warrants;
+never turn an unsuccessful read-only investigation into implementation delegation without the user's explicit request.
 
 Resolve effort per model/host; do not send `balanced` as an API value. Documented defaults/supported levels: starting
 points, not proof of task suitability or hard spending limits. Maximum effort/premium speed requires task-specific
@@ -107,15 +130,18 @@ provider/storage boundaries.
 
 ### Bound Execution And Recovery
 
-Absent local settings, start with at most two independent read-only children, one writer unless independence and
-isolation are established, and no nested delegation. These defaults are adjustable, not measured optima. Assign shared
-contract ownership before parallel writes. State budgets/stops with supported controls; distinguish advisory limits from
-enforcement. Do not repeat assigned work while waiting without a justified independent comparison.
+Absent local settings, start with at most two independent read-only children and no nested delegation. These capacity
+defaults are adjustable, not measured optima; changing them does not authorize implementation. Explicitly requested
+implementation defaults to one writer; additional writers need established independence, isolation, and shared-contract
+ownership within the requested scope. Restrict child tools to the assigned work where supported and state the read-only
+boundary in the handoff; a prompt is not sandbox enforcement. State budgets/stops with supported controls. Do not repeat
+assigned work while waiting without a justified independent comparison.
 
 At a limit, blocker, or ambiguous decision, return partial evidence rather than silently widen scope. Default to one
-parent-requested repair round when new evidence constrains the fix; this default does not cap the child's ordinary
-test/edit loop. Resume related repair when supported, refreshing changed state. Diagnose repeated failure before
-retry/escalation; inspect interrupted-write state before resume/replay. Provider errors do not establish absence of
+parent-requested correction round when new evidence constrains it. A read-only child corrects its evidence/report, not
+the project; only explicitly requested implementation may include a test/edit loop. Resume related work when supported,
+refreshing changed state. Diagnose repeated failure before retry/escalation; inspect interrupted-write state before
+resume/replay. Provider errors do not establish absence of
 effects. Count retries, fallbacks, and authorized descendants against the original task budget.
 
 Before closing, account for every child as completed, stopped, or explicitly handed off; unknown state stays unresolved.
@@ -163,7 +189,8 @@ failures and pending records. Central submission remains a separate existing wor
 
 Normally stop after recording the assessment; do not rewrite hints or derive a lesson per run. Repeated repair,
 rejection, or a surprising result can justify one scoped alternative within the approved budget. An incumbent is not
-proven optimal because a model-wide ranking is unknown. Mark intentional alternatives with
+proven optimal because a model-wide ranking is unknown. Explore model/effort, context, and scope within read-only work;
+local outcomes never supply the explicit user request required for implementation. Mark intentional alternatives with
 `model_selection_reason: exploration`; do not require duplicate runs or artificial model diversity. Read
 [tuning.md](references/tuning.md) before changing hints or reviewing accumulated experience.
 

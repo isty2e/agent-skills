@@ -4,6 +4,10 @@ Use task observations to improve the next choice, not to build universal ranking
 retain uncertainty and corrections. Keep vendor guidance, operator reports, and proposed trials distinct from measured
 local outcomes; none supplies missing success or cost data.
 
+Apply the skill's read-only boundary before tuning. Implementation delegation requires the user's explicit request
+for that task or scope; previous successful implementations, model examples, and exploratory budgets cannot supply it.
+Keep historical implementation evidence, but do not use it as standing permission for future writing jobs.
+
 ## 1. Diagnose The Observed Result
 
 Compare the original primary benefit and acceptable burden with the observed outcome, including parent repair. A
@@ -35,8 +39,10 @@ Do not treat the current choice as proven optimal merely because alternatives la
 rework or rejection can justify a narrowly scoped alternative on the next ordinary task. Record intentional trials as
 `model_selection_reason: exploration`; do not manufacture an experiment on every run or enforce model-diversity quotas.
 
-Test alternatives on a small, explicitly budgeted share of eligible reversible tasks within authority. Where feasible,
-vary one suspected factor with unchanged requirements/acceptance. Additional duplicate runs need an information goal and
+Default trials to eligible read-only work within the authorized budget. A shallow multi-source investigation may merit
+a stronger model or higher effort; a routine lookup may merit lower effort. Compare stronger moderate-effort profiles,
+cheaper deeper-effort profiles, and direct work without requiring failure first. Difficult reasoning is not made easy by
+a read-only label. Where feasible, vary one suspected factor with unchanged requirements/acceptance. Additional duplicate runs need an information goal and
 experiment allowance. Compare existing settings too; alternative failure is not global disqualification.
 
 Compare task family/profile first; interpret differences using context, difficulty, scope, verification, parent
@@ -50,7 +56,8 @@ the choice rather than manufacture a ranking.
 
 The coordinating parent owns records for its delegation tree; descendants return evidence. Within authorized project
 scope, the parent may keep, adjust, or revert choices about direct work, partition, handoff, context, model/effort, or
-concurrency. Hints cannot override instructions, pins, budgets, permissions, or acceptance.
+concurrency. Hints cannot override instructions, pins, budgets, permissions, acceptance, or the explicit-user-request
+boundary for implementation; a speed objective or a useful past result is not an exception.
 
 ### Use One Project File
 
