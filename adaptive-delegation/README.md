@@ -1,48 +1,80 @@
 # Adaptive Delegation
 
-Choose whether and how to delegate, then use observed cost, time, and parent repair to improve project-local choices.
+Choose useful subagent work and retain project-specific experience with small, validated stage inputs.
 
 ## Setup
 
-1. Make this directory available through your host's supported skill path.
-2. Merge [assets/AGENTS.section.md](assets/AGENTS.section.md) into the project instructions your host reads. Do not
-   replace existing instructions wholesale.
-3. Use authorized local settings for models, tools, permissions, and budgets.
-4. Keep current hints and compact observations in project-root `.agents/delegation.md`, or in the one alternative named
-   by project instructions.
+Keep this directory intact in your host's skill path. Merge [assets/AGENTS.section.md](assets/AGENTS.section.md) into
+the instructions that host actually reads; do not replace existing project policy. The adopted section authorizes local
+record updates within repository policy, not publication or changed permissions.
 
-The skill description covers delegation decisions, dispatch, results, failures, cancellations, and experience review.
-Once adopted as project instructions, the supplied section authorizes the parent to create or update the designated file
-within repository policy without per-run reapproval. Installing the skill alone creates no hook or write authority.
+The recorder needs Python 3.11+ and `jsonschema` 4.x. `uv run scripts/delegation.py ...` uses the inline dependency
+metadata; alternatively install `jsonschema>=4.23,<5` once and run with Python. Dependency installation may require
+network access; the recorder itself has no network operations. There is no server, hook, provider adapter, background
+collector, or subagent launcher.
 
-## Project-Local Learning
+## Delegation Policy
 
-Record every launch attempt and representative delegation decisions kept with the parent, not routine direct work. Start
-a pending observation before dispatch. If that would violate a launch precondition such as a clean checkout, keep the
-fields in permitted session state and persist them immediately after the attempt. Add returned statistics, one bounded
-lookup for missing fields, and the parent's verified assessment. Missing values stay unknown with a reason; unchanged
-hints, failures, cancellations, and unused results still count as experience.
+Prefer read-only research, diagnosis, and verification. Keep implementation with the parent by default; delegate bounded
+work when its expected benefit outweighs briefing, verification, integration, and likely rework. Choose model/effort by
+task difficulty and parent checking burden. See [selection guidance](SKILL.md#1-find-a-candidate-and-decide) and
+[model starts](references/model-starting-points.md).
 
-Keep observations and current hints together without copying transcripts. Preserve human content, reconcile concurrent
-edits, and consolidate only without losing covered IDs, failures, missingness, or contrary evidence. Recording does not
-authorize commits, publication, permission changes, or weaker acceptance. If the approved destination is unavailable,
-disclose the gap; the task result need not fail.
+## Routine Use
 
-A separate authorized review may compare selected projects' records and propose shared-skill changes. Local recording
-never publishes or promotes those changes automatically. Actual no-reminder behavior depends on the host; use the
-[recording check](evaluations/recording.md) before relying on unattended capture.
+Use the project-root `.agents/delegation.md`, or one explicitly approved override. Pass the known root; the tool never
+searches upward or scans home directories. It updates one managed JSONL block and preserves surrounding hints and legacy
+records. Do not type or rewrite that block manually.
 
-## Documents
+| Moment                         | Command         | Parent input                                                                      |
+| ------------------------------ | --------------- | --------------------------------------------------------------------------------- |
+| Before dispatch                | `prepare`       | Existing task/type/model and expected delegation benefit; optional known settings |
+| After native execution         | `record-run`    | Run/status and exposed scalar metrics; unknown values may be omitted              |
+| After checking/repair          | `assess`        | Output enums and whole-delegation usefulness; optional note up to 200 characters  |
+| Representative direct choice   | `record-direct` | Existing task/type and one short reason; no child or estimated alternative cost   |
+| Separate authorized collection | `export`        | Approved local destination; existing records are copied as JSON                   |
 
-- [SKILL.md](SKILL.md): decision, execution, recording, assessment, and learning workflow.
-- [references/model-starting-points.md](references/model-starting-points.md): conditional model-specific starting points.
-- [references/measurement.md](references/measurement.md): fields, attribution, and comparisons.
-- [references/tuning.md](references/tuning.md): project-file ownership, consolidation, hint updates, and shared review.
-- [templates/delegation.md](templates/delegation.md): project hints and compact observations.
-- [evaluations/recording.md](evaluations/recording.md): static contract and no-reminder host checks.
+`show` lists compact pending/assessment summaries, `validate` checks managed records, and `schema` prints the canonical
+record or stage-input schema. Commands return short JSON and exit nonzero on invalid input. They do not require complete
+telemetry. Requested configuration never fills effective configuration, and timestamps never fabricate elapsed time. The
+two output verdicts do not measure delegation value: record its purpose before running and judge usefulness across
+retries and parent burden afterward. `unknown` is valid; no measured savings or successful task is inferred.
 
-Read references only at the decision points named in the skill.
+See [recording-tool.md](references/recording-tool.md) for runnable examples and enum meanings. The parent uses existing
+harness tools to obtain metrics; child-side collection is not required. Script invocation still depends on the agent
+following the skill. Unit tests do not establish no-reminder behavior in Pi, Codex, or Claude.
 
-## License
+## Storage And Export
+
+Record and attempt IDs are generated. Repeated run updates merge by identity without adding token counts; late metrics
+preserve assessment. Explicit corrections retain prior assessments. Existing prose is neither imported nor counted, and
+old records remain readable. Do not log the same run once as prose and again as a new staged record.
+
+`export` writes one `adaptive-delegation/staged-record` JSON file per record, including failed/pending delegations and
+representative direct choices. Direct choices have no child attempts or inferred counterfactual metrics. It does not
+convert or replace the legacy YAML-frontmatter Markdown format in `subagent-stats`. Use an approved new-format output
+subdirectory; Git synchronization and any future format migration are separate. Local export is not remote submission or
+automatic redaction. Check task text and optional source labels before sharing.
+
+Routine recording needs no new hint or essay. Keep current choices in the same project file; review accumulated evidence
+and update hints only when useful. Shared-skill changes require separate authorized review. Recording-time reduction
+remains unverified: use the existing no-reminder check on one already-needed task before adding further machinery.
+
+## Checks And References
+
+From this skill directory, with the dependency installed:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+- [SKILL.md](SKILL.md): activation and stage workflow.
+- [schemas/record.schema.json](schemas/record.schema.json): canonical schema, stage fields, and validation enums.
+- [references/measurement.md](references/measurement.md): units, missingness, cache and cost semantics.
+- [references/model-starting-points.md](references/model-starting-points.md): optional model starts; not changed by the
+  recorder.
+- [references/tuning.md](references/tuning.md): project evidence, hint ownership, and shared review.
+- [templates/delegation.md](templates/delegation.md): human hint area, without a per-run report template.
+- [evaluations/recording.md](evaluations/recording.md): integration and no-reminder host checks.
 
 [MIT](LICENSE).

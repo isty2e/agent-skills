@@ -1,22 +1,30 @@
 ## Delegation
 
-At substantive task decomposition—not every tool call—consider independent research, verification, or implementation.
-When a candidate exists, a subagent attempt changes state, or experience is reviewed, load and apply
-`adaptive-delegation` without another request. Activation does not require spawning. Record every launch attempt and
-representative delegation decisions kept with the parent, not routine direct work.
+At substantive task decomposition, consider useful independent subtasks. When a candidate exists, before dispatch,
+on returned/failed/cancelled work, or during experience review, load and apply `adaptive-delegation` without another
+request. Direct execution remains valid; activation is not a spawn quota.
 
-Keep current choices and compact observations in project-root `.agents/delegation.md` unless project instructions name
-another file. The parent may create or update the authorized file within repository policy without per-run reapproval;
-preserve human content and do not silently change destinations.
+Use project-root `.agents/delegation.md` unless these instructions name another file. The parent may create/update it
+within repository write policy without per-run reapproval. Preserve human hints and legacy records; never silently
+change destinations. Use the skill's recorder for its managed block, not agent-written JSON or a new report.
 
-- Before dispatch, compare direct execution with total delegation burden; state the expected benefit and acceptable cost.
-  Save a pending observation. If this would violate a clean-checkout or other launch precondition, retain it in permitted
-  session state, launch once, then persist the attempt or failure immediately.
-- Keep decomposition, decisions, integration, and acceptance with the parent. Bound child scope, settings, permissions,
-  limits, evidence, and stops; avoid conflicting writes and unauthorized nested delegation.
-- On results, failures, or cancellations, read returned statistics and make one bounded exposed lookup for missing fields.
-  After verification or repair, update the observation even when no hint changes.
-- Before reporting or handoff, reconcile known attempts, confirm persistence or disclose the gap, and compare outcome with
-  the original expectation. Missing telemetry does not block the task result and is never zero.
-- Revise project hints only within authorized models, budgets, and experiment scope. Observations do not authorize shared
-  guidance changes, publication, permission expansion, or weaker acceptance.
+- Compare delegation's whole-task burden with direct work. The parent retains scope, decisions, checking, integration,
+  and acceptance; respect existing parent-only duties, permissions, and budgets.
+- Prefer read-only work. Keep implementation with the parent by default; delegate bounded implementation when its
+  expected benefit outweighs verification, integration, and likely rework.
+- Choose model/effort by reasoning difficulty and parent verification burden, rather than using one cheap default for
+  all tasks.
+- Before a selected launch, call `prepare` with existing task text, known requested settings, and the expected benefit.
+  If writing would break a launch precondition, retain inputs and persist immediately after the attempt instead.
+- Execute through the native harness. The parent calls `record-run` for outcomes and available statistics, then `assess`
+  after verification/repair. No child-side self-accounting, automatic host discovery, or repeated metric searches.
+- Keep output verdicts distinct from whole-delegation usefulness, including retries and parent burden. Add usefulness to
+  the final `assess` call; unknown is valid and no savings are inferred. Use only a useful short note. Keep
+  failed/cancelled attempts, late metrics, and pending assessments visible; recording needs neither a new lesson nor a
+  changed hint.
+- For seriously considered but rejected delegation, call `record-direct` with task/type and a short reason. Export
+  includes these representative choices; do not log routine direct work or invent alternative costs.
+- Before reporting, reconcile known attempts and confirm persistence or disclose the gap. Never let telemetry collection
+  grow into a separate investigation or block delivery of the work result.
+- Review hints later when evidence warrants it. Export selected records only to an approved local destination; commits,
+  remote publication, shared-skill updates, permission changes, and weaker acceptance need separate authority.

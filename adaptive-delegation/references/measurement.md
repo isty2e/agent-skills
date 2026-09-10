@@ -1,93 +1,80 @@
 # Measurement And Attribution
 
-Runtime owns usage/lifecycle facts; the parent owns collection and assessment. Keep compact experience in the approved
-project file, normally `.agents/delegation.md`; link detailed runtime records. Record available facts without requiring
-unsupported fields or inventing values.
+Use the staged recorder for routine facts, not a hand-written audit report. Runtime values are supplied through existing
+harness tools; the recorder validates and stores them but does not discover or normalize provider APIs automatically.
+See [recording-tool.md](recording-tool.md) for calls, enums, and partial-record handling.
 
-## Collect Without A Reminder
+## Time And Missing Values
 
-Before the first delegation, identify exposed result, status, artifact, and attributable parent-usage sources; reuse the
-plan until the host changes. For each attempt:
+All duration fields use seconds. `elapsed_seconds` is the supplied attempt-start to observed terminal interval,
+including tools/waiting where the source includes them. It is not a timeout or inference-only duration. Prepare, update,
+and assess timestamps indicate recording events, never execution durations. Millisecond telemetry may be divided by
+1,000 before submission; do not seek millisecond precision.
 
-1. create the pending record under the skill's launch-precondition rule;
-2. read returned usage, then make one bounded exposed lookup for missing fields;
-3. after verification or repair, add effective settings, use, acceptance, parent burden, and next choice;
-4. before reporting, reconcile known attempts and confirm the save or disclose the gap.
+Optional `parent_work_seconds` covers attributable briefing, checking, integration, and repair for this record,
+excluding children and recording. `parent_recording_seconds` covers attributable collection/recording. Both are optional
+supplied measurements; no stopwatch or wall-time inference is installed. Whole-task wall time is not the sum of
+overlapping child and parent durations. For fanout, leave shared parent attribution unknown rather than repeating a
+group total per child.
 
-Retain source, units, inclusion scope, and whether lookup was attempted. Distinguish not reported, no exposed lookup,
-lookup failure, unavailable attribution, and skipped collection. Do not poll, scan unrelated sessions, retry without new
-evidence, or relaunch work to recreate metrics.
+An omitted or null metric is unknown, not zero. `missing_metrics_reason` is one short default for missing values in that
+attempt: `not_reported`, `no_exposed_lookup`, `lookup_failed`, `not_attributable`, or `not_collected`. A skipped lookup
+is not a failed/unavailable lookup. Leave unavailable detail unknown instead of filling every metric with repeated
+prose. A short optional `metrics_source` identifies the supplied evidence; do not create a reference document for it.
 
-## Start With The Decision Record
+## Tokens And Cache
 
-Use [the template](../templates/delegation.md) to keep decision ID and scope, expectation and selection basis, intended and
-effective settings, attempts/status, artifacts, measurements and missing reasons, parent assessment, and next choice.
-Record every launch attempt, including failures, cancellations, and unused results, even when no hint changes. For a
-representative delegation decision kept with the parent, record the reason, observed burden, and revisit condition. Link
-full artifacts instead of copying transcripts, and keep essential facts locally. Do not invent pre-run expectations,
-record routine direct work, or launch a child merely to populate a baseline.
+Copy reported scalar counts; do not relabel their meaning silently. `input_token_scope` records the supplied input's
+meaning:
 
-## Add Detail For Comparisons
+- `includes_cache`: `input_tokens` is total input; cache counts are subsets.
+- `excludes_cache`: `input_tokens` is uncached input; total input is input plus cache-read plus cache-write counts.
+- `unknown`: inclusion semantics were not established; do not infer them from model or host names.
 
-Record task/delegation ID, linked attempts, and available facts needed to reconstruct the comparison:
+`show RECORD_ID` derives token-weighted cache-read share only when the necessary counts and input scope are known. For
+`includes_cache`, divide cache-read by input. For `excludes_cache`, divide cache-read by input plus cache-read plus
+cache-write. A zero denominator or unknown required count gives null, not zero. It is not a request cache-hit frequency
+or a cost-saving estimate. Across attempts, aggregate compatible numerator/denominator counts, not an unweighted mean of
+per-attempt ratios.
 
-- **Task:** Family, objective/acceptance reference, revision/state, primary expected benefit and acceptable extra
-  burden, relevant scope/verification difficulty, routine/experimental selection, and selection basis/source: local
-  measurement, operator report, vendor guidance, or proposed trial.
-- **Configuration:** Host/version, parent/child identities, profile/settings version, requested/effective
-  model/provider/version or unresolved alias, skill revision, effort, service tier, fresh/fork/resume, concurrency,
-  permissions/limits, and override reason.
-- **Execution:** Start/end, terminal status, attempts/fallback/descendants, and artifact/check references.
-- **Usage:** Input/output and reported cache/reasoning categories with inclusion semantics, currency/cost source or
-  quota measure, completeness/missing fields, collection attempts/sources/outcomes, and missing-value reasons.
-- **Parent:** Contract assessment, use/disposition, evidence, usefulness, repair burden/diagnosis, expectation versus
-  outcome, next choice or hint revision, and later corrections.
+Store `output_tokens` in the source's documented scope. Do not add separately reported reasoning again when included.
+This initial schema deliberately omits reasoning-only metrics and an additive `tokens_used` field. References to
+original runtime records may retain further detail, but do not write a long provenance object per token category.
 
-Keep decision-relevant metadata/references in approved storage, not credentials or unnecessary confidential prompts,
-source, or transcripts. Scope aggregates to authorized project/account; cross-boundary sharing requires permission.
+Repeated `record-run` calls replace supplied attempt totals, never add receipts together. A separate retry/continuation
+has its own attempt; only newly consumed usage belongs there. Restored historical usage, parent totals that already
+include children, and per-model totals already included in an attempt must not be counted again.
 
-Use **unknown** for an applicable fact that was not reported or cannot be measured, including unsupported reporting. Use
-**not-applicable** only when the fact does not apply, such as a child identity for a direct-only task. **Zero** means
-observed zero. Keep measured values, estimates, and unavailable attribution distinct; lack of telemetry does not make
-incurred cost inapplicable.
+## Money And Outcome
 
-## Account For The Whole Task
+Optional `cost_amount` requires `cost_currency` and `cost_basis`: `reported_charge`, `host_estimate`, or
+`unverified_indicator`. It describes the attempt's supplied model-usage amount. Do not put session-wide or combined
+parent/tool totals here. No pricing catalog, formula engine, currency converter, or quota-to-money conversion is
+provided. If that scope cannot be established, omit the amount. Unknown pricing semantics can remain an unverified
+indicator; that is not evidence of an actual bill. Costs from unlike bases are not automatically comparable.
 
-Compare the same task boundary and starting state through acceptance or terminal failure. Include parent briefing,
-children, checking, integration, repair, failures, cancellations, abandoned attempts, retries, fallback, available tool
-charges, and authorized descendants. Measure direct-parent baselines identically; do not log only successful children.
-Without a comparable baseline, natural logs describe cost, not savings.
+The parent records `output_quality` before its own repair and `output_use` after handling the result. Runtime completion
+is separate. Two favorable verdicts do not establish final task acceptance, independent review coverage, or low checking
+cost. Unknown quality is a valid record, not an excluded failure. Do not force these observations into a numeric success
+score or invent an unrun direct-work baseline.
 
-Check accounting coverage as well as task comparability. Do not rank whole-task cost or claim savings when differences
-in included costs or missing usage could reverse the conclusion. A run missing parent repair cost is not directly
-comparable to one that includes it. You may compare equally covered components with that scope stated, but do not
-present a component advantage as a whole-task advantage. Keep estimates separate and unresolved total cost unknown;
-other observed benefits can still inform a bounded routing choice.
+Save `expected_delegation_benefit` before dispatch and `delegation_usefulness` after considering the whole record,
+including retries, parent checking/repair, and recording burden. Usefulness is a parent judgment, not a monetary
+estimate or a measured comparison. An unchanged correct answer need not be useful; unused output may resolve
+uncertainty. Leave usefulness `unknown` when the expected benefit or total burden cannot be judged.
 
-Count each newly billed event once. Restored history is not new usage; resubmitting it may incur input charges. Check
-whether session/parent totals already include children/tools before adding components. Preserve provider inclusion
-semantics when combining input/cache/reasoning/output. Mark incomplete totals; never replace missing usage with zero.
+`record-direct` preserves a representative non-delegation choice and short reason in the same export. No child was run:
+child usage and delegation usefulness do not apply, rather than being zero or a failed output. These selected direct
+cases reveal conditions worth reviewing, not the denominator of all direct work.
 
-Attribute shared parent review to the group unless finer allocation is observed; equal division is not measured
-attribution. Separate measurements from marginal-overhead estimates. Record child duration and elapsed task time to
-acceptance/failure separately; summing parallel durations does not give wall time. Record blocked parent waiting only
-when observable.
+## Later Comparisons
 
-Distinguish reported charges, published-rate estimates, and subscription quota. Estimates need price/version/date and
-units; quota is not API dollars. Compare currencies/quota systems only through explicit valid conversion. Require
-observed usage for cache benefit, not fresh/fork assumptions.
+Compare compatible task conditions, effort/context, usage scopes, and cost bases. Include failures, retries, discarded
+outputs, incomplete measurements, and recording overhead. Missing parent costs that could reverse a comparison prevent
+whole-task cost ranking; a component comparison must remain labeled as such. Report the denominator, direct/delegated
+choices, missing usefulness judgments, and unassessed or pending attempts separately. A direct choice is not an
+awaiting-run record. These sparse records support narrower questions before end-to-end savings claims.
 
-## Summarize Without Hiding Failure
-
-State rate units/denominators. Group retries by task for task rates; show attempt outcomes separately.
-
-For comparable groups, report acceptance, unchanged-use and substantial-rework rates, cost per accepted task, elapsed
-time, and failure/timeout counts. Divide all observed costs, including failures, by accepted tasks. With none accepted,
-report undefined, total cost, and failures. Preserve completeness caveats. Show child assessment alongside final
-acceptance so parent repairs do not hide failure.
-
-Keep observations distinct from derived hints even in the same file. Deduplicate by decision/run/attempt IDs, including
-membership retained in consolidated summaries. Preserve counts and missingness; do not pool incompatible settings or
-accounting coverage. Report pending/unassessed runs separately and state the terminal cohort used for acceptance rates.
-A completed-cohort rate must not conceal excluded observations. Use [tuning.md](tuning.md) before consolidating or
-changing routing; missing records preclude a claim of complete capture.
+Project hints remain separate from raw records even in the same file. Read [tuning.md](tuning.md) before combining
+observations or changing policy. Export is a mechanical, separately authorized local copy, not a requirement to write a
+standalone narrative. No statistic alone authorizes sharing private project information.
