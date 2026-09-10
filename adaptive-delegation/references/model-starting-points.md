@@ -7,8 +7,7 @@ under the skill's settings precedence and budget. Other approved models remain e
 
 The read-only assignments below are workflow hypotheses using vendor-documented model identities/effort, not measured
 quality parity or savings. Treat providers independently, not as equivalent tiers. IDs are examples, not portable launch
-arguments. These entries authorize neither writing nor implementation: that requires the user's explicit request for
-the task or scope under [the skill boundary](../SKILL.md#1-find-a-candidate-and-decide).
+arguments. Apply [the skill's selection criteria](../SKILL.md#1-find-a-candidate-and-decide) before choosing a profile.
 
 Stronger models may be initial choices; no cheaper-first sequence is required. Compare moderate effort on a stronger
 model, deeper effort on a cheaper model, and direct parent execution, including expected checking/repair. Same-model
@@ -50,11 +49,6 @@ Sources: [Claude model roles](https://code.claude.com/docs/en/model-config),
 [model IDs](https://platform.claude.com/docs/en/about-claude/models/overview),
 [model-specific effort](https://platform.claude.com/docs/en/build-with-claude/effort),
 [Fable 5.1 identity and scope](https://platform.claude.com/docs/en/release-notes/overview#september-1-2026).
-
-The read-only policy is a conservative operating choice, not proof that implementation delegation always loses money
-or that read-only work always saves it. Explicitly requested implementation needs a separate scope/verification and
-model/effort decision; these reading-task starts do not automatically apply. Local trials remain allowed within the
-read-only boundary; hard tasks need not fail on Luna medium before another profile is considered.
 
 ## Resolve And Refresh
 

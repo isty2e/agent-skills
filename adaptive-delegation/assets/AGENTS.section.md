@@ -1,8 +1,8 @@
 ## Delegation
 
-At substantive task decomposition, consider independent read-only research, diagnosis, or verification. When a candidate
-exists, before dispatch, on returned/failed/cancelled work, or during experience review, load and apply
-`adaptive-delegation` without another request. Direct execution remains valid; activation is not a spawn quota.
+At substantive task decomposition, consider useful independent subtasks. When a candidate exists, before dispatch,
+on returned/failed/cancelled work, or during experience review, load and apply `adaptive-delegation` without another
+request. Direct execution remains valid; activation is not a spawn quota.
 
 Use project-root `.agents/delegation.md` unless these instructions name another file. The parent may create/update it
 within repository write policy without per-run reapproval. Preserve human hints and legacy records; never silently
@@ -10,13 +10,10 @@ change destinations. Use the skill's recorder for its managed block, not agent-w
 
 - Compare delegation's whole-task burden with direct work. The parent retains scope, decisions, checking, integration,
   and acceptance; respect existing parent-only duties, permissions, and budgets.
-- Keep implementation with the parent unless the user explicitly requests subagent implementation for the relevant task
-  or scope. General implementation requests, generic delegation permission, model pins, and learned hints do not suffice.
-  Text-only patches, new tests, and configuration edits are implementation too. Read-only checks may use isolated scratch
-  output, not change project artifacts. Otherwise work directly, without routine permission-seeking to delegate.
-- Choose read-only model/effort by reasoning difficulty and parent verification burden: modest settings for simple
-  extraction, stronger reasoning for multi-source analysis or hard diagnosis. Read-only is neither always easy nor
-  automatically cost-saving; compare direct work and do not repeat a cheap default blindly.
+- Prefer read-only work. Keep implementation with the parent by default; delegate bounded implementation when its
+  expected benefit outweighs verification, integration, and likely rework.
+- Choose model/effort by reasoning difficulty and parent verification burden, rather than using one cheap default for
+  all tasks.
 - Before a selected launch, call `prepare` with existing task text, known requested settings, and the expected benefit.
   If writing would break a launch precondition, retain inputs and persist immediately after the attempt instead.
 - Execute through the native harness. The parent calls `record-run` for outcomes and available statistics, then `assess`

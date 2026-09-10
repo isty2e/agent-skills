@@ -15,18 +15,10 @@ collector, or subagent launcher.
 
 ## Delegation Policy
 
-Default to read-only research, diagnosis, and verification; keep implementation with the parent. Delegate implementation
-only when the user explicitly requests subagent implementation for the relevant task or scope, not merely a feature,
-speedup, or generic use of subagents. New tests and text-only patches count as implementation. Existing checks may write
-isolated logs/scratch files, not modify project artifacts. An explicit request does not waive verification or budgets.
-
-Choose read-only models and effort by reasoning difficulty and parent checking burden, not file count or a blanket cheap
-model default. Cost-oriented delegation must avoid enough parent exploration to justify briefing, checking, and
-recording; read-only is not proof of savings. See [the boundary](SKILL.md#1-find-a-candidate-and-decide) and
+Prefer read-only research, diagnosis, and verification. Keep implementation with the parent by default; delegate bounded
+work when its expected benefit outweighs briefing, verification, integration, and likely rework. Choose model/effort by
+task difficulty and parent checking burden. See [selection guidance](SKILL.md#1-find-a-candidate-and-decide) and
 [model starts](references/model-starting-points.md).
-
-This is an agent instruction policy, not a new recorder permission check. The schema still accepts implementation
-observations for explicitly requested work and historical evidence; recording one does not authorize a new launch.
 
 ## Routine Use
 

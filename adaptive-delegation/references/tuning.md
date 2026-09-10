@@ -4,10 +4,6 @@ Use task observations to improve the next choice, not to build universal ranking
 retain uncertainty and corrections. Keep vendor guidance, operator reports, and proposed trials distinct from measured
 local outcomes; none supplies missing success or cost data.
 
-Apply the skill's read-only boundary before tuning. Implementation delegation requires the user's explicit request
-for that task or scope; previous successful implementations, model examples, and exploratory budgets cannot supply it.
-Keep historical implementation evidence, but do not use it as standing permission for future writing jobs.
-
 ## 1. Diagnose The Observed Result
 
 Compare the original primary benefit and acceptable burden with the observed outcome, including parent repair. A
@@ -56,8 +52,7 @@ the choice rather than manufacture a ranking.
 
 The coordinating parent owns records for its delegation tree; descendants return evidence. Within authorized project
 scope, the parent may keep, adjust, or revert choices about direct work, partition, handoff, context, model/effort, or
-concurrency. Hints cannot override instructions, pins, budgets, permissions, acceptance, or the explicit-user-request
-boundary for implementation; a speed objective or a useful past result is not an exception.
+concurrency. Hints cannot override instructions, pins, budgets, permissions, or acceptance.
 
 ### Use One Project File
 
