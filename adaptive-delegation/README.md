@@ -19,16 +19,19 @@ Use the project-root `.agents/delegation.md`, or one explicitly approved overrid
 searches upward or scans home directories. It updates one managed JSONL block and preserves surrounding hints and legacy
 records. Do not type or rewrite that block manually.
 
-| Moment                         | Command      | Parent input                                                                       |
-| ------------------------------ | ------------ | ---------------------------------------------------------------------------------- |
-| Before dispatch                | `prepare`    | Short existing task, type, requested model; optional known settings/classification |
-| After native execution         | `record-run` | Run/status and exposed scalar metrics; unknown values may be omitted               |
-| After checking/repair          | `assess`     | Two output enums; optional exception note up to 200 characters                     |
-| Separate authorized collection | `export`     | Approved local destination; existing records are copied as JSON                    |
+| Moment                         | Command         | Parent input                                                                      |
+| ------------------------------ | --------------- | --------------------------------------------------------------------------------- |
+| Before dispatch                | `prepare`       | Existing task/type/model and expected delegation benefit; optional known settings |
+| After native execution         | `record-run`    | Run/status and exposed scalar metrics; unknown values may be omitted              |
+| After checking/repair          | `assess`        | Output enums and whole-delegation usefulness; optional note up to 200 characters  |
+| Representative direct choice   | `record-direct` | Existing task/type and one short reason; no child or estimated alternative cost   |
+| Separate authorized collection | `export`        | Approved local destination; existing records are copied as JSON                   |
 
 `show` lists compact pending/assessment summaries, `validate` checks managed records, and `schema` prints the canonical
 record or stage-input schema. Commands return short JSON and exit nonzero on invalid input. They do not require complete
-telemetry. Requested configuration never fills effective configuration, and timestamps never fabricate elapsed time.
+telemetry. Requested configuration never fills effective configuration, and timestamps never fabricate elapsed time. The
+two output verdicts do not measure delegation value: record its purpose before running and judge usefulness across
+retries and parent burden afterward. `unknown` is valid; no measured savings or successful task is inferred.
 
 See [recording-tool.md](references/recording-tool.md) for runnable examples and enum meanings. The parent uses existing
 harness tools to obtain metrics; child-side collection is not required. Script invocation still depends on the agent
@@ -40,13 +43,15 @@ Record and attempt IDs are generated. Repeated run updates merge by identity wit
 preserve assessment. Explicit corrections retain prior assessments. Existing prose is neither imported nor counted, and
 old records remain readable. Do not log the same run once as prose and again as a new staged record.
 
-`export` writes one `adaptive-delegation/staged-record` JSON file per record, including failed/pending records. It does
-not convert or replace the legacy YAML-frontmatter Markdown format in `subagent-stats`. Use an approved new-format
-output subdirectory; Git synchronization and any future format migration are separate. Local export is not remote
-submission or automatic redaction. Check task text and optional source labels before sharing.
+`export` writes one `adaptive-delegation/staged-record` JSON file per record, including failed/pending delegations and
+representative direct choices. Direct choices have no child attempts or inferred counterfactual metrics. It does not
+convert or replace the legacy YAML-frontmatter Markdown format in `subagent-stats`. Use an approved new-format output
+subdirectory; Git synchronization and any future format migration are separate. Local export is not remote submission or
+automatic redaction. Check task text and optional source labels before sharing.
 
 Routine recording needs no new hint or essay. Keep current choices in the same project file; review accumulated evidence
-and update hints only when useful. Shared-skill changes require separate authorized review.
+and update hints only when useful. Shared-skill changes require separate authorized review. Recording-time reduction
+remains unverified: use the existing no-reminder check on one already-needed task before adding further machinery.
 
 ## Checks And References
 

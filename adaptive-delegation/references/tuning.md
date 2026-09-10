@@ -9,7 +9,9 @@ local outcomes; none supplies missing success or cost data.
 Compare the original primary benefit and acceptable burden with the observed outcome, including parent repair. A
 successful final task does not by itself vindicate the delegation choice. Use artifact checks and observed work, not
 confidence alone; retain uncertainty where the benefit was not observed. Consider the handoff and task partition before
-attributing an outcome to the model. Candidate tests below are hypotheses, not mandatory actions:
+attributing an outcome to the model. Use the recorded expected benefit and whole-delegation usefulness, not output
+quality alone. Unknown usefulness is not a negative result or proof of savings. Candidate tests below are hypotheses,
+not mandatory actions:
 
 - **Missing contract/source:** Fix the handoff; retain the profile for a discriminating retry.
 - **Repeated reasoning errors with adequate context:** Adjust supported effort or profile/model.
@@ -65,7 +67,9 @@ tracking changes, or host configuration.
 
 The script alone updates its managed JSONL block. Use `assess --correction-reason` for a changed parent verdict and
 `record-run` for late scalar facts. A terminal attempt is not reopened; explicitly start a continuation/retry. Direct
-choices can remain short prose outside the block. Do not generate a second narrative per structured record.
+choices seriously considered against delegation use `record-direct` and a short reason, so export retains them. No child
+model, run, or hypothetical metrics are required. Preserve older prose without automatic import. Do not generate a
+second narrative per structured record.
 
 ### Consolidate Without Erasing Evidence
 
@@ -112,8 +116,9 @@ home directories or cross confidentiality boundaries. Group compatible task, set
 retaining failures, repair, missingness, coverage, and contrary evidence.
 
 Use the recorder's `export` only when gathering an authorized batch. Exported staged JSON retains the fields already
-collected; do not rewrite it as a long case report. It is separate from a central repository's legacy format and
-requires an approved destination. No export operation grants Git synchronization or publication authority.
+collected, including representative direct choices and separate output/usefulness judgments; do not rewrite it as a long
+case report. It is separate from a central repository's legacy format and requires an approved destination. No export
+operation grants Git synchronization or publication authority.
 
 A shared-skill proposal records its evidence, affected instruction, expected benefit, uncertainty, and recheck or
 rollback. Submit it for explicit review; local records never authorize publication or automatic promotion. Insufficient

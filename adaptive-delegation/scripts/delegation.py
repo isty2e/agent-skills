@@ -30,7 +30,9 @@ Object: TypeAlias = dict[str, JSON]
 START = '<!-- adaptive-delegation:records:v1 -->'
 END = '<!-- /adaptive-delegation:records:v1 -->'
 TERMINAL = {'completed', 'failed', 'cancelled'}
-INPUTS = {'prepare': 'prepare_input', 'record-run': 'record_run_input', 'assess': 'assess_input'}
+INPUTS = {'prepare': 'prepare_input', 'record-direct': 'record_direct_input',
+          'record-run': 'record_run_input', 'assess': 'assess_input'}
+CREATE_COMMANDS = {'prepare', 'record-direct'}
 SCHEMA = json.loads((Path(__file__).resolve().parents[1] / 'schemas' / 'record.schema.json').read_text(encoding='utf-8'))
 
 
@@ -126,6 +128,9 @@ def validate_record(record: Object) -> None:
             raise RecordError('retry_of must identify an earlier attempt in this record.')
         attempt_ids.add(aid)
         metric_invariants(object_value(attempt['metrics']))
+    review = record.get('delegation_assessment')
+    if review is not None and not set(cast(list[str], object_value(review)['attempt_ids'])) <= attempt_ids:
+        raise RecordError('Delegation assessment refers to an unknown attempt.')
 
 
 def cache_ratio(metrics: Object) -> float | None:
@@ -144,13 +149,20 @@ def cache_ratio(metrics: Object) -> float | None:
 
 def summary(record: Object) -> Object:
     attempts = objects(record['attempts'])
+    mode = record.get('execution_mode', 'delegate')
+    review = record.get('delegation_assessment')
+    review_pending = mode == 'delegate' and (review is None or
+        object_value(review)['attempt_ids'] != [a['attempt_id'] for a in attempts] or
+        any(a['execution_status'] not in TERMINAL for a in attempts))
     return {
         'record_id': record['record_id'], 'revision': record['revision'],
+        'execution_mode': mode,
+        'delegation_review_pending': review_pending,
         'task_type': object_value(record['task'])['type'], 'attempts': len(attempts),
         'unassessed_attempts': sum(a['assessment'] is None for a in attempts),
         'nonterminal_attempts': sum(a['execution_status'] not in TERMINAL for a in attempts),
         'pending_use_attempts': sum(a['assessment'] is not None and object_value(a['assessment'])['output_use'] == 'pending' for a in attempts),
-        'awaiting_run': not attempts,
+        'awaiting_run': mode == 'delegate' and not attempts,
     }
 
 
@@ -263,23 +275,28 @@ def atomic_write(path: Path, content: bytes, expected: bytes | None) -> bool:
     return True
 
 
-def prepare(document: Document, data: Object, project_name: str) -> Object:
-    validate(data, 'prepare_input')
-    if not data.get('requested_child_model'):
+def create_record(document: Document, data: Object, project_name: str, *, direct: bool = False) -> Object:
+    validate(data, 'record_direct_input' if direct else 'prepare_input')
+    if not direct and not data.get('requested_child_model'):
         raise RecordError('requested_child_model must be known before recording a planned delegation.')
     timestamp = now()
     record: Object = {
         'format': 'adaptive-delegation/staged-record', 'schema_version': 1,
         'record_id': new_id('D'), 'revision': 1, 'created_at': timestamp, 'updated_at': timestamp,
+        'execution_mode': 'direct' if direct else 'delegate',
         'project_name': data.get('project_name') or project_name,
         'parent': {'model': data.get('parent_model'), 'effort': data.get('parent_effort')},
         'task': {'description': data['task_description'], 'type': data['task_type'],
                  'domains': data.get('task_domains', []), 'estimated_difficulty': data.get('estimated_difficulty')},
-        'requested_child': {'model': data['requested_child_model'], 'effort': data.get('requested_child_effort'),
-                            'context': data.get('requested_context')},
-        'model_selection_reason': data.get('model_selection_reason', 'unknown'),
         'attempts': [], 'parent_metrics': {},
     }
+    if direct:
+        record['direct_reason'] = data['direct_reason']
+    else:
+        record['requested_child'] = {'model': data['requested_child_model'], 'effort': data.get('requested_child_effort'),
+                                     'context': data.get('requested_context')}
+        record['model_selection_reason'] = data.get('model_selection_reason', 'unknown')
+        record['expected_delegation_benefit'] = data['expected_delegation_benefit']
     for key in ('workspace_task', 'group_id', 'host', 'skill_revision'):
         if key in data:
             record[key] = data[key]
@@ -307,6 +324,8 @@ def select_attempt(record: Object, attempt_id: str | None, run_id: JSON) -> Obje
 
 def record_run(record: Object, data: Object, args: argparse.Namespace) -> Object:
     validate(data, 'record_run_input')
+    if record.get('execution_mode') == 'direct':
+        raise RecordError('A direct choice has no child runs; prepare a separate delegation if the choice changes.')
     if not data:
         raise RecordError('record-run needs at least one reported field.')
     if args.new_attempt and args.attempt_id:
@@ -352,37 +371,67 @@ def record_run(record: Object, data: Object, args: argparse.Namespace) -> Object
     return {'attempt_id': attempt['attempt_id'], 'run_id': attempt['run_id']}
 
 
+def replace_assessment(owner: Object, key: str, proposed: Object, reason: str | None) -> bool:
+    """Retain earlier parent judgments without counting repeated reports twice."""
+    current = owner.get(key)
+    previous = object_value(current) if current is not None else None
+    if previous is not None and {k: v for k, v in previous.items() if k != 'assessed_at'} == proposed:
+        return False
+    if previous is not None:
+        if not reason:
+            raise RecordError('Changing an assessment requires --correction-reason; previous evidence is retained.')
+        validate(reason, 'note')
+        history = cast(list[JSON], owner.setdefault(key + '_history', []))
+        history.append({'at': now(), 'previous': copy.deepcopy(previous), 'reason': reason})
+    owner[key] = {**proposed, 'assessed_at': now()}
+    return True
+
+
 def assess(record: Object, data: Object, args: argparse.Namespace) -> Object:
     validate(data, 'assess_input')
-    attempt = select_attempt(record, args.attempt_id, args.run_id)
-    if attempt is None:
+    if record.get('execution_mode') == 'direct':
+        raise RecordError('A direct choice has no child output or delegation usefulness to assess.')
+    attempts = objects(record['attempts'])
+    if not attempts:
         raise RecordError('No matching attempt. Record the result or launch failure first.')
-    if args.run_id is not None and attempt['run_id'] != args.run_id:
-        raise RecordError('--attempt-id and --run-id identify different attempts.')
-    current = attempt['assessment']
-    proposed: Object = {'output_quality': data['output_quality'], 'output_use': data['output_use']}
-    if 'note' in data:
-        proposed['note'] = data['note']
-    elif current is not None and 'note' in object_value(current):
-        proposed['note'] = object_value(current)['note']
-    previous = object_value(current) if current is not None else None
-    same = previous is not None and {k: v for k, v in previous.items() if k != 'assessed_at'} == proposed
-    if not same:
-        if previous is not None:
-            if not args.correction_reason:
-                raise RecordError('Changing an assessment requires --correction-reason; previous evidence is retained.')
-            validate(args.correction_reason, 'note')
-            if not args.correction_reason.strip():
-                raise RecordError('Correction reason must not be blank.')
-            history = cast(list[JSON], attempt.setdefault('assessment_history', []))
-            history.append({'at': now(), 'previous': copy.deepcopy(previous), 'reason': args.correction_reason})
-        proposed['assessed_at'] = now()
-        attempt['assessment'] = proposed
+    response: Object = {}
+    if 'output_quality' in data:
+        attempt = select_attempt(record, args.attempt_id, args.run_id)
+        if attempt is None:
+            raise RecordError('No matching attempt.')
+        if args.run_id is not None and attempt['run_id'] != args.run_id:
+            raise RecordError('--attempt-id and --run-id identify different attempts.')
+        current = attempt['assessment']
+        proposed: Object = {'output_quality': data['output_quality'], 'output_use': data['output_use']}
+        if 'note' in data:
+            proposed['note'] = data['note']
+        elif current is not None and 'note' in object_value(current):
+            proposed['note'] = object_value(current)['note']
+        changed = replace_assessment(attempt, 'assessment', proposed, args.correction_reason)
+        # An output correction can change utility; preserve the old judgment for review.
+        if changed and 'delegation_usefulness' not in data and record.get('delegation_assessment') is not None:
+            history = cast(list[JSON], record.setdefault('delegation_assessment_history', []))
+            history.append({'at': now(), 'previous': record['delegation_assessment'],
+                            'reason': 'Output assessment changed; reconsider whole-delegation usefulness.'})
+            record['delegation_assessment'] = None
+        response['attempt_id'] = attempt['attempt_id']
+    elif args.attempt_id or args.run_id:
+        raise RecordError('Delegation usefulness covers the whole record; omit attempt/run selectors without output verdicts.')
+    if 'delegation_usefulness' in data:
+        if data['delegation_usefulness'] != 'unknown' and any(a['execution_status'] not in TERMINAL for a in attempts):
+            raise RecordError('Nonterminal attempts: leave delegation usefulness unknown until the result is observable.')
+        proposed = {'delegation_usefulness': data['delegation_usefulness'],
+                    'attempt_ids': [a['attempt_id'] for a in attempts]}
+        previous = record.get('delegation_assessment')
+        reason = args.correction_reason
+        if previous is not None and object_value(previous)['attempt_ids'] != proposed['attempt_ids'] and not reason:
+            reason = 'Reassessed after additional attempts, including their cost and parent burden.'
+        replace_assessment(record, 'delegation_assessment', proposed, reason)
     parent = object_value(record['parent_metrics'])
     for key in SCHEMA['$defs']['parent_metrics']['properties']:
         if key in data:
             parent[key] = data[key]
-    return {'attempt_id': attempt['attempt_id']}
+    return response
 
 
 def export_records(document: Document, destination: Path, ids: list[str] | None) -> Object:
@@ -410,11 +459,18 @@ def export_records(document: Document, destination: Path, ids: list[str] | None)
             changed += atomic_write(target, content, raw)
     return {'exported': len(records), 'files_changed': changed,
             'unassessed_attempts': sum(cast(int, summary(r)['unassessed_attempts']) for r in records),
-            'awaiting_run': sum(not r['attempts'] for r in records)}
+            'awaiting_run': sum(bool(summary(r)['awaiting_run']) for r in records),
+            'direct_records': sum(r.get('execution_mode') == 'direct' for r in records),
+            'delegation_reviews_pending': sum(bool(summary(r)['delegation_review_pending']) for r in records)}
 
 
 def resolved(field: dict[str, object]) -> dict[str, object]:
-    return SCHEMA['$defs'][field['$ref'].split('/')[-1]] if '$ref' in field else field
+    while '$ref' in field:
+        target = SCHEMA
+        for part in str(field['$ref']).removeprefix('#/').split('/'):
+            target = target[part]
+        field = target
+    return field
 
 
 def parser() -> argparse.ArgumentParser:
@@ -423,8 +479,8 @@ def parser() -> argparse.ArgumentParser:
     root.add_argument('--record-file', type=Path, default=Path('.agents/delegation.md'), help='Path relative to project root, or an explicitly approved absolute override.')
     subs = root.add_subparsers(dest='command', required=True)
     for command, definition in INPUTS.items():
-        sub = subs.add_parser(command, allow_abbrev=False, help={'prepare':'Save pre-run task and requested settings.', 'record-run':'Merge reported runtime facts.', 'assess':'Add the parent output assessment.'}[command])
-        if command != 'prepare':
+        sub = subs.add_parser(command, allow_abbrev=False, help={'prepare':'Save pre-run task, delegation purpose, and requested settings.', 'record-direct':'Record a representative choice not to delegate.', 'record-run':'Merge reported runtime facts.', 'assess':'Assess child output and whole-delegation usefulness.'}[command])
+        if command not in CREATE_COMMANDS:
             sub.add_argument('record_id')
             sub.add_argument('--attempt-id', help='Internal attempt ID; otherwise use run ID or the sole attempt.')
         sub.add_argument('--json', type=Path, metavar='FILE', help='Flat stage input JSON; - reads stdin. Flags may add distinct fields, never silently override.')
@@ -488,8 +544,8 @@ def execute(args: argparse.Namespace) -> Object:
         with locked(path):
             original = read_bytes(path)
             document = Document.parse(original)
-            if args.command == 'prepare':
-                response = prepare(document, data, root.name)
+            if args.command in CREATE_COMMANDS:
+                response = create_record(document, data, root.name, direct=args.command == 'record-direct')
                 record = document.find(str(response['record_id']))
                 changed = True
             else:

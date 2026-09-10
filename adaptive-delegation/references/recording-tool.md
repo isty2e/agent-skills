@@ -16,7 +16,7 @@ record() { uv run "$SKILL_DIR/scripts/delegation.py" --project-root "$PROJECT_RO
 
 record prepare --task-type verify --task-description 'Check active-bound derivatives.' \
   --requested-child-model 'provider/model-id' --requested-child-effort high \
-  --requested-context fresh --model-selection-reason exploration
+  --requested-context fresh --model-selection-reason exploration --expected-delegation-benefit reduce_context
 ```
 
 The model above is a placeholder, not a recommendation. Reuse the returned `record_id` (shown below as `$RECORD_ID`).
@@ -27,10 +27,14 @@ record record-run "$RECORD_ID" --run-id "$NATIVE_RUN_ID" --execution-status comp
   --elapsed-seconds 92 --input-tokens 18000 --output-tokens 2100
 
 record assess "$RECORD_ID" --output-quality incomplete --output-use used_after_local_fix \
-  --note 'Parent added the omitted active-bound case.'
+  --delegation-usefulness unknown --note 'Parent added the omitted active-bound case.'
 
 record show
 ```
+
+The usefulness value is a parent judgment against the original purpose, including all retries and parent work; the
+example leaves it unknown instead of inferring it from output quality. Add it to the final output assessment, not
+another mandatory command. Use `show` once at task closure, not after every child or successful write.
 
 The numbers are synthetic examples. Supply only actual reported values. Omit unavailable measurements; if known, use
 `--missing-metrics-reason not_reported`, `no_exposed_lookup`, `lookup_failed`, `not_attributable`, or `not_collected`.
@@ -48,17 +52,32 @@ clears a nullable measurement. No automatic host discovery or provider-specific 
 
 ## Which Stage Owns Which Fields?
 
-| Stage        | Required input                                           | Useful optional input                                                                                                          | Automatically filled                                               |
-| ------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `prepare`    | `task_description`, `task_type`, `requested_child_model` | Parent model/effort, host, workspace task, domains, estimated difficulty, requested effort/context, selection reason, group ID | Record ID, revision, timestamps, default project name              |
-| `record-run` | Record ID and at least one reported field                | Native run ID, status, effective child settings, seconds, token/cache counts, cost and its basis                               | Internal attempt ID; merges without adding counters                |
-| `assess`     | Record ID, `output_quality`, `output_use`                | Run/attempt selector, exception note, observed parent work/recording seconds                                                   | Assessment timestamp; correction history when explicitly requested |
-| `export`     | Approved local destination                               | Record IDs to select; otherwise all managed records                                                                            | Validated JSON files named by record ID                            |
+| Stage           | Required input                                                                          | Useful optional input                                                                                                          | Automatically filled                                               |
+| --------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `prepare`       | `task_description`, `task_type`, `requested_child_model`, `expected_delegation_benefit` | Parent model/effort, host, workspace task, domains, estimated difficulty, requested effort/context, selection reason, group ID | Record ID, revision, timestamps, default project name              |
+| `record-direct` | `task_description`, `task_type`, `direct_reason`                                        | Known workspace/parent/task metadata                                                                                           | Identity, timestamps, direct mode; no child attempts               |
+| `record-run`    | Record ID and at least one reported field                                               | Native run ID, status, effective child settings, seconds, token/cache counts, cost and its basis                               | Internal attempt ID; merges without adding counters                |
+| `assess`        | Record ID and an output pair or `delegation_usefulness`                                 | Both output verdicts and usefulness together on the normal final call; short note and observed parent seconds                  | Assessment timestamp; correction history when explicitly requested |
+| `export`        | Approved local destination                                                              | Record IDs to select; otherwise all managed records                                                                            | Validated JSON files named by record ID                            |
 
 `prepare` records a selected delegated task, not every possibility considered. A distinct parallel task gets a separate
 record; use the same optional `group_id` to group a fanout. Retries/continuations stay in the original record. Do not
-repeat shared parent work in every fanout record; leave attribution unknown unless separable. Record representative
-direct choices as short human notes outside the block; this initial script does not encode direct-work baselines.
+repeat shared parent work in every fanout record; leave attribution unknown unless separable.
+
+### Representative Direct Choices
+
+When delegation was seriously considered but direct work was preferable, record once:
+
+```bash
+record record-direct --task-type lookup --task-description 'Read the already located option.' \
+  --direct-reason 'Briefing and checking would duplicate one short source read.'
+```
+
+`execution_mode: direct` records have no child fields, attempts, or delegation assessment. They are exported but never
+counted as missing runs, failed children, or zero-cost alternatives. No `record-run` or `assess` follows; those commands
+reject direct records. If a later task is delegated, use a new `prepare` record rather than changing this past choice.
+Keep `direct_reason` to 200 characters. Do not log all direct work, require hypothetical child settings/costs, or infer
+population-wide non-delegation rates from representative cases. Existing prose remains untouched, not auto-imported.
 
 Common context such as parent settings can be supplied from an already-known session value, but the script does not
 infer them. Absent effective settings remain unknown; first-attempt requested settings come from `prepare`. A later
@@ -75,6 +94,30 @@ attempt's request is unknown unless explicitly supplied with `--requested-child-
   the model/effort choice, not the output verdict. A model explicitly present in a tool call does not imply a user pin.
 - `execution_status`: `running`, `completed`, `failed`, `cancelled`, `unknown`. A cancellation request is not an
   observed stop; keep the state running/unknown until the harness reports termination.
+
+### Delegation Purpose And Usefulness
+
+`expected_delegation_benefit` is the primary purpose, chosen before execution: `save_time`, `save_cost`,
+`reduce_context`, `independent_check`, or `explore_options`; `unknown` is allowed when the original expectation was not
+retained. It is distinct from why a particular model was selected. Record it in `prepare`; never invent it
+retrospectively from success.
+
+`delegation_usefulness` belongs to the entire record, including retries and parent checking, repair, and recording:
+
+| Value                     | Meaning                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------ |
+| `helpful`                 | Parent judges that useful contribution justified the total burden under the original purpose     |
+| `no_benefit`              | No meaningful contribution was observed, without clear evidence of excess burden                 |
+| `burden_exceeded_benefit` | Parent judges that extra burden outweighed the contribution                                      |
+| `unknown`                 | Available evidence does not support that judgment; never infer helpfulness from a correct output |
+
+These are ordinal judgments, not measured savings or a numeric success score. An unchanged correct answer may duplicate
+parent work; unused output may resolve uncertainty. Keep any note short and optional. Missing costs need not prevent a
+scoped usefulness judgment, but a cost-saving claim still needs comparable accounting.
+
+Normally include usefulness in the final `assess` call with output verdicts. For intermediate attempts, record output
+only; after retries, judge the whole task, not just the best attempt. It can also be supplied alone without repeating
+output flags or an attempt selector. Nonterminal runs allow only `unknown` and remain pending for review.
 
 ### Parent Output Verdicts
 
@@ -127,12 +170,18 @@ this script cannot subtract restored history or discover provider-side fallback 
 
 A terminal attempt is not reopened. Duplicate terminal receipts are harmless; late metrics may still be added after
 assessment. Changing a stored assessment requires `--correction-reason 'short explanation'`; the prior verdict is kept.
-Repeated identical assessments are no-ops. An omitted note preserves the prior note; JSON null explicitly clears it. No
-artifact output or incomplete statistics is not a reason to omit the attempt.
+Repeated identical assessments are no-ops. Whole-delegation review stores its covered attempt IDs; a later retry makes
+that review pending. Reassessment of expanded coverage preserves the previous review automatically. A changed output
+assessment without a new usefulness judgment archives the previous utility review and marks it pending; late metrics
+alone do not erase either judgment. Revising usefulness for the same attempts requires the same correction reason. An
+omitted note preserves the prior note; JSON null explicitly clears it. No artifact output or incomplete statistics is
+not a reason to omit the attempt.
 
-`show` and `validate` list missing assessments, nonterminal attempts, and records awaiting a run. These counts cover
-only tool-managed records, not legacy prose or unobserved host executions. `validate` requires well-formed data, not
-complete metrics or a successful output.
+`show` and `validate` list missing output assessments, nonterminal attempts, awaiting runs, and
+`delegation_review_pending`. Direct records are identified separately, never awaiting runs. Older staged records without
+`execution_mode` still mean delegate; absent expected benefit or usefulness remains unrecorded, not inferred. These
+counts cover only tool-managed records, not legacy prose or unobserved host executions. `validate` requires well-formed
+data, not complete metrics or a successful output.
 
 ## Export Later, In A Batch
 
@@ -142,10 +191,11 @@ record export --destination /approved/subagent-stats-checkout/staged-json
 record export --destination /approved/export-dir --record-id "$RECORD_ID"
 ```
 
-Exports include pending and failed observations. No Markdown narrative is generated. This is staged-record JSON format
-1, identified by `format: adaptive-delegation/staged-record`; it is not `subagent-stats`' legacy format 1. Existing
-Markdown files are untouched and no migration is attempted. No credentials, network sync, Git commits/pushes, or
-automatic redaction. Use the existing authorized sharing process after reviewing optional text and source labels.
+Exports include pending and failed delegations, their purpose/usefulness, and representative direct choices. No Markdown
+narrative is generated. This is staged-record JSON format 1, identified by `format: adaptive-delegation/staged-record`;
+it is not `subagent-stats`' legacy format 1. Existing Markdown files are untouched and no migration is attempted. No
+credentials, network sync, Git commits/pushes, or automatic redaction. Use the existing authorized sharing process after
+reviewing optional text and source labels.
 
 Existing identical exports are unchanged. A newer conflicting destination revision, equal-revision divergence, or
 identity mismatch is rejected. Multi-file exports are atomic per file, not a batch transaction; after an I/O failure,
@@ -154,8 +204,8 @@ safely rerun. Cross-machine Git conflicts remain outside this tool.
 ## Validation And Local Writes
 
 The canonical [JSON Schema](../schemas/record.schema.json) supplies fields, enums, and CLI field help. `schema prepare`,
-`schema record-run`, or `schema assess` prints the stage-input schema; no root is needed. Do not routinely load this
-large schema into the model context. `--help` is the short field reference.
+`schema record-direct`, `schema record-run`, or `schema assess` prints the stage-input schema; no root is needed. Do not
+routinely load this large schema into the model context. `--help` is the short field reference.
 
 Unknown keys, duplicate JSON keys, conflicting flags/JSON, negative/nonfinite numbers, and invalid enums fail with exit
 status 2. Record errors are JSON on stderr; argument syntax errors use standard CLI diagnostics. Successful mutations

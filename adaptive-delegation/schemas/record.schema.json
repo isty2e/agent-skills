@@ -52,15 +52,7 @@
       "description": "Parent assessment of the original output, before parent repair."
     },
     "use": {
-      "enum": [
-        "used_as_is",
-        "used_after_local_fix",
-        "used_after_major_rework",
-        "rejected",
-        "not_used",
-        "pending",
-        "no_output"
-      ],
+      "enum": ["used_as_is", "used_after_local_fix", "used_after_major_rework", "rejected", "not_used", "pending", "no_output"],
       "description": "Actual use; major rework means substantially re-solving the delegated problem."
     },
     "note": {
@@ -157,9 +149,12 @@
         },
         "model_selection_reason": {
           "$ref": "#/$defs/selection_reason"
+        },
+        "expected_delegation_benefit": {
+          "$ref": "#/$defs/expected_benefit"
         }
       },
-      "required": ["task_description", "task_type", "requested_child_model"],
+      "required": ["task_description", "task_type", "requested_child_model", "expected_delegation_benefit"],
       "additionalProperties": false
     },
     "record_run_input": {
@@ -254,10 +249,26 @@
         },
         "parent_recording_seconds": {
           "$ref": "#/$defs/seconds"
+        },
+        "delegation_usefulness": {
+          "$ref": "#/$defs/delegation_usefulness"
         }
       },
-      "required": ["output_quality", "output_use"],
-      "additionalProperties": false
+      "required": [],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": ["output_quality", "output_use"]
+        },
+        {
+          "required": ["delegation_usefulness"]
+        }
+      ],
+      "dependentRequired": {
+        "output_quality": ["output_use"],
+        "output_use": ["output_quality"],
+        "note": ["output_quality", "output_use"]
+      }
     },
     "metrics": {
       "type": "object",
@@ -528,23 +539,175 @@
         },
         "parent_metrics": {
           "$ref": "#/$defs/parent_metrics"
+        },
+        "execution_mode": {
+          "enum": ["delegate", "direct"],
+          "description": "An absent value in an older staged record means delegate, not an inferred outcome."
+        },
+        "expected_delegation_benefit": {
+          "$ref": "#/$defs/expected_benefit"
+        },
+        "direct_reason": {
+          "$ref": "#/$defs/direct_reason"
+        },
+        "delegation_assessment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/delegation_assessment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delegation_assessment_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delegation_assessment_change"
+          }
         }
       },
-      "required": [
-        "format",
-        "schema_version",
-        "record_id",
-        "revision",
-        "created_at",
-        "updated_at",
-        "project_name",
-        "parent",
-        "task",
-        "requested_child",
-        "model_selection_reason",
-        "attempts",
-        "parent_metrics"
-      ],
+      "required": ["format", "schema_version", "record_id", "revision", "created_at", "updated_at", "project_name", "parent", "task", "attempts", "parent_metrics"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "execution_mode": {
+                "const": "direct"
+              }
+            },
+            "required": ["execution_mode"]
+          },
+          "then": {
+            "required": ["direct_reason"],
+            "properties": {
+              "attempts": {
+                "maxItems": 0
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["requested_child"]
+                },
+                {
+                  "required": ["model_selection_reason"]
+                },
+                {
+                  "required": ["expected_delegation_benefit"]
+                },
+                {
+                  "required": ["delegation_assessment"]
+                },
+                {
+                  "required": ["delegation_assessment_history"]
+                }
+              ]
+            }
+          },
+          "else": {
+            "required": ["requested_child", "model_selection_reason"],
+            "not": {
+              "required": ["direct_reason"]
+            }
+          }
+        }
+      ]
+    },
+    "expected_benefit": {
+      "enum": ["save_time", "save_cost", "reduce_context", "independent_check", "explore_options", "unknown"],
+      "description": "Primary reason for delegation, chosen before execution; not the model-selection reason."
+    },
+    "delegation_usefulness": {
+      "enum": ["helpful", "no_benefit", "burden_exceeded_benefit", "unknown"],
+      "description": "Parent judgment of the whole delegation, including retries and parent burden; not measured savings."
+    },
+    "direct_reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "\\S",
+      "description": "Why a seriously considered delegation stayed with the parent; at most 200 characters, no counterfactual cost."
+    },
+    "record_direct_input": {
+      "type": "object",
+      "properties": {
+        "project_name": {
+          "$ref": "#/$defs/prepare_input/properties/project_name"
+        },
+        "workspace_task": {
+          "$ref": "#/$defs/prepare_input/properties/workspace_task"
+        },
+        "group_id": {
+          "$ref": "#/$defs/prepare_input/properties/group_id"
+        },
+        "host": {
+          "$ref": "#/$defs/prepare_input/properties/host"
+        },
+        "skill_revision": {
+          "$ref": "#/$defs/prepare_input/properties/skill_revision"
+        },
+        "parent_model": {
+          "$ref": "#/$defs/prepare_input/properties/parent_model"
+        },
+        "parent_effort": {
+          "$ref": "#/$defs/prepare_input/properties/parent_effort"
+        },
+        "task_description": {
+          "$ref": "#/$defs/prepare_input/properties/task_description"
+        },
+        "task_type": {
+          "$ref": "#/$defs/prepare_input/properties/task_type"
+        },
+        "task_domains": {
+          "$ref": "#/$defs/prepare_input/properties/task_domains"
+        },
+        "estimated_difficulty": {
+          "$ref": "#/$defs/prepare_input/properties/estimated_difficulty"
+        },
+        "direct_reason": {
+          "$ref": "#/$defs/direct_reason"
+        }
+      },
+      "required": ["task_description", "task_type", "direct_reason"],
+      "additionalProperties": false
+    },
+    "delegation_assessment": {
+      "type": "object",
+      "properties": {
+        "delegation_usefulness": {
+          "$ref": "#/$defs/delegation_usefulness"
+        },
+        "attempt_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "assessed_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "required": ["delegation_usefulness", "attempt_ids", "assessed_at"],
+      "additionalProperties": false
+    },
+    "delegation_assessment_change": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "previous": {
+          "$ref": "#/$defs/delegation_assessment"
+        },
+        "reason": {
+          "$ref": "#/$defs/note"
+        }
+      },
+      "required": ["at", "previous", "reason"],
       "additionalProperties": false
     }
   }

@@ -42,7 +42,8 @@ class DelegationTests(unittest.TestCase):
 
     def prepare(self, **fields: object) -> str:
         data = {'task_description': 'Check a bounded contract.', 'task_type': 'verify',
-                'requested_child_model': 'example/worker', 'requested_child_effort': 'high'}
+                'requested_child_model': 'example/worker', 'requested_child_effort': 'high',
+                'expected_delegation_benefit': 'save_time'}
         data.update(fields)
         return self.call('prepare', '--json', '-', stdin=json.dumps(data))['record_id']
 
@@ -86,7 +87,8 @@ class DelegationTests(unittest.TestCase):
 
     def test_stage_validation_and_no_partial_save(self) -> None:
         for fields in [{'task_type': 'typo'}, {'task_description': ''}, {'requested_child_model': ''}, {'acceptance_ref': 'bad'}]:
-            base={'task_type': 'verify', 'task_description': 'Check', 'requested_child_model': 'example/worker'}
+            base={'task_type': 'verify', 'task_description': 'Check', 'requested_child_model': 'example/worker',
+                  'expected_delegation_benefit': 'save_time'}
             base.update(fields)
             self.call('prepare', '--json', '-', stdin=json.dumps(base), error=True)
             self.assertFalse(self.file.exists())
@@ -235,7 +237,7 @@ class DelegationTests(unittest.TestCase):
         self.file.parent.mkdir()
         try: self.file.symlink_to(target)
         except OSError: self.skipTest('Symlinks unavailable')
-        self.call('prepare','--task-type','verify','--task-description','x','--requested-child-model','x',error=True)
+        self.call('prepare','--task-type','verify','--task-description','x','--requested-child-model','x','--expected-delegation-benefit','save_time',error=True)
         self.assertEqual(target.read_text(),'human')
 
     def test_lock_contention_fails_without_modifying(self) -> None:
@@ -267,7 +269,7 @@ class DelegationTests(unittest.TestCase):
 
     def test_explicit_path_not_cwd(self) -> None:
         dest=self.root/'other'/'hints.md'
-        self.call('--record-file',str(dest),'prepare','--task-type','verify','--task-description','x','--requested-child-model','x')
+        self.call('--record-file',str(dest),'prepare','--task-type','verify','--task-description','x','--requested-child-model','x','--expected-delegation-benefit','save_time')
         self.assertTrue(dest.exists()); self.assertFalse(self.file.exists())
 
     def test_export_pending_failed_and_assessed_without_text_generation(self) -> None:
@@ -362,7 +364,8 @@ class DelegationTests(unittest.TestCase):
 
     def test_schema_and_enum_reference_agree(self) -> None:
         text = (ROOT / 'references' / 'recording-tool.md').read_text()
-        for definition in ['task_type', 'difficulty', 'selection_reason', 'quality', 'use', 'status']:
+        for definition in ['task_type', 'difficulty', 'selection_reason', 'quality', 'use', 'status',
+                           'expected_benefit', 'delegation_usefulness']:
             for value in d.SCHEMA['$defs'][definition]['enum']:
                 if value is not None:
                     self.assertIn('`' + value + '`', text)
@@ -389,6 +392,185 @@ class DelegationTests(unittest.TestCase):
         rid = self.prepare(task_description=description)
         self.start(rid)
         self.assertEqual(self.record(rid)['task']['description'], description)
+
+
+    def test_expected_benefit_is_required_before_new_delegation(self) -> None:
+        self.call('prepare', '--task-type', 'verify', '--task-description', 'Check',
+                  '--requested-child-model', 'example/worker', error=True)
+        self.assertFalse(self.file.exists())
+        rid = self.prepare(expected_delegation_benefit='independent_check', model_selection_reason='default')
+        rec = self.record(rid)
+        self.assertEqual(rec['expected_delegation_benefit'], 'independent_check')
+        self.assertEqual(rec['model_selection_reason'], 'default')
+        self.assertEqual(rec['execution_mode'], 'delegate')
+        original = self.file.read_bytes()
+        self.call('record-run', rid, '--json', '-',
+                  stdin='{"expected_delegation_benefit":"save_cost"}', error=True)
+        self.assertEqual(self.file.read_bytes(), original)
+
+    def test_correct_used_output_can_have_negative_delegation_value(self) -> None:
+        rid = self.prepare(); aid = self.start(rid)
+        self.call('assess', rid, '--output-quality', 'meets_requirements', '--output-use', 'used_as_is',
+                  '--delegation-usefulness', 'burden_exceeded_benefit')
+        rec = self.record(rid)
+        self.assertEqual(rec['attempts'][0]['assessment']['output_quality'], 'meets_requirements')
+        self.assertEqual(rec['delegation_assessment']['delegation_usefulness'], 'burden_exceeded_benefit')
+        self.assertEqual(rec['delegation_assessment']['attempt_ids'], [aid])
+        self.assertNotIn('delegation_usefulness', rec['attempts'][0]['assessment'])
+        self.assertFalse(self.call('show')['records'][0]['delegation_review_pending'])
+
+    def test_unused_output_can_resolve_uncertainty(self) -> None:
+        rid = self.prepare(expected_delegation_benefit='independent_check'); self.start(rid)
+        self.call('assess', rid, '--output-quality', 'meets_requirements', '--output-use', 'not_used',
+                  '--delegation-usefulness', 'helpful')
+        self.assertEqual(self.record(rid)['delegation_assessment']['delegation_usefulness'], 'helpful')
+
+    def test_usefulness_unknown_does_not_fabricate_metrics(self) -> None:
+        rid = self.prepare(expected_delegation_benefit='save_cost'); self.start(rid)
+        self.call('assess', rid, '--output-quality', 'meets_requirements', '--output-use', 'used_as_is',
+                  '--delegation-usefulness', 'unknown')
+        rec = self.record(rid)
+        self.assertNotIn('cost_amount', rec['attempts'][0]['metrics'])
+        self.assertEqual(rec['parent_metrics'], {})
+        self.assertFalse(self.call('show')['records'][0]['delegation_review_pending'])
+
+    def test_missing_usefulness_is_not_inferred_from_quality(self) -> None:
+        rid = self.prepare(); self.start(rid)
+        self.call('assess', rid, '--output-quality', 'meets_requirements', '--output-use', 'used_as_is')
+        self.assertIsNone(self.record(rid).get('delegation_assessment'))
+        self.assertTrue(self.call('show')['records'][0]['delegation_review_pending'])
+        self.call('assess', rid, '--delegation-usefulness', 'no_benefit')
+        self.assertFalse(self.call('show')['records'][0]['delegation_review_pending'])
+
+    def test_whole_delegation_review_covers_retries_not_last_output(self) -> None:
+        rid = self.prepare(); first = self.start(rid)
+        self.call('assess', rid, '--output-quality', 'meets_requirements', '--output-use', 'used_as_is',
+                  '--delegation-usefulness', 'helpful')
+        second = self.call('record-run', rid, '--new-attempt', '--retry-of', first, '--run-id', 'R2',
+                           '--execution-status', 'completed')['attempt_id']
+        self.assertTrue(self.call('show')['records'][0]['delegation_review_pending'])
+        self.call('assess', rid, '--attempt-id', second, '--output-quality', 'incorrect',
+                  '--output-use', 'used_after_major_rework', '--delegation-usefulness', 'burden_exceeded_benefit')
+        rec = self.record(rid)
+        self.assertEqual(rec['delegation_assessment']['attempt_ids'], [first, second])
+        self.assertEqual(rec['delegation_assessment_history'][0]['previous']['delegation_usefulness'], 'helpful')
+        self.assertFalse(self.call('show')['records'][0]['delegation_review_pending'])
+
+    def test_usefulness_updates_are_idempotent_and_corrections_preserved(self) -> None:
+        rid = self.prepare(); self.start(rid)
+        self.call('assess', rid, '--delegation-usefulness', 'helpful')
+        original = self.file.read_bytes()
+        self.assertFalse(self.call('assess', rid, '--delegation-usefulness', 'helpful')['changed'])
+        self.assertEqual(self.file.read_bytes(), original)
+        self.call('assess', rid, '--delegation-usefulness', 'no_benefit', error=True)
+        self.assertEqual(self.file.read_bytes(), original)
+        self.call('assess', rid, '--delegation-usefulness', 'no_benefit',
+                  '--correction-reason', 'Review duplicated work already done.')
+        self.assertEqual(self.record(rid)['delegation_assessment_history'][0]['previous']['delegation_usefulness'], 'helpful')
+
+    def test_output_correction_reopens_utility_review_without_erasing_history(self) -> None:
+        rid = self.prepare(); self.start(rid)
+        self.call('assess', rid, '--output-quality', 'meets_requirements', '--output-use', 'used_as_is',
+                  '--delegation-usefulness', 'helpful')
+        self.call('assess', rid, '--output-quality', 'incorrect', '--output-use', 'used_as_is',
+                  '--correction-reason', 'Later test exposed an error.')
+        rec = self.record(rid)
+        self.assertIsNone(rec['delegation_assessment'])
+        self.assertEqual(rec['delegation_assessment_history'][0]['previous']['delegation_usefulness'], 'helpful')
+        self.assertTrue(self.call('show')['records'][0]['delegation_review_pending'])
+
+    def test_late_metrics_do_not_erase_utility_judgment(self) -> None:
+        rid = self.prepare(); self.start(rid)
+        self.call('assess', rid, '--output-quality', 'meets_requirements', '--output-use', 'used_as_is',
+                  '--delegation-usefulness', 'helpful')
+        review = copy.deepcopy(self.record(rid)['delegation_assessment'])
+        self.call('record-run', rid, '--output-tokens', '12')
+        self.assertEqual(self.record(rid)['delegation_assessment'], review)
+
+    def test_usefulness_only_and_output_stage_input_boundaries(self) -> None:
+        rid = self.prepare(); aid = self.start(rid); original = self.file.read_bytes()
+        for fields in ({'output_quality':'incorrect'}, {'note':'unattached'},
+                       {'delegation_usefulness':'good'}, {'delegation_usefulness':'helpful','output_use':'not_used'}):
+            self.call('assess', rid, '--json', '-', stdin=json.dumps(fields), error=True)
+            self.assertEqual(self.file.read_bytes(), original)
+        self.call('assess', rid, '--attempt-id', aid, '--delegation-usefulness', 'helpful', error=True)
+        self.call('assess', rid, '--delegation-usefulness', 'unknown')
+
+    def test_nonterminal_utility_is_unknown_and_remains_pending(self) -> None:
+        rid = self.prepare()
+        self.call('record-run', rid, '--execution-status', 'running')
+        self.call('assess', rid, '--delegation-usefulness', 'helpful', error=True)
+        self.call('assess', rid, '--delegation-usefulness', 'unknown')
+        self.assertTrue(self.call('show')['records'][0]['delegation_review_pending'])
+
+    def test_direct_choice_has_no_child_and_no_pending_run(self) -> None:
+        rid = self.call('record-direct', '--task-type', 'lookup', '--task-description', 'Read the already located option.',
+                        '--direct-reason', 'Briefing and checking would duplicate a short read.')['record_id']
+        rec = self.record(rid); summary = self.call('show')['records'][0]
+        self.assertEqual(rec['execution_mode'], 'direct')
+        self.assertEqual(rec['attempts'], [])
+        for key in ('requested_child','model_selection_reason','expected_delegation_benefit','delegation_assessment'):
+            self.assertNotIn(key, rec)
+        self.assertEqual(summary['unassessed_attempts'], 0)
+        self.assertFalse(summary['awaiting_run'])
+        self.assertFalse(summary['delegation_review_pending'])
+        original = self.file.read_bytes()
+        self.call('record-run', rid, '--execution-status', 'completed', error=True)
+        self.call('assess', rid, '--output-quality', 'no_output', '--output-use', 'no_output', error=True)
+        self.assertEqual(self.file.read_bytes(), original)
+
+    def test_direct_stage_rejects_child_fields_and_requires_short_reason(self) -> None:
+        fields = {'task_type':'lookup','task_description':'Read one source.','direct_reason':'Already have the source.'}
+        for extra in ({'requested_child_model':'x'}, {'direct_reason':None}, {'direct_reason':' '},
+                      {'direct_reason':'x'*201}, {'expected_delegation_benefit':'save_time'}):
+            self.call('record-direct', '--json', '-', stdin=json.dumps({**fields, **extra}), error=True)
+            self.assertFalse(self.file.exists())
+        fields.pop('direct_reason')
+        self.call('record-direct', '--json', '-', stdin=json.dumps(fields), error=True)
+
+    def test_direct_schema_does_not_disguise_a_launch_failure(self) -> None:
+        rid = self.call('record-direct', '--task-type', 'lookup', '--task-description', 'Read source.',
+                        '--direct-reason', 'No useful independent work.')['record_id']
+        rec = self.record(rid)
+        other = self.prepare(); self.start(other)
+        for key, value in [('requested_child',{}), ('delegation_assessment',None),
+                           ('attempts',self.record(other)['attempts'])]:
+            altered = copy.deepcopy(rec); altered[key] = value
+            with self.assertRaises(d.RecordError):
+                d.validate_record(altered)
+
+    def test_mixed_export_retains_direct_pending_failed_and_utility(self) -> None:
+        pending = self.prepare(); failed = self.prepare()
+        self.call('record-run', failed, '--execution-status', 'failed')
+        self.call('assess', failed, '--output-quality', 'no_output', '--output-use', 'no_output',
+                  '--delegation-usefulness', 'burden_exceeded_benefit')
+        direct = self.call('record-direct', '--task-type', 'lookup', '--task-description', 'Read source.',
+                           '--direct-reason', 'No useful independent work.')['record_id']
+        dest = self.root/'exported'; result = self.call('export', '--destination', str(dest))
+        self.assertEqual(result['exported'], 3)
+        self.assertEqual(result['direct_records'], 1)
+        self.assertEqual(result['awaiting_run'], 1)
+        self.assertEqual(result['delegation_reviews_pending'], 1)
+        for rid in (pending, failed, direct):
+            self.assertEqual(json.loads((dest/f'{rid}.json').read_text()), self.record(rid))
+        self.assertEqual(self.call('export', '--destination', str(dest))['files_changed'], 0)
+
+    def test_older_records_do_not_gain_invented_benefits(self) -> None:
+        rid = self.prepare(); self.start(rid)
+        document = d.Document.parse(self.file.read_bytes()); rec = document.find(rid)
+        rec.pop('execution_mode'); rec.pop('expected_delegation_benefit')
+        self.file.write_bytes(document.render())
+        self.call('record-run', rid, '--output-tokens', '4')
+        self.assertNotIn('expected_delegation_benefit', self.record(rid))
+        self.assertEqual(self.call('show')['records'][0]['execution_mode'], 'delegate')
+        self.assertTrue(self.call('show')['records'][0]['delegation_review_pending'])
+
+    def test_utility_cannot_reference_an_unobserved_attempt(self) -> None:
+        rid = self.prepare(); self.start(rid)
+        self.call('assess', rid, '--delegation-usefulness', 'unknown')
+        rec = self.record(rid); rec['delegation_assessment']['attempt_ids'] = ['UnknownAttempt']
+        with self.assertRaises(d.RecordError):
+            d.validate_record(rec)
 
 if __name__ == '__main__':
     unittest.main()

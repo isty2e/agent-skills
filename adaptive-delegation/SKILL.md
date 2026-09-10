@@ -28,18 +28,19 @@ At substantive task decomposition, look once for independent evidence-gathering,
 candidate triggers a decision, not a spawn quota. Prefer tools for deterministic work. Compare direct execution with a
 bounded child, including briefing, reading, checking, integration, and repair. Before dispatch, name the primary
 expected benefit: total cost, completion time, context isolation, independent evidence, or bounded information gain.
-Honor user priorities and limits across dimensions; one benefit alone need not justify the tradeoff. Keep this judgment
-brief in the working task context, not a new acceptance document or per-run essay. Do not redefine success afterward.
-Same-model capability alone is no benefit; one child proves neither parallel speedup nor savings.
+Honor user priorities and limits across dimensions; one benefit alone need not justify the tradeoff. Save the primary
+reason as `expected_delegation_benefit` in `prepare`, not an acceptance document or per-run essay. Do not redefine the
+expectation after seeing the outcome. Same-model capability alone is no benefit; one child proves neither parallel
+speedup nor savings.
 
 Keep coupled design and unresolved contracts with the parent unless judgment is explicitly delegated within authority.
 Delegate implementation when decisions/acceptance are sufficiently settled and checking avoids re-solving the task.
 Distinguish executing a specified probe from designing it.
 
-If direct execution is preferable, use it. For a representative candidate seriously considered but not selected, note
-why and when to reconsider in the same project file under the recording rules below. Routine direct work needs no
-record; keep representative direct choices as short prose outside the managed block. The tool records delegated work
-only. Do not infer a requirement to run both alternatives.
+If direct execution is preferable, use it. For a representative candidate seriously considered but not selected, call
+`record-direct` once with the existing task description/type and a short `direct_reason`. It needs no child model,
+attempt, or hypothetical cost and is included in export. Routine direct work needs no record. Do not run both
+alternatives merely to fill the dataset.
 
 ## 2. Resolve The Execution Choice
 
@@ -81,10 +82,10 @@ ordinary work.
 
 ### Prepare The Handoff
 
-Before dispatch, call `prepare`: reuse the short task description and supply type and requested child model. Add known
-parent settings, native effort/context, task domains, estimated difficulty, and model-selection reason only when useful;
-invent no missing values or references. Keep the returned record ID. Each distinct child task gets a record; an optional
-shared group ID links a fanout. Retries stay in that task's attempts.
+Before dispatch, call `prepare`: reuse the short task description and supply type, requested child model, and primary
+`expected_delegation_benefit`. Add known parent settings, native effort/context, task domains, estimated difficulty, and
+model-selection reason only when useful; invent no missing values or references. Keep the returned record ID. Each
+distinct child task gets a record; an optional shared group ID links a fanout. Retries stay in that task's attempts.
 
 If persistence would violate a launch precondition, retain the same inputs in permitted session state and call `prepare`
 immediately after the launch attempt. Preparation timestamps are recording times, never measured execution times. The
@@ -130,19 +131,23 @@ Use the native harness to launch, wait, inspect status, and cancel. The recordin
   through a known exposed source. No host integration development, broad searches, repeated polling, or reconstruction
   project to fill nulls. Explicitly mark skipped collection or lookup failure when applicable. Do not infer elapsed time
   from preparation/reporting timestamps or fill effective settings from the request.
-- **After parent verification/repair:** call `assess` with original `output_quality` and actual `output_use`. Add an
-  exception note only if useful, at most 200 characters. No acceptance reference, separate evidence document, numeric
-  success score, or mandatory next-experiment prose. Correcting an earlier assessment needs a short reason; the script
-  retains its previous value. Late metrics update the same attempt without removing its assessment.
+- **After parent verification/repair:** call `assess` with original `output_quality` and actual `output_use`. When the
+  whole delegated task is ready to judge, include `delegation_usefulness` in that same call, accounting for all retries
+  and parent burden against the expected benefit. Keep it `unknown` when not observable; favorable output does not prove
+  useful delegation or measured savings. Add an exception note only if useful, at most 200 characters. No acceptance
+  reference, separate evidence document, numeric success score, or mandatory next-experiment prose. Correcting an
+  earlier assessment needs a short reason; the script retains its previous value. Late metrics update the same attempt
+  without removing its assessment.
 - **Before reporting/handoff:** use `show` summaries to reconcile known attempts, including failures and unassessed
-  results. A successful write reports `saved`; a missing destination or failed write remains a disclosed gap, not an
-  alternative file. Missing metrics do not block the task result. No lesson or unchanged hints never excuses skipping
-  the short run record and parent assessment.
+  results and whole-delegation reviews needing attention. A successful write reports `saved`; a missing destination or
+  failed write remains a disclosed gap, not an alternative file. Missing metrics do not block the task result. No lesson
+  or unchanged hints never excuses skipping the short run record and parent assessment.
 
 Judge original output against the delegated request, not against the parent's repaired result. Validate behavior and
 sources, not child confidence, finding count, or silence; unknown review coverage stays unknown. Execution completion,
-output correctness, actual use, and the final user's task acceptance are different. The two stored output verdicts do
-not claim final task success. Record failed runs with useful partial output too.
+output correctness, actual use, delegation usefulness, and final user-task acceptance are different. A correct answer
+used unchanged can still cost more effort than it saves; unused output can resolve important uncertainty. These parent
+judgments claim neither final task success nor measured counterfactual savings. Record useful partial failures too.
 
 Only the script edits its managed block; leave human hints and legacy prose intact. No automatic legacy migration or
 full-file rewriting by the agent. Optional metrics are unknown unless reported; use
@@ -150,9 +155,9 @@ full-file rewriting by the agent. Optional metrics are unknown unless reported; 
 neither guarantees host activation nor recovers unobserved work after session termination.
 
 **Later, when authorized:** run `export` for a batch into an approved local directory. It writes validated staged JSON,
-not a narrative, not the central repository's legacy Markdown format. It does not redact automatically, commit, push,
-call a database, or submit to an MCP server. Review sharing scope first; retain failures and pending records. Central
-submission remains a separate existing workflow.
+including representative direct choices, not a narrative or the central repository's legacy Markdown format. It does not
+redact automatically, commit, push, call a database, or submit to an MCP server. Review sharing scope first; retain
+failures and pending records. Central submission remains a separate existing workflow.
 
 ## 5. Use The Evidence For The Next Choice
 
@@ -175,8 +180,10 @@ uncertainty, not telemetry dumps.
 
 ## First-Run Example
 
-For a bounded API lookup, use `prepare` with the existing question and chosen profile, then run the native child. Call
-`record-run` with its returned ID, status, seconds, and available usage. If the answer omits a needed version caveat,
-check the source, repair the answer, and call `assess` with `incomplete` and `used_after_local_fix`; one short note
-names the omission. Keep the original quality rating and any unknown costs. Do not write an acceptance document or
-export a case report before responding. An already-known answer may instead favor direct reading and no child record.
+For a bounded API lookup, use `prepare` with the existing question, chosen profile, and `reduce_context` as the expected
+benefit, then run the native child. Call `record-run` with its returned ID, status, seconds, and available usage. If the
+answer omits a needed version caveat, check the source, repair the answer, and call `assess` with `incomplete` and
+`used_after_local_fix`; one short note names the omission. In the same call, judge whole-delegation usefulness or mark
+it `unknown`; do not infer it from output quality. Keep the original quality rating and any unknown costs. Do not write
+an acceptance document or export a case report before responding. If a serious alternative was direct reading of an
+already-located answer, `record-direct` retains that short reason without a child run.

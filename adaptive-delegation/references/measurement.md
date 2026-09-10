@@ -58,12 +58,22 @@ is separate. Two favorable verdicts do not establish final task acceptance, inde
 cost. Unknown quality is a valid record, not an excluded failure. Do not force these observations into a numeric success
 score or invent an unrun direct-work baseline.
 
+Save `expected_delegation_benefit` before dispatch and `delegation_usefulness` after considering the whole record,
+including retries, parent checking/repair, and recording burden. Usefulness is a parent judgment, not a monetary
+estimate or a measured comparison. An unchanged correct answer need not be useful; unused output may resolve
+uncertainty. Leave usefulness `unknown` when the expected benefit or total burden cannot be judged.
+
+`record-direct` preserves a representative non-delegation choice and short reason in the same export. No child was run:
+child usage and delegation usefulness do not apply, rather than being zero or a failed output. These selected direct
+cases reveal conditions worth reviewing, not the denominator of all direct work.
+
 ## Later Comparisons
 
 Compare compatible task conditions, effort/context, usage scopes, and cost bases. Include failures, retries, discarded
 outputs, incomplete measurements, and recording overhead. Missing parent costs that could reverse a comparison prevent
-whole-task cost ranking; a component comparison must remain labeled as such. Report the denominator and unassessed or
-pending cohort separately. These sparse records support narrower questions before end-to-end savings claims.
+whole-task cost ranking; a component comparison must remain labeled as such. Report the denominator, direct/delegated
+choices, missing usefulness judgments, and unassessed or pending attempts separately. A direct choice is not an
+awaiting-run record. These sparse records support narrower questions before end-to-end savings claims.
 
 Project hints remain separate from raw records even in the same file. Read [tuning.md](tuning.md) before combining
 observations or changing policy. Export is a mechanical, separately authorized local copy, not a requirement to write a

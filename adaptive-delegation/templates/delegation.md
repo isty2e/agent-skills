@@ -11,11 +11,13 @@ level.
 
 ## Existing Observations
 
-Keep any pre-existing prose here or in its existing location; no migration is required. Representative decisions to work
-directly may be noted briefly. These notes are not parsed or counted by the staged recorder.
+Keep pre-existing prose here or in its existing location; no migration is required. It is not parsed or counted. Use
+`record-direct` for new representative non-delegation choices so the short reason is included in export.
 
 ## Staged Records
 
-The recorder appends its managed JSONL block on the first `prepare`. Use `prepare`, `record-run`, and `assess` rather
-than manually filling a second template. Inspect with `show`; export later in batches when authorized. Each delegated
-task has one record with linked attempts. Sharing, correction, and consolidation follow the skill, not this file alone.
+The recorder appends its managed JSONL block on the first `prepare` or `record-direct`. Use `prepare`, `record-run`, and
+`assess` rather than manually filling a second template. Inspect with `show`; export later in batches when authorized.
+Each delegated task has one record with linked attempts, an expected benefit, and a separate whole-delegation usefulness
+judgment. Direct choices have a short reason and no child attempts; they are not pending launches. Sharing, correction,
+and consolidation follow the skill, not this file alone.
