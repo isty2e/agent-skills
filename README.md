@@ -8,6 +8,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
   through evidence-backed assessment, scoped adjustments, and rechecks.
 - [`durable-knowledge`](durable-knowledge/) — Maintain a sparse, portable Markdown knowledge base
   with human review, optional Obsidian views, grounded paper notes, and bounded recall.
+- [`github-math-comment`](github-math-comment/) — Draft and verify GitHub comments with display math while checking
+  GFM heading corruption, macro compatibility, and rendered-structure parity.
 - [`https-throttle`](https-throttle/) — Limit aggregate receive bandwidth for proxy-aware HTTPS commands with a
   rootless authenticated localhost proxy.
 - [`kata-task-management`](kata-task-management/) — Plan and track real work with Kata, maintain useful epic/task
