@@ -1,8 +1,6 @@
 ---
 name: github-math-comment
-description: >-
-  Draft, validate, publish, or edit GitHub issue and pull request comments with TeX. Use when GFM parsing, rendered
-  display math, and posted-body equality must be verified.
+description: Draft, validate, publish, or edit GitHub issue and pull request comments with TeX. Use when GFM parsing, rendered display math, and posted-body equality must be verified.
 license: MIT
 ---
 
