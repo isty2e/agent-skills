@@ -1,74 +1,58 @@
 # Initialize Without Unrelated Repository Changes
 
-Use this procedure only when Kata is missing or the intended workspace needs setup. Initialization is not a prerequisite
-for answering a simple question or inspecting a repository.
+Use only for a missing CLI or workspace setup, not simple questions or repository inspection.
 
 ## Confirm The Target
 
-1. Identify the installed CLI with `kata --version` and `kata --help`. If it is absent, consult the
-   [official installation guide](https://www.katatracker.com/docs/get-started/install/); follow the environment's software
-   installation policy. Do not assume a package manager, install location, or privilege escalation is available.
-2. Confirm the intended workspace/project, applicable repository instructions, and effective daemon selection. Check
-   explicit selectors, existing `.kata.toml`/`.kata.local.toml` configuration, and inherited configuration or environment
-   overrides without exposing credentials. Workspace discovery and Git root are not necessarily the same boundary.
-3. Check whether that workspace already resolves to the intended project using an installed, documented read command.
-   Reuse valid bindings. A missing file alone does not prove that no project or alias exists. A connection or permission
-   error is not evidence that initialization is needed; do not create a replacement local project to bypass it.
-4. Run `kata init --help`. Installed help governs flags and defaults; the website may describe a newer version.
-   Resolve an ambiguous project choice before writing, and do not use replacement or reassignment flags to force a fit.
+1. Check `kata --version` and `kata --help`. If absent, consult the
+   [official installation guide](https://www.katatracker.com/docs/get-started/install/) under software-installation policy;
+   assume no package manager, install location, or privilege escalation.
+2. Confirm workspace/project, repository instructions, and effective daemon. Check explicit selectors,
+   `.kata.toml`/`.kata.local.toml`, and inherited configuration/environment without exposing credentials. Workspace and
+   Git-root boundaries may differ.
+3. Use an installed, documented read command to resolve the project; reuse valid bindings. A missing file does not prove
+   no project/alias exists. Connection/permission errors do not justify initialization or a replacement local project.
+4. Read `kata init --help`: installed flags/defaults govern, not a possibly newer website. Resolve ambiguous project
+   selection before writing; do not force a fit with replacement/reassignment flags.
 
-## Initialize Only What Is Needed
+## Initialize And Keep Setup Local
 
-Before initialization, record the existing tracked, staged, unstaged, and untracked state of the files it may touch,
-including `.gitignore`, `AGENTS.md`, `CLAUDE.md`, and Kata configuration. Preserve their original contents; a status listing
-alone cannot distinguish pre-existing edits from new additions.
+Before initialization, preserve contents and tracked/staged/unstaged/untracked state of potentially affected files,
+including `.gitignore`, `AGENTS.md`, `CLAUDE.md`, and Kata configuration. Status alone cannot distinguish existing edits.
 
-Initialize from the confirmed workspace with the needed project selection and no optional integrations. Do not add
-agent-guidance or hook-installation options unless separately requested. For example, v0.16.0 help documents:
+Initialize in the confirmed workspace with the needed project selection and no optional integrations. Agent-guidance
+and hook installation require separate requests. Inspect actual file/binding effects even with integrations omitted or
+initialization errors; defaults vary by version and failure need not be atomic. Inspect before retrying.
 
-- `.kata.toml` as a workspace/project binding intended for committing;
-- an automatic `.kata.local.toml` addition to `.gitignore`;
-- `--with-agents` as opt-in modification of AGENTS.md/CLAUDE.md, with separate hook options.
+Default to local-only setup, but preserve established repository policy and intentionally tracked configuration rather
+than silently converting them. For a new local setup in Git:
 
-Do not generalize these defaults to every version. Inspect actual changes even when optional integrations were omitted.
-If initialization reports an error, inspect its file and binding effects before retrying; do not assume it was atomic.
-
-## Keep Local Setup Local
-
-This skill defaults to local-only setup, rather than Kata's suggested committed binding. Preserve an established
-repository policy or intentionally tracked configuration; do not silently convert it to local-only storage.
-
-For a new local setup in a Git worktree:
-
-1. Compare changes with the recorded baseline. Remove only newly introduced Kata guidance in AGENTS.md/CLAUDE.md and
-   initialization-added ignore entries. Preserve existing guidance, unrelated edits, and staging. Do not blanket-remove
-   every Kata block or use `git restore` on files containing unrelated changes.
-2. Keep the configuration needed for the binding and daemon connection; do not delete it to make Git status clean.
-   Exclude the newly local configuration through Git's local exclude file instead of a shared `.gitignore`.
-3. Resolve that file from the relevant Git worktree rather than assuming `.git` is a directory:
+1. Compare against the baseline. Remove only initialization-added Kata guidance and ignore entries; preserve existing
+   guidance, unrelated edits, and staging. No blanket Kata-block removal or `git restore` over unrelated changes.
+2. Retain configuration needed for binding/daemon access; do not delete it merely to clean status. Exclude newly local
+   configuration through Git's local exclude file, not shared `.gitignore`. Resolve it from the relevant worktree:
 
    ```sh
    git rev-parse --git-path info/exclude
    ```
 
-   Preserve existing entries and append only missing rules for the actual configuration paths. For configuration at the
-   repository root, the rules are:
+   Preserve entries and append only missing rules for actual paths. At the repository root:
 
    ```gitignore
    /.kata.toml
    /.kata.local.toml
    ```
 
-   Adjust paths for a nested workspace; do not ignore every TOML file. Linked worktrees may share this exclude file.
-   For a workspace outside Git, no exclude file is needed; do not create a fake `.git` directory.
-4. Excludes do not affect tracked files. Do not run `git rm --cached`, delete tracked configuration, or rewrite history
-   to enforce this default. If existing policy and requested setup conflict, resolve that choice with the operator.
+   Adjust for nested workspaces; never ignore all TOML files. Linked worktrees may share this file. Outside Git, skip
+   excludes; never create a fake `.git` directory.
+3. Excludes do not affect tracked files. Do not `git rm --cached`, delete tracked configuration, or rewrite history to
+   enforce this default. Resolve policy/setup conflicts with the operator.
 
-## Verify The Result
+## Verify
 
-- Read back the binding and run a non-mutating Kata command against the intended project/daemon. Merely producing a
-  configuration file does not prove the connection or project selection works.
-- Use `git check-ignore -v` on the actual local configuration paths and inspect staged and unstaged diffs plus untracked
-  files. Confirm no unrelated changes, unwanted guidance, hooks, or shared ignore edits were left by initialization.
-- Run `kata quickstart` if it has not already been read for this session/environment, then return to task registration.
-  Do not create a sample issue as a setup test; the next issue should represent real work.
+- Read back the binding and run a non-mutating command against the intended project/daemon; a config file proves neither
+  connection nor project selection.
+- Run `git check-ignore -v` on actual local config paths and inspect staged/unstaged diffs and untracked files. Confirm no
+  unrelated changes, unwanted guidance/hooks, or shared ignore edits remain.
+- Run `kata quickstart` unless already read for this session/environment, then return to registration. No sample issue
+  for setup testing: the next issue must represent real work.
