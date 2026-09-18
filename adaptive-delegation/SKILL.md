@@ -133,6 +133,8 @@ Parent cancellation does not establish child termination.
 
 The coordinating parent records its delegation tree; children do not run collection tools or edit the project record.
 Use the native harness to launch, wait, inspect status, and cancel. The recording script does none of those operations.
+For Pi async status JSON, use [the Pi status helper](references/pi-status.md) to supply `record-run` without
+retyping its counters; other hosts retain the manual path.
 
 - **After a result, failure, or observed cancellation:** call `record-run` with record ID, native run ID when known,
   status, and available metrics/effective settings. Reuse returned numbers; for missing data, at most one bounded lookup
