@@ -13,11 +13,7 @@ const OBJECT_ID_PATTERN = /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/;
 const DEFAULT_TIMEOUT_MS = 7_200_000;
 const MAX_GIT_STDERR_BYTES = 64 * 1024;
 
-export const RECEIPT_SECTIONS = Object.freeze([
-  "In-scope findings",
-  "Out-of-scope findings",
-  "Residual risks",
-]);
+export const RECEIPT_SECTIONS = Object.freeze(["In-scope findings", "Out-of-scope findings", "Residual risks"]);
 
 function requireString(value, label) {
   if (typeof value !== "string" || value.trim() === "") {
@@ -73,11 +69,7 @@ function normalizeReviewFiles(value, cwd, materials) {
     const sourcePath = resolve(cwd, path);
     return {
       sourcePath,
-      snapshotPath: join(
-        materials.reviewFilesDirectory,
-        String(index + 1).padStart(3, "0"),
-        basename(sourcePath),
-      ),
+      snapshotPath: join(materials.reviewFilesDirectory, String(index + 1).padStart(3, "0"), basename(sourcePath)),
     };
   });
 }
@@ -85,18 +77,13 @@ function normalizeReviewFiles(value, cwd, materials) {
 function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requiredSkills, lane }) {
   const [inScopeSection, outOfScopeSection, residualRisksSection] = RECEIPT_SECTIONS;
   const gitOnly = target !== undefined && reviewFiles.length === 0;
-  const lines = [
-    "Read-only review lane.",
-  ];
+  const lines = ["Read-only review lane."];
   if (target) {
     lines.push(`Repository: ${target.repository}`);
   }
   lines.push(`Working directory: ${cwd}`);
   if (target) {
-    lines.push(
-      `Exact base: ${target.base}`,
-      `Exact head: ${target.head}`,
-    );
+    lines.push(`Exact base: ${target.base}`, `Exact head: ${target.head}`);
   }
   lines.push(
     "",
@@ -115,11 +102,11 @@ function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requi
   for (const reviewFile of reviewFiles) {
     lines.push(`- Review file snapshot: ${reviewFile.snapshotPath} (source: ${reviewFile.sourcePath})`);
   }
-  lines.push(
-    "- Use the read tool with offsets when an artifact is large.",
-  );
+  lines.push("- Use the read tool with offsets when an artifact is large.");
   if (target) {
-    lines.push("- Do not run git diff, git show, or git log. The parent has already captured the exact immutable comparison.");
+    lines.push(
+      "- Do not run git diff, git show, or git log. The parent has already captured the exact immutable comparison.",
+    );
   }
   if (reviewFiles.length > 0) {
     lines.push(
@@ -244,11 +231,22 @@ export function normalizeReviewPacket(packet) {
   };
 }
 
+export function selectReviewLanes(normalized, keys = []) {
+  if (keys.length === 0) return normalized;
+  if (new Set(keys).size !== keys.length) throw new Error("duplicate selected lane key");
+  const known = new Set(normalized.lanes.map(({ key }) => key));
+  for (const key of keys) {
+    if (!known.has(key)) throw new Error(`unknown selected lane: ${key}`);
+  }
+  return { ...normalized, lanes: normalized.lanes.filter(({ key }) => keys.includes(key)) };
+}
+
+function packetDigest(normalized) {
+  return createHash("sha256").update(JSON.stringify(normalized)).digest("hex");
+}
+
 function buildWorkflowFromNormalized(normalized) {
-  return [
-    `const lanes = ${JSON.stringify(normalized.lanes)};`,
-    "return runs.all(lanes);",
-  ].join("\n");
+  return [`const lanes = ${JSON.stringify(normalized.lanes)};`, "return runs.all(lanes);"].join("\n");
 }
 
 function buildSubagentRequestFromNormalized(normalized) {
@@ -268,8 +266,8 @@ export function buildReviewWorkflow(packet) {
   return buildWorkflowFromNormalized(normalizeReviewPacket(packet));
 }
 
-export function buildSubagentRequest(packet) {
-  return buildSubagentRequestFromNormalized(normalizeReviewPacket(packet));
+export function buildSubagentRequest(packet, laneKeys = []) {
+  return buildSubagentRequestFromNormalized(selectReviewLanes(normalizeReviewPacket(packet), laneKeys));
 }
 
 async function runGitText({ cwd, args, maximumBytes = 4096 }) {
@@ -291,7 +289,8 @@ async function runGitText({ cwd, args, maximumBytes = 4096 }) {
     });
     child.on("error", rejectPromise);
     child.on("close", (code, signal) => {
-      if (stdout.length > maximumBytes) rejectPromise(new Error(`git ${args[0]} output exceeded ${maximumBytes} bytes`));
+      if (stdout.length > maximumBytes)
+        rejectPromise(new Error(`git ${args[0]} output exceeded ${maximumBytes} bytes`));
       else if (code === 0) resolvePromise();
       else rejectPromise(new Error(`git ${args[0]} failed (${signal ?? code}): ${stderr.trim()}`));
     });
@@ -344,24 +343,58 @@ async function fileEvidence(path) {
 
 export async function captureReviewMaterial(packet) {
   const normalized = normalizeReviewPacket(packet);
-  await mkdir(normalized.materialDir, { recursive: true, mode: 0o700 });
+  await mkdir(dirname(normalized.materialDir), { recursive: true, mode: 0o700 });
+  await mkdir(normalized.materialDir, { mode: 0o700 });
 
   let gitFiles;
   if (normalized.target) {
-    for (const [label, objectId] of [["base", normalized.target.base], ["head", normalized.target.head]]) {
-      const resolvedCommit = await runGitText({ cwd: normalized.cwd, args: ["rev-parse", "--verify", `${objectId}^{commit}`] });
+    for (const [label, objectId] of [
+      ["base", normalized.target.base],
+      ["head", normalized.target.head],
+    ]) {
+      const resolvedCommit = await runGitText({
+        cwd: normalized.cwd,
+        args: ["rev-parse", "--verify", `${objectId}^{commit}`],
+      });
       if (resolvedCommit !== objectId) throw new Error(`target.${label} did not resolve to the exact supplied commit`);
     }
 
-    const common = ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", normalized.target.base, normalized.target.head, "--"];
+    const common = [
+      "diff",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--find-renames",
+      normalized.target.base,
+      normalized.target.head,
+      "--",
+    ];
     await runGitCapture({
       cwd: normalized.cwd,
-      args: ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", "--name-status", normalized.target.base, normalized.target.head, "--"],
+      args: [
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--find-renames",
+        "--name-status",
+        normalized.target.base,
+        normalized.target.head,
+        "--",
+      ],
       outputPath: normalized.materials.changedFilesPath,
     });
     await runGitCapture({
       cwd: normalized.cwd,
-      args: ["diff", "--no-ext-diff", "--no-textconv", "--find-renames", "--stat", "--summary", normalized.target.base, normalized.target.head, "--"],
+      args: [
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--find-renames",
+        "--stat",
+        "--summary",
+        normalized.target.base,
+        normalized.target.head,
+        "--",
+      ],
       outputPath: normalized.materials.diffStatPath,
     });
     await runGitCapture({
@@ -381,25 +414,29 @@ export async function captureReviewMaterial(packet) {
   let capturedReviewFiles = [];
   if (normalized.reviewFiles.length > 0) {
     await mkdir(normalized.materials.reviewFilesDirectory, { recursive: true, mode: 0o700 });
-    capturedReviewFiles = await Promise.all(normalized.reviewFiles.map(async ({ sourcePath, snapshotPath }) => {
-      const source = await stat(sourcePath);
-      if (!source.isFile()) throw new TypeError(`reviewFiles source must be a regular file: ${sourcePath}`);
-      await mkdir(dirname(snapshotPath), { recursive: true, mode: 0o700 });
-      await copyFile(sourcePath, snapshotPath);
-      const snapshot = await stat(snapshotPath);
-      return { sourcePath, path: snapshotPath, bytes: snapshot.size };
-    }));
+    capturedReviewFiles = await Promise.all(
+      normalized.reviewFiles.map(async ({ sourcePath, snapshotPath }) => {
+        const source = await stat(sourcePath);
+        if (!source.isFile()) throw new TypeError(`reviewFiles source must be a regular file: ${sourcePath}`);
+        await mkdir(dirname(snapshotPath), { recursive: true, mode: 0o700 });
+        await copyFile(sourcePath, snapshotPath);
+        return { sourcePath, ...(await fileEvidence(snapshotPath)) };
+      }),
+    );
   }
 
   const manifest = {
-    version: 1,
+    version: 2,
+    packetDigest: packetDigest(normalized),
     capturedAt: new Date().toISOString(),
     cwd: normalized.cwd,
-    ...(normalized.target === undefined ? {} : {
-      repository: normalized.target.repository,
-      base: normalized.target.base,
-      head: normalized.target.head,
-    }),
+    ...(normalized.target === undefined
+      ? {}
+      : {
+          repository: normalized.target.repository,
+          base: normalized.target.base,
+          head: normalized.target.head,
+        }),
     files: {
       ...(gitFiles === undefined ? {} : gitFiles),
       ...(capturedReviewFiles.length === 0 ? {} : { reviewFiles: capturedReviewFiles }),
@@ -409,18 +446,58 @@ export async function captureReviewMaterial(packet) {
   return { normalized, manifest };
 }
 
-export async function runCli(args = process.argv.slice(2)) {
-  const packetPath = args[0];
-  if (!packetPath) throw new Error("usage: review-wave.mjs <review-packet.json>");
-  const packet = JSON.parse(await readFile(packetPath, "utf8"));
-  const { normalized } = await captureReviewMaterial(packet);
-  process.stdout.write(`${JSON.stringify(buildSubagentRequestFromNormalized(normalized), null, 2)}\n`);
+/** Verify the original packet and captured bytes before selecting a recovery subset. */
+export async function verifyReviewMaterial(packet) {
+  const normalized = normalizeReviewPacket(packet);
+  const manifest = JSON.parse(await readFile(normalized.materials.manifestPath, "utf8"));
+  if (manifest.version !== 2 || manifest.packetDigest !== packetDigest(normalized)) {
+    throw new Error("review material does not match the original packet; capture a new target in a new directory");
+  }
+  const expected = [];
+  if (normalized.target) {
+    expected.push(
+      [normalized.materials.changedFilesPath, manifest.files?.changedFiles],
+      [normalized.materials.diffStatPath, manifest.files?.diffStat],
+      [normalized.materials.diffPath, manifest.files?.patch],
+    );
+  }
+  for (const [index, file] of normalized.reviewFiles.entries()) {
+    const saved = manifest.files?.reviewFiles?.[index];
+    if (saved?.sourcePath !== file.sourcePath) throw new Error("review source identity changed");
+    expected.push([file.snapshotPath, saved]);
+  }
+  for (const [path, saved] of expected) {
+    const current = await fileEvidence(path);
+    if (saved?.path !== path || saved.bytes !== current.bytes || saved.sha256 !== current.sha256) {
+      throw new Error(`captured review material changed: ${path}`);
+    }
+  }
+  return normalized;
 }
 
-if (
-  process.argv[1]
-  && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])
-) {
+export async function runCli(args = process.argv.slice(2)) {
+  const [packetPath, ...options] = args;
+  if (!packetPath || packetPath.startsWith("--"))
+    throw new Error("usage: review-wave.mjs <packet.json> [--reuse-material] [--lane <key>]...");
+  const laneKeys = [];
+  let reuseMaterial = false;
+  for (let index = 0; index < options.length; index += 1) {
+    if (options[index] === "--reuse-material" && !reuseMaterial) reuseMaterial = true;
+    else if (options[index] === "--lane" && options[index + 1] && !options[index + 1].startsWith("--"))
+      laneKeys.push(options[++index]);
+    else throw new Error(`invalid review-wave option: ${options[index]}`);
+  }
+  const packet = JSON.parse(await readFile(packetPath, "utf8"));
+  // Validate selection before capturing anything; retain the unfiltered packet as material identity.
+  selectReviewLanes(normalizeReviewPacket(packet), laneKeys);
+  const normalized = reuseMaterial
+    ? await verifyReviewMaterial(packet)
+    : (await captureReviewMaterial(packet)).normalized;
+  const selected = selectReviewLanes(normalized, laneKeys);
+  process.stdout.write(`${JSON.stringify(buildSubagentRequestFromNormalized(selected), null, 2)}\n`);
+}
+
+if (process.argv[1] && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])) {
   runCli().catch((error) => {
     process.stderr.write(`${error.stack ?? error}\n`);
     process.exitCode = 1;

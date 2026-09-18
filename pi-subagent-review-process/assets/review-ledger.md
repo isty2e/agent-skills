@@ -31,29 +31,30 @@
 
 ## Coverage ledger
 
-| lane key | decision owned | routed skills | source seam | reviewer | model/thinking | status | child run id | output collected | candidate disposition |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| | | | | | | prepared | | no | |
+| lane key | decision owned | routed skills | source seam | reviewer | model/thinking | status   | wrapper/child run ids | output collected | candidate disposition |
+| -------- | -------------- | ------------- | ----------- | -------- | -------------- | -------- | --------------------- | ---------------- | --------------------- |
+|          |                |               |             |          |                | prepared |                       | no               |                       |
 
 ## Parent evidence and candidates
 
-| candidate id | source lane/direct | scope class | approval relevant | mechanism | impact | current status | independent adjudication | root-cause owner |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| | | in-scope/out-of-scope | yes/no | | | open | | |
+| candidate id | source lane/direct | scope class           | approval relevant | mechanism | impact | current status | independent adjudication | root-cause owner |
+| ------------ | ------------------ | --------------------- | ----------------- | --------- | ------ | -------------- | ------------------------ | ---------------- |
+|              |                    | in-scope/out-of-scope | yes/no            |           |        | open           |                          |                  |
 
 Allowed states: `open`, `confirmed`, `rejected`, `duplicate`, `pre-existing`, `needs-decision`. Every out-of-scope or pre-existing finding has approval relevance `no`.
 
 ## Machine gate
 
-- [ ] Wrapper completed successfully
-- [ ] `scripts/review-gate.mjs` passed after its settling interval
-- [ ] Machine-gate receipt copied below
+- [ ] Each round's gate report retained after its settling interval
+- [ ] Original lane coverage accounted for across ready receipts and explicit parent review
+- [ ] Wrapper failures, evidence gaps, and affected side effects resolved
+- [ ] Gate reports copied below
 
 ```json
 {}
 ```
 
-A failed wrapper or gate blocks final delivery. Diagnose or replace the orchestration; do not salvage child files into approval.
+A subset pass covers only that round. Retain original lane keys and run IDs; resolve gaps without rerunning unaffected lanes. Parent adjudication and closure remain required.
 
 ## Parent closure
 
