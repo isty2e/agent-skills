@@ -1,127 +1,120 @@
 # Local Routing Improvement
 
-Use task observations to improve the next choice, not to build universal rankings. Parent assessments are fallible;
-retain uncertainty and corrections. Keep vendor guidance, operator reports, and proposed trials distinct from measured
-local outcomes; none supplies missing success or cost data.
+Improve the next choice, not universal rankings. Parent judgments are fallible: retain uncertainty and corrections.
+Distinguish measured outcomes from vendor guidance, operator reports, and proposed trials; none fills missing cost or
+success data.
 
 ## 1. Diagnose The Observed Result
 
-Compare the original primary benefit and acceptable burden with the observed outcome, including parent repair. A
-successful final task does not by itself vindicate the delegation choice. Use artifact checks and observed work, not
-confidence alone; retain uncertainty where the benefit was not observed. Consider the handoff and task partition before
-attributing an outcome to the model. Use the recorded expected benefit and whole-delegation usefulness, not output
-quality alone. Unknown usefulness is not a negative result or proof of savings. Candidate tests below are hypotheses,
-not mandatory actions:
+Compare the recorded expected benefit and acceptable burden with observed whole-delegation usefulness, including parent
+repair. Use artifacts and observed work, not confidence, output quality, or final task success alone. Unknown usefulness
+is neither failure nor proof of savings. Consider handoff and partition before attributing outcomes to the model.
 
-- **Missing contract/source:** Fix the handoff; retain the profile for a discriminating retry.
-- **Repeated reasoning errors with adequate context:** Adjust supported effort or profile/model.
-- **Conflicting edits, unresolved shared decisions, expensive integration:** Repartition or keep coupled work with the
-  parent.
-- **Unsupported feature, outage, timeout, tool failure:** Diagnose runtime/tool availability, not reasoning.
-- **Re-reading history or low information value:** Reconsider context, output contract, or direct execution.
-- **Valid useful output but excessive cost/delay:** Compare a cheaper/faster profile, effort, context, or concurrency.
+Within each task, separate useful content, substantive errors, local formatting/metadata repair, and execution/receipt/
+retry overhead. Preserve original outcomes and incurred costs, including mixed failures; invent no harness-free success
+rate. Candidate next steps are hypotheses, not obligations:
 
-Availability fallback need not solve task difficulty. Inspect write state before replay and retain original
-budget/permissions. One outcome supports a scoped observation, not universal superiority or incapacity.
+- Missing contract/source: distinguish unavailable inputs/tools from failure to retrieve/ground evidence; adjust handoff,
+  runtime, or profile accordingly.
+- Repeated reasoning errors with adequate context: adjust supported effort/profile/model.
+- Conflicting edits, unresolved shared decisions, costly integration: repartition or keep coupled work with the parent.
+- Unsupported feature/outage/timeout/tool failure: distinguish runtime faults from child tool choices or ignored
+  constraints; both may contribute.
+- Re-reading history/low information value: reconsider context, output contract, or direct work.
+- Useful but costly/slow output: compare cheaper/faster profiles, effort, context, or concurrency.
+
+Availability fallback need not solve difficulty. Inspect write state before replay; retain budget/permissions. One
+outcome supports a scoped observation, not universal superiority or incapacity.
 
 ## 2. Choose An Informative Next Observation
 
-Default to one ordinary execution and lightweight records, not shadow runs or an evaluator agent. Consider both child
-runs and representative cases kept with the parent. Direct work can reveal its own checking burden and how much useful
-context was already at hand. Unperformed briefing or integration remains estimated; an unrun child provides no measured
-counterfactual. Use [measurement.md](measurement.md) for comparison boundaries and attribution.
+Default to one ordinary execution and lightweight records, not shadow runs or evaluator agents. Include representative
+direct choices: they reveal checking burden and available context, but unperformed handoffs/integration remain estimates
+and unrun children supply no measured counterfactual. See [measurement.md](measurement.md) for attribution/comparability.
 
-Do not treat the current choice as proven optimal merely because alternatives lack universal evidence. Repeated major
-rework or rejection can justify a narrowly scoped alternative on the next ordinary task. Record intentional trials as
-`model_selection_reason: exploration`; do not manufacture an experiment on every run or enforce model-diversity quotas.
+Lack of universal evidence for alternatives does not prove the incumbent optimal. Repeated major repair/rejection may
+justify a scoped alternative on the next ordinary task. Mark intentional trials `model_selection_reason: exploration`; no experiment per
+run or model-diversity quota.
 
-Default trials to eligible read-only work within the authorized budget. A shallow multi-source investigation may merit
-a stronger model or higher effort; a routine lookup may merit lower effort. Compare stronger moderate-effort profiles,
-cheaper deeper-effort profiles, and direct work without requiring failure first. Difficult reasoning is not made easy by
-a read-only label. Where feasible, vary one suspected factor with unchanged requirements/acceptance. Additional duplicate runs need an information goal and
-experiment allowance. Compare existing settings too; alternative failure is not global disqualification.
+Default trials to eligible read-only work within budget; read-only does not mean easy. Routine lookup may warrant lower
+effort; shallow multi-source investigation may warrant a stronger model or higher effort. Compare stronger/moderate-effort,
+cheaper/deeper-effort, existing settings, and direct work without requiring failure first. Where feasible, vary one factor
+under unchanged acceptance/requirements. Duplicate runs need an information goal and experiment allowance. Alternative
+failure is not global disqualification.
 
-Compare task family/profile first; interpret differences using context, difficulty, scope, verification, parent
-identity, and runtime changes. Observational selection can give stronger profiles harder work. For consequential
-changes, prefer limited paired/comparable trials at the same revision without answer leakage. Include
-failures/cancellations and relevant tail cost/time, not just successful means. Small samples can expose waste, not
-establish no quality loss. When evidence is insufficient, retain the candidate and name what observation would change
-the choice rather than manufacture a ranking.
+Compare within task families/shared episodes, not pooled effort-level success rates. Wave lanes are correlated, not
+independent replications; pinned profiles describe requested workflow, not autonomous routing/exploration. Account for
+context, difficulty, scope, verification, parent identity, and runtime changes; stronger profiles may receive harder
+work. Consequential changes warrant limited paired/comparable trials at the same revision without answer leakage.
+Include failures/cancellations and tail cost/time, not just successful means. Small samples may expose waste, not prove
+no quality loss. With insufficient evidence, retain the candidate and name an informative observation, not a ranking.
 
 ## 3. Retain Experience And Revise Hints Within Authority
 
-The coordinating parent owns records for its delegation tree; descendants return evidence. Within authorized project
-scope, the parent may keep, adjust, or revert choices about direct work, partition, handoff, context, model/effort, or
-concurrency. Hints cannot override instructions, pins, budgets, permissions, or acceptance.
+The coordinating parent owns delegation-tree records; descendants return evidence. Within authorized project scope,
+the parent may keep/adjust/revert direct work, partition, handoff, context, model/effort, or concurrency. Hints cannot
+override instructions, pins, budgets, permissions, or acceptance.
 
 ### Use One Project File
 
-Resolve the path from project instructions once per session: normally project-root `.agents/delegation.md`, never a
-second ad hoc destination. Follow the skill's launch-precondition rule. The recorder initializes its block without
-replacing existing text; the [template](../templates/delegation.md) is optional for human hints. Read before editing
-hints, preserve human content, reconcile concurrent changes, and confirm the write. Without an approved writable path,
-retain permitted session evidence and disclose the gap.
+Resolve the instruction-designated path once per session, normally project-root `.agents/delegation.md`; never relocate
+ad hoc. Honor the skill's launch preconditions. The recorder preserves surrounding text; the
+[template](../templates/delegation.md) is optional for human hints. Read before editing hints, preserve human content,
+reconcile concurrent changes, and confirm writes. Without an approved writable path, retain permitted session evidence
+and disclose the gap.
 
-Keep current hints and compact attempt observations together. Preserve stable decision/run IDs, facts apart from
-interpretation, pending assessments, and essential context when detailed links may expire. Do not store credentials,
-full transcripts, or unnecessary confidential material. Local write authority does not authorize commits, publication,
-tracking changes, or host configuration.
+Keep hints and compact observations together, separating facts from interpretation. Preserve decision/run IDs, pending
+assessments, and essential context when links may expire. Store no credentials, full transcripts, or unnecessary private
+material. Local writing does not authorize commits, publication, tracking changes, or host configuration.
 
-The script alone updates its managed JSONL block. Use `assess --correction-reason` for a changed parent verdict and
-`record-run` for late scalar facts. A terminal attempt is not reopened; explicitly start a continuation/retry. Direct
-choices seriously considered against delegation use `record-direct` and a short reason, so export retains them. No child
-model, run, or hypothetical metrics are required. Preserve older prose without automatic import. Do not generate a
-second narrative per structured record.
+Only the script edits managed JSONL. Change verdicts with `assess --correction-reason`; add late facts with `record-run`.
+Terminal attempts are not reopened: explicitly start a retry/continuation. For direct choices seriously considered
+against delegation, use `record-direct` with a short reason so export retains them; no child model/run/hypothetical
+metrics. Preserve legacy prose without automatic import. Do not add a second narrative per structured record.
 
 ### Consolidate Without Erasing Evidence
 
-Consolidate human hints and summaries, not raw managed records. This tool provides no deletion or compaction command.
-Use summaries derived from record IDs without rewriting the underlying attempts. A future data migration needs its own
-scope and validation; do not manually replace the managed block with an aggregate.
+Consolidate human hints/summaries, not managed records. Reference record IDs; this tool has no deletion/compaction command.
+Do not replace raw records with aggregates. Future migrations need separate scope and validation.
 
-Merge only comparable observations. Preserve membership or IDs, counts and denominators, settings/skill scope,
-accounting coverage, missingness, failures, corrections, and counterevidence. Keep pending entries identifiable; never
-convert estimates into measurements or derive unsupported rates or quantiles.
+Merge only comparable observations. Preserve membership/IDs, counts/denominators, settings/skill scope, accounting
+coverage, missingness, failures, corrections, counterevidence, and identifiable pending entries. Do not turn estimates
+into measurements or derive unsupported rates/quantiles.
 
 ### Revise And Recheck
 
-For an adjustment, retain a compact entry:
+Keep each adjustment compact:
 
-- **Applies to:** task scope and relevant model/host/prompt versions.
-- **Change and basis:** previous choice, proposed choice, linked observations, limitations, confidence, and material
-  counterevidence. Mark a provisional hypothesis as such.
-- **Recheck:** date/version, next applicable ordinary task or other observable trigger, the result to inspect, and when
-  to retain, revise, or revert the change under unchanged acceptance.
+- Applies to: task scope and relevant model/host/prompt versions.
+- Change/basis: previous and proposed choices, observations, limitations, confidence, material counterevidence; label
+  provisional hypotheses.
+- Recheck: date/version, next applicable ordinary task or other observable trigger, result to inspect, and retain/revise/
+  revert criteria under unchanged acceptance.
 
-Keep one current choice per scoped routing decision and preserve the previous choice for rollback. A single observation
-can justify a narrow, reversible provisional adjustment, not a proven improvement or universal ranking. Keep the current
-choice when appropriate; if the reason is insufficient evidence, name what would inform a change. Do not tune merely to
-complete a checklist.
+Keep one current choice per scope and its predecessor for rollback. One observation may justify a narrow reversible
+trial, not proven improvement or universal ranking. Keeping the current choice is valid; if evidence is insufficient,
+name what would help. Do not tune to fill a checklist.
 
-On the next applicable task, read the hint, check its scope and versions, and apply it only if still authorized. After
-that task, compare the observed result with its recheck condition and retain, revise, or revert it. Revert a change when
-evidence shows regression or unjustified added burden; record the reason without discarding earlier observations.
-Additional comparison runs remain subject to the experiment allowance in §2.
+On the next applicable task, check the hint's scope, versions, and authority, then compare its outcome to the recheck
+condition. Retain/revise/revert accordingly; regressions or unjustified burden warrant reversal without discarding old
+evidence. Extra comparison runs still require §2's allowance.
 
-Reassess after material model/provider, host, prompt/skill, task mix, price, or acceptance changes. Retain scoped old
-evidence; do not pool incompatible runs. Regressions can justify narrow temporary restrictions, not blanket bans;
-investigate context, decomposition, and verification.
-
-Review compact summaries after a useful batch or material failure, not full histories per launch. Stop at the experiment
-budget and report uncertainty. Savings never weaken correctness, permissions, confidentiality, or parent-only duties.
-Return out-of-authority changes to the governing decision process.
+Reassess after material model/provider, host, prompt/skill, task-mix, price, or acceptance changes. Keep scoped old
+evidence without pooling incompatible runs. Regressions may warrant temporary scoped restrictions, not blanket bans;
+investigate context, decomposition, and verification. Review summaries after a useful batch or material failure, not
+full histories per launch. Stop at the experiment budget and report uncertainty. Savings never weaken correctness,
+permissions, confidentiality, or parent-only duties; return out-of-authority changes to their decision owner.
 
 ## 4. Review Project Experience For Shared Guidance
 
-Only in a separate authorized maintenance task, compare selected projects' approved observations and hints; do not sweep
-home directories or cross confidentiality boundaries. Group compatible task, settings, and skill revisions while
-retaining failures, repair, missingness, coverage, and contrary evidence.
+In a separate authorized maintenance task, compare selected projects' approved observations/hints; no home-directory
+sweeps or confidentiality crossings. Group compatible tasks, settings, and skill revisions, retaining failures, repair,
+missingness, coverage, and counterevidence.
 
-Use the recorder's `export` only when gathering an authorized batch. Exported staged JSON retains the fields already
-collected, including representative direct choices and separate output/usefulness judgments; do not rewrite it as a long
-case report. It is separate from a central repository's legacy format and requires an approved destination. No export
-operation grants Git synchronization or publication authority.
+For an authorized batch, `export` to an approved local directory. Staged JSON preserves collected fields, direct choices,
+and separate output/usefulness judgments; do not rewrite long case reports. It is not the central repository's legacy
+format and grants no Git synchronization or publication authority.
 
-A shared-skill proposal records its evidence, affected instruction, expected benefit, uncertainty, and recheck or
-rollback. Submit it for explicit review; local records never authorize publication or automatic promotion. Insufficient
-evidence calls for a narrower claim or a more informative observation, not an invented improvement.
+A shared-skill proposal needs evidence, affected instruction, expected benefit, uncertainty, and recheck/rollback, followed
+by explicit review. Records never authorize publication or automatic promotion. Insufficient evidence calls for narrower
+claims or informative observations, not invented improvements.
