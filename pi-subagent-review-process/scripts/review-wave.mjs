@@ -88,8 +88,8 @@ function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requi
   lines.push(
     "",
     gitOnly
-      ? "Parent-captured review material (read these first; do not ask the parent to provide a diff):"
-      : "Parent-captured review material (read these first):",
+      ? "Read parent-captured material first; do not request a pasted diff:"
+      : "Read parent-captured material first:",
     `- Material manifest: ${materials.manifestPath}`,
   );
   if (target) {
@@ -105,24 +105,23 @@ function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requi
   lines.push("- Use the read tool with offsets when an artifact is large.");
   if (target) {
     lines.push(
-      "- Do not run git diff, git show, or git log. The parent has already captured the exact immutable comparison.",
+      "- The captured Git comparison is authoritative; do not run git diff, git show, or git log.",
     );
   }
   if (reviewFiles.length > 0) {
     lines.push(
-      "- If tool output is truncated, continue reading with offsets; truncation is not evidence absence.",
-      "- Captured review-file snapshots define the reviewed target even if live source files later differ.",
-      "- You may inspect repository context needed to assess them, but do not substitute live versions or silently expand the reviewed target.",
+      "- Continue truncated reads with offsets; truncation does not establish absence.",
+      "- File snapshots define the target, not later live edits. Inspect needed repository context without substituting live files or expanding scope.",
     );
   }
   lines.push(
     gitOnly
-      ? "- If a material file is unavailable or inconsistent, return EVIDENCE_UNAVAILABLE as the terminal report instead of asking for pasted diff content."
-      : "- If material is unavailable or inconsistent, return EVIDENCE_UNAVAILABLE instead of asking for pasted content.",
+      ? "- Unavailable/inconsistent material: return EVIDENCE_UNAVAILABLE, not a request for pasted diff."
+      : "- Unavailable/inconsistent material: return EVIDENCE_UNAVAILABLE, not a request for pasted content.",
     "",
     "Required routed skills:",
     ...requiredSkills.map((skill) => `- ${skill}`),
-    "- Load and apply every routed skill before analysis; names in this prompt are not substitutes for their SKILL.md contents.",
+    "- Before analysis, load and apply each routed SKILL.md; names alone do not suffice.",
     "",
     "Hard constraints:",
     ...constraints.map((constraint) => `- ${constraint}`),
@@ -130,13 +129,13 @@ function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requi
     "- Use supervisor/intercom only for a blocking decision or a meaningful progress checkpoint.",
     "",
     "Terminal report contract:",
-    "Use exactly the following three level-1 ATX headings, in this order, each on its own line. Do not add a document title or another level-1 heading.",
+    "Use exactly these three level-1 ATX headings in order, each on its own line; no document title or other level-1 headings.",
     `# ${inScopeSection}`,
-    "List concrete evidence-backed findings within the overall reviewed change boundary that can affect approval, or write NO FINDING. The lane focus organizes review work but does not redefine overall review scope; report a material cross-lane finding here and notify the parent.",
+    "Concrete evidence-backed findings within the overall change boundary, or NO FINDING; may affect approval. Lane focus does not narrow scope: include material cross-lane findings here and notify the parent.",
     `# ${outOfScopeSection}`,
-    "List concrete evidence-backed findings discovered during the lane that are outside the reviewed change boundary or pre-existing. These must be reported but must not affect approval. Write NO FINDING when empty.",
+    "Concrete evidence-backed pre-existing/other-boundary findings, or NO FINDING. Report them without approval effect.",
     `# ${residualRisksSection}`,
-    "List verification limits only; do not promote speculation to findings.",
+    "Verification limits only, not speculative findings.",
     "",
     `Decision lane: ${lane.task}`,
   );

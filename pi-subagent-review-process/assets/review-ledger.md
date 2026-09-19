@@ -1,82 +1,65 @@
-# Review process ledger
+# Review Ledger
 
-## Target authority
+## Target
 
-- Repository:
-- Working directory:
+- Repository / absolute cwd:
 - Review kind:
-- Base:
-- Head:
-- Review files:
+- Git base/head and/or review files:
 - Initial worktree state:
-- User constraints:
-- Forbidden actions:
+- User constraints / forbidden actions:
 - Required current-head checks:
 
-## Runtime preflight
+## Preflight
 
-- [ ] `subagent({ action: "list" })` completed
-- [ ] Selected reviewers are executable and enabled
-- [ ] Effective model and thinking match the session requirement
-- [ ] Packet starts from `assets/review-wave.example.json` with an unused absolute `materialDir`
-- [ ] Shared `reviewSkills` and lane-specific `routedSkills` cover the intended decisions
-- [ ] `scripts/review-wave.mjs` generated the immutable material and launch request
-- Review packet:
-- Generated request:
-- Material directory:
-- Wrapper run id:
-- Mission id:
-- Async directory:
-- Status path:
+- [ ] Reviewer capabilities checked: executable, enabled, available runner, required effective model/thinking
+- [ ] Example-based packet uses an unused absolute `materialDir`
+- [ ] Shared `reviewSkills` and lane `routedSkills` cover assigned decisions
+- [ ] Generator produced captured material and launch request
+- Packet / request / material paths:
+- Wrapper / mission IDs; async / status paths (per round):
 
-## Coverage ledger
+## Coverage
 
-| lane key | decision owned | routed skills | source seam | reviewer | model/thinking | status   | wrapper/child run ids | output collected | candidate disposition |
-| -------- | -------------- | ------------- | ----------- | -------- | -------------- | -------- | --------------------- | ---------------- | --------------------- |
-|          |                |               |             |          |                | prepared |                       | no               |                       |
+| lane key / decision | routed skills / source seam | reviewer / model / thinking | status | wrapper / child IDs | output / disposition |
+| --- | --- | --- | --- | --- | --- |
+| | | | prepared | | not collected |
 
-## Parent evidence and candidates
+## Parent Findings
 
-| candidate id | source lane/direct | scope class           | approval relevant | mechanism | impact | current status | independent adjudication | root-cause owner |
-| ------------ | ------------------ | --------------------- | ----------------- | --------- | ------ | -------------- | ------------------------ | ---------------- |
-|              |                    | in-scope/out-of-scope | yes/no            |           |        | open           |                          |                  |
+| candidate / source lane or direct | scope / approval relevance | mechanism / impact | status | adjudication / root-cause owner |
+| --- | --- | --- | --- | --- |
+| | in-scope or out-of-scope / yes or no | | open | |
 
-Allowed states: `open`, `confirmed`, `rejected`, `duplicate`, `pre-existing`, `needs-decision`. Every out-of-scope or pre-existing finding has approval relevance `no`.
+States: `open`, `confirmed`, `rejected`, `duplicate`, `pre-existing`, `needs-decision`. Out-of-scope/pre-existing findings
+always have approval relevance `no`.
 
-## Machine gate
+## Gate And Recovery
 
-- [ ] Each round's gate report retained after its settling interval
-- [ ] Original lane coverage accounted for across ready receipts and explicit parent review
-- [ ] Wrapper failures, evidence gaps, and affected side effects resolved
-- [ ] Gate reports copied below
+- Round gate-report paths:
+- [ ] Reports retained after settling; original lane keys and run IDs preserved
+- [ ] Original coverage accounted for across ready receipts and authorized parent review
+- [ ] Wrapper failures, evidence gaps, and affected side effects resolved under governing recovery requirements
 
-```json
-{}
-```
+A subset pass covers only its round. Recover gaps without rerunning unaffected lanes or replacing required independent
+review without authorization. Gate success never authorizes final disposition.
 
-A subset pass covers only that round. Retain original lane keys and run IDs; resolve gaps without rerunning unaffected lanes. Parent adjudication and closure remain required.
+## Closure
 
-## Parent closure
+- [ ] No tracked child/wrapper remains active
+- [ ] Supervisor/intercom queues and completion/control notices drained; later notices reset closure
+- [ ] Exact Git base/head and/or captured file snapshots reconfirmed, along with worktree state
+- [ ] Local checks follow session rerun/authorization policy
+- [ ] Candidates independently adjudicated, deduplicated, and scoped; out-of-scope findings disposition-neutral
+- [ ] Retained prior findings still reproduce; residual risks and excluded evidence recorded
 
-- [ ] No tracked child or wrapper remains active
-- [ ] Supervisor and intercom pending queues are empty; completion/control notices are drained
-- [ ] No later notice arrived after this pass; otherwise reset closure
-- [ ] Applicable target identity was reconfirmed: exact base/head for Git and captured snapshots for review files
-- [ ] Local validation followed the session's rerun and authorization policy
-- [ ] Every candidate was independently adjudicated, deduplicated, and scope-classified
-- [ ] Out-of-scope findings remain reportable but disposition-neutral
-- [ ] Every retained prior finding still reproduces
-- [ ] Residual risks and excluded evidence are recorded
-
-## Final disposition
+## Disposition
 
 State: `blocked | request-changes | approve | no-disposition`
 
 - In-scope findings affecting disposition:
 - Out-of-scope findings reported separately:
 - Rejected candidates:
-- Verification evidence:
-- Residual risks:
-- Exactly one final report delivered: [ ]
+- Verification evidence / residual risks:
+- [ ] Exactly one final report delivered
 
-A post-final child message means closure was premature. Retract the disposition and reopen this ledger.
+A post-final child notice reopens this ledger: retract disposition and recheck affected evidence and closure.

@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { materializeWorkflowResults, validateReviewRun } from "../scripts/review-gate.mjs";
 
@@ -44,6 +47,42 @@ test("keyless receipts follow child identity, not array position", async () => {
     ["b", "a"],
   );
   assert.equal(validateReviewRun({ packet: packet(), status: value, results, now: 100000 }).machineGatePassed, true);
+});
+
+test("file-only receipts use their explicit output reference, not artifact ordering", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "review-output-reference-"));
+  try {
+    const reportPath = join(dir, "report.md");
+    const unrelatedPath = join(dir, "unrelated.md");
+    await writeFile(reportPath, output);
+    await writeFile(unrelatedPath, `${output}Unrelated artifact.\n`);
+
+    for (const firstArtifact of [dir, unrelatedPath]) {
+      const value = status();
+      value.workflow.value[0] = {
+        runId: "run-b",
+        success: true,
+        outputReference: reportPath,
+        artifactPaths: [firstArtifact, reportPath],
+      };
+      const results = await materializeWorkflowResults(value);
+      assert.equal(results[0].output, output);
+      assert.equal(validateReviewRun({ packet: packet(), status: value, results, now: 100000 }).machineGatePassed, true);
+    }
+
+    const missing = status();
+    missing.workflow.value[0] = {
+      runId: "run-b",
+      success: true,
+      outputReference: join(dir, "missing.md"),
+      artifactPaths: [unrelatedPath],
+    };
+    const results = await materializeWorkflowResults(missing);
+    assert.match(results[0].outputReadError, /cannot read/);
+    assert.equal(results[1].output, output);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 });
 
 test("explicit no-unavailable-evidence annotation does not invalidate a complete report", () => {

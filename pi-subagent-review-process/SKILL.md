@@ -8,70 +8,78 @@ compatibility: Requires Pi with pi-subagents workflowScript, Node.js, subagent s
 
 ## Procedure
 
-1. Fix target. Copy `assets/review-ledger.md`; record the absolute `cwd`, review kind, worktree state, constraints, and `reviewFiles`, Git `base`/`head`, or both. Git IDs may be any two distinct full commits; ancestry is not required. Use `reviewFiles` for plans, specs, RFCs, saved full tool output, and other non-diff material.
-2. Define lanes from `assets/review-wave.example.json`. Give each stable key one distinct correctness decision. Include `code-review-vector` in `reviewSkills`, apply its routing, and record the selected names in each lane's `routedSkills`. The parent owns uncovered vectors; do not create lanes merely to fill a vector checklist. For follow-ups, target changed decisions and remaining uncertainty.
-3. Verify reviewers with `subagent({ action: "list" })`; use only executable, enabled agents. Confirm the effective runtime model and thinking.
-4. Give the wave an unused absolute `materialDir`, then generate immutable review material and the launch request:
+1. Fix the target in `assets/review-ledger.md`: absolute `cwd`, review kind, worktree state, constraints, and Git
+   `base`/`head`, `reviewFiles`, or both. Git IDs must be distinct full commits; ancestry is irrelevant. Files may be
+   plans, specs, RFCs, saved full tool output, or other non-diff material.
+2. Define lanes from `assets/review-wave.example.json`: one correctness decision per stable key, not one lane per
+   checklist item. Include `code-review-vector` in `reviewSkills`, apply its routing, and list each lane's `routedSkills`.
+   The parent covers remaining vectors; follow-ups target changed decisions or unresolved uncertainty.
+3. Verify reviewers with `subagent({ action: "list", capabilities: true })`: executable, enabled, with required effective
+   model/thinking. External CLI runners must be available.
+4. Choose an unused absolute `materialDir` and generate the request:
 
    ```bash
    node scripts/review-wave.mjs review-packet.json > review-request.json
    ```
 
-   `reviewFiles` paths are relative to `cwd` or absolute and must name regular files. Omit `target` for file-only review. Captured snapshots define the target; reviewers may inspect needed repository context but must not substitute live files or expand scope. Treat generator rejection as blocking and run its `workflowScript` unchanged; do not hand-edit the generated terminal `return runs.all(lanes)`. For commit ranges, prohibit `git diff`, `git show`, and `git log`.
-
-5. Launch the returned `workflowScript` once as an async fresh-context fanout. Record wrapper, mission, child, async, status, model, and thinking evidence.
-6. Keep the main session available for user and subagent communication: do not call `subagent_wait()` while the wave is active. Continue parent review, answer supervisor/intercom requests, share evidence, and steer drift; then yield so Pi can wake the session. Delayed notification does not justify polling or a duplicate wave.
-7. On wake, collect the wrapper result from the completion notice or durable status; timeout is not completion.
-8. Inspect the durable status, including failed waves:
+   `reviewFiles` are regular-file paths, absolute or relative to `cwd`; omit `target` for file-only reviews. Snapshots
+   define the target. Reviewers may inspect needed repository context, not substitute live files or expand scope.
+   For Git ranges, prohibit `git diff`, `git show`, and `git log`. Generator rejection blocks launch; execute its
+   `workflowScript` unchanged, including `return runs.all(lanes)`.
+5. Launch once, async with fresh context. Retain wrapper/mission/child IDs, async/status paths, and effective settings.
+6. Stay available for users and children. Continue parent review, answer supervisor/intercom requests, share evidence,
+   and steer drift, then yield for Pi wake notifications. Do not block on `subagent_wait()`, poll for delayed notices,
+   or launch a duplicate wave. On wake collect the wrapper result from the notice or durable status; timeout is not completion.
+7. Inspect status, including failed waves:
 
    ```bash
    node scripts/review-gate.mjs review-packet.json status.json
    ```
 
-   The gate emits per-lane results and valid receipts even on failure, with a nonzero exit. `machineGatePassed` covers
-   only the selected round; `reviewComplete` also requires the original lane set. `finalDispositionAuthorized` is always
-   `false`. Preserve ready receipts and resolve reported gaps before closure.
+   Failure emits per-lane diagnostics and usable receipts with a nonzero exit. `machineGatePassed` covers the selected
+   round; `reviewComplete` also requires the original lanes. `finalDispositionAuthorized` is always `false`.
+8. Before one final report, reconfirm target, worktree, checks, candidate dispositions, and quiescence. Drain supervisor,
+   intercom, completion, and control notices; later notices reopen closure. Only parent-verified in-scope findings affect
+   disposition. Report verified out-of-scope/pre-existing findings separately, with verification and residual risks.
 
-9. Close only after reconfirming target, worktree, checks, candidate dispositions, and quiescence. Drain supervisor, intercom, completion, and control notices; any later notice reopens closure.
-10. Report once. Base disposition only on parent-verified in-scope findings. Report verified out-of-scope or pre-existing findings separately with no approval effect. Include verification and residual risks.
+## Receipt Semantics
 
-## Receipt semantics
+The generator owns the three-section report format:
 
-The generator gives every reviewer the required three-section Markdown contract. Interpret it as follows:
+- In-scope findings: evidence-backed findings within the overall change boundary, or `NO FINDING`; may affect approval.
+  Lane focus organizes work, not scope.
+- Out-of-scope findings: concrete pre-existing/other-boundary findings, or `NO FINDING`; report without approval effect.
+- Residual risks: verification limits, not speculative findings.
 
-- In-scope findings: evidence-backed findings inside the reviewed change boundary, or `NO FINDING`; may affect disposition. Lane focus organizes work, not scope.
-- Out-of-scope findings: concrete pre-existing or other-boundary findings, or `NO FINDING`; never affect disposition.
-- Residual risks: verification limits only, not speculative findings.
-
-`EVIDENCE_UNAVAILABLE` on its own status line is terminal but incomplete; an explicit `EVIDENCE_UNAVAILABLE:none` is not a missing-evidence report. Child output is candidate evidence; only the parent decides scope, validity, root-cause ownership, severity, and disposition.
+`EVIDENCE_UNAVAILABLE` as a status line is terminal but incomplete; `EVIDENCE_UNAVAILABLE:none` is not missing evidence.
+Child output remains candidate evidence; the parent owns validity, scope, root-cause ownership, severity, and disposition.
 
 ## Recovery
 
-Use `laneResults` to distinguish missing evidence, malformed reports, execution failures, and identity errors. Correct
-only the affected report or lane; retain other ready receipts when their captured target and evidence remain valid.
-A wrapper failure still needs diagnosis, but does not by itself erase independent candidate evidence. Shared-state or
-target changes require rechecking the affected coverage. Missing evidence is not repaired by changing its label.
+Use `laneResults` to distinguish identity/execution errors, unavailable evidence/output, and report-format errors. Repair
+only affected reports/lanes; retain ready receipts only while their captured target and evidence remain applicable.
+Relabeling does not repair missing evidence. Diagnose wrapper failures and resolve shared-state/target effects before
+closure. Follow governing stop, approval, and retry rules; this skill authorizes no runtime switch or weakened review.
 
-For the same original packet, rerun only needed lanes on verified captured material:
+For the same packet, generate an affected-lane request without recapturing live files:
 
 ```bash
 node scripts/review-wave.mjs review-packet.json --reuse-material --lane affected > recovery-request.json
-# Launch the generated request with the native harness, then inspect its returned status.
-node scripts/review-gate.mjs review-packet.json recovery-status.json --lane affected
 ```
 
-Repeat `--lane` for more than one gap. Reuse checks the original packet and captured content hashes; it does not recapture
-live files. A changed target or a legacy manifest without these hashes needs a fresh directory. Keep each round's run IDs
-in the coverage ledger. A subset pass is not a complete original review: every original decision must be covered by a
-ready receipt or explicit parent review before final closure, with wrapper failures and side effects resolved.
+After its native-harness launch completes, inspect with
+`node scripts/review-gate.mjs review-packet.json recovery-status.json --lane affected`.
+Repeat `--lane` for multiple gaps. Reuse verifies the original packet and captured hashes; changed targets or legacy
+manifests without hashes need a fresh directory. Failed initial capture also needs a fresh directory, not overwrite.
 
-On timeout, retain the active run rather than launch a duplicate. After closure, new notices reopen the affected review
-and closure checks, not automatically the entire fanout. Keep user decisions with the parent.
+Keep round/run IDs in the coverage ledger. Subset success is not original-review completion: cover every original
+decision with a ready receipt or explicit parent review allowed by governing requirements. Replacing required independent
+review needs authorization, not merely a parent checkbox. Retain active runs on timeout; new post-closure notices reopen
+affected evidence and closure, not automatically the whole fanout. User decisions stay with the parent.
 
-Run local regression and recovery checks with `node --test tests/*.test.mjs`. These are fixture tests, not live Pi runs.
+Local check: `node --test tests/*.test.mjs` (fixtures, not live Pi execution).
 
 ## Boundaries
 
-- The parent alone adjudicates; reviewers must not merge, publish, close issues, or make product decisions.
-- Keep concrete out-of-scope findings for reporting, but exclude them from disposition.
-- Do not modify `pi-subagents` while using this skill.
+Reviewers must not merge, publish, close issues, or make product decisions. Keep out-of-scope findings reportable but
+disposition-neutral. Do not modify `pi-subagents` while using this skill.
