@@ -1,13 +1,15 @@
 # Model Starting Points
 
-Model catalog evidence last checked 2026-09-08; read-only routing revised 2026-09-11. Apply these conditional starts
-under the skill's settings precedence and budget. Other approved models remain eligible; this is not a latest catalog.
+Model catalog evidence last checked 2026-09-08; routing revised 2026-09-19 from maintainer-reviewed task observations.
+Apply these conditional defaults under the skill's settings precedence and budget. Other approved models remain
+eligible; this is not a latest catalog.
 
 ## Representative Candidates
 
-The read-only assignments below are workflow hypotheses using vendor-documented model identities/effort, not measured
-quality parity or savings. Treat providers independently, not as equivalent tiers. IDs are examples, not portable launch
-arguments. Apply [the skill's selection criteria](../SKILL.md#1-find-a-candidate-and-decide) before choosing a profile.
+These task-specific starts combine vendor guidance and operator observations, not matched benchmarks or measured
+savings. Task mix, review procedure, and parent checking differ between profiles. Treat providers independently, not as
+equivalent tiers. IDs are examples, not portable launch arguments. Apply
+[the skill's selection criteria](../SKILL.md#1-find-a-candidate-and-decide) before choosing a profile.
 
 Stronger models may be initial choices; no cheaper-first sequence is required. Compare moderate effort on a stronger
 model, deeper effort on a cheaper model, and direct parent execution, including expected checking/repair. Same-model
@@ -15,17 +17,26 @@ capability alone does not justify a child; identify its concrete delegation bene
 
 ### OpenAI
 
-- **GPT-5.6 Luna** (`gpt-5.6-luna`): routine extraction, lookup, or specified checks. Trial `low` for mechanical work;
-  `medium` for bounded tracing or source/version interpretation, as in the guide's documentation example. Do not extend
-  this start to difficult synthesis merely because no files are edited; compare `high` or a stronger model if needed.
-- **GPT-5.6 Terra** (`gpt-5.6-terra`): broader read-heavy scans and multi-file/source investigation. Trial `medium` for
-  exploration; `high` for causal paths, conflicting evidence, or assumption checking. These are trial combinations.
-- **GPT-5.6 Sol** (`gpt-5.6-sol`): demanding bounded diagnosis or adversarial review. Trial `high`; compare a stronger
-  moderate-effort option and direct parent work without first exhausting cheaper attempts. The model page identifies
-  the guide's `gpt-5.6` as a Sol alias.
+- **GPT-5.6 Luna** (`gpt-5.6-luna`):
+  - `medium`: narrow lookup, extraction, bounded tracing, or specified checks. `low` remains a mechanical-work trial.
+    Current multi-source synthesis is not routine lookup; compare `high` or Terra when substantial interpretation is
+    needed.
+  - `high`: start here for selecting and summarizing substantial existing material. Observed usefulness included local
+    formatting/metadata repair, not fully verified semantic accuracy.
+  - `xhigh`: start here for bounded deep review with a meaningful unresolved question. Useful review contributions
+    survived poor whole-workflow outcomes; parent scope/severity checks still mattered. No demonstrated advantage
+    justifies promoting `max` to the default.
+- **GPT-5.6 Terra** (`gpt-5.6-terra`): start at `high` for multi-file causal paths, persisted-state contracts, or
+  cross-service investigation; trial `medium` for broader shallow scans. Useful requested-profile observations support
+  this candidate, but effective-model and cost evidence are incomplete.
+- **GPT-5.6 Sol** (`gpt-5.6-sol`): retain `high` as a trial for demanding bounded diagnosis. Usable outcome evidence is
+  limited; launch and acceptance failures do not establish model weakness. Compare stronger moderate-effort options and
+  direct work. The model page identifies the guide's `gpt-5.6` as a Sol alias.
 - **GPT-6 Astra** (`gpt-6-astra`): difficult read-only diagnosis, cross-contract review, or scientific/mathematical
   reasoning with costly errors. Trial `high`; compare `medium` under unchanged acceptance. If Astra is already the
   parent, require a separate delegation benefit such as useful parallel investigation or context isolation.
+
+For already-verified follow-ups, prefer direct parent/tool work unless another review addresses remaining uncertainty.
 
 Sources: [OpenAI subagent guide](https://learn.chatgpt.com/docs/agent-configuration/subagents),
 [Sol identity](https://developers.openai.com/api/docs/models/gpt-5.6-sol),

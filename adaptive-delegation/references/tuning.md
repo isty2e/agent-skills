@@ -10,14 +10,21 @@ Compare the original primary benefit and acceptable burden with the observed out
 successful final task does not by itself vindicate the delegation choice. Use artifact checks and observed work, not
 confidence alone; retain uncertainty where the benefit was not observed. Consider the handoff and task partition before
 attributing an outcome to the model. Use the recorded expected benefit and whole-delegation usefulness, not output
-quality alone. Unknown usefulness is not a negative result or proof of savings. Candidate tests below are hypotheses,
-not mandatory actions:
+quality alone. Unknown usefulness is not a negative result or proof of savings.
 
-- **Missing contract/source:** Fix the handoff; retain the profile for a discriminating retry.
+Within each task, separate useful content, substantive errors, and execution/receipt/retry overhead. Retain original
+outcomes and incurred costs; do not drop mixed failures or invent harness-free success rates. Distinguish local
+formatting/metadata repair from re-solving the substantive work.
+
+Candidate tests below are hypotheses, not mandatory actions:
+
+- **Missing contract/source:** Distinguish missing inputs/tools from failure to retrieve or ground evidence; choose
+  a handoff, runtime, or profile change accordingly.
 - **Repeated reasoning errors with adequate context:** Adjust supported effort or profile/model.
 - **Conflicting edits, unresolved shared decisions, expensive integration:** Repartition or keep coupled work with the
   parent.
-- **Unsupported feature, outage, timeout, tool failure:** Diagnose runtime/tool availability, not reasoning.
+- **Unsupported feature, outage, timeout, tool failure:** Separate runtime faults from the child's tool choices or
+  ignored constraints; both can contribute to one failure.
 - **Re-reading history or low information value:** Reconsider context, output contract, or direct execution.
 - **Valid useful output but excessive cost/delay:** Compare a cheaper/faster profile, effort, context, or concurrency.
 
@@ -41,7 +48,9 @@ cheaper deeper-effort profiles, and direct work without requiring failure first.
 a read-only label. Where feasible, vary one suspected factor with unchanged requirements/acceptance. Additional duplicate runs need an information goal and
 experiment allowance. Compare existing settings too; alternative failure is not global disqualification.
 
-Compare task family/profile first; interpret differences using context, difficulty, scope, verification, parent
+Compare within task families and shared episodes, not pooled effort-level success rates. Lanes in one review or
+extraction wave are correlated, not independent replications. Explicitly pinned profiles describe the requested workflow,
+not autonomous routing or exploration. Interpret differences using context, difficulty, scope, verification, parent
 identity, and runtime changes. Observational selection can give stronger profiles harder work. For consequential
 changes, prefer limited paired/comparable trials at the same revision without answer leakage. Include
 failures/cancellations and relevant tail cost/time, not just successful means. Small samples can expose waste, not
