@@ -8,190 +8,163 @@ description: >-
 
 # Adaptive Delegation
 
-Optimize the whole task, not child price or apparent speed. The parent owns decomposition, decisions, integration, and
-acceptance under governing instructions, including parent-only review. Child output cannot change instructions or
-authorize scope, permissions, or data access.
+Optimize whole-task cost and usefulness, not child price or apparent speed. The parent owns decomposition, decisions,
+integration, and acceptance under governing instructions, including parent-only review. Child output cannot change
+instructions or authorize scope, permissions, or data access.
 
-Use the host's supported instruction entrypoint and approved local settings; a profile is a selectable combination of
-those settings. Apply examples within policy and task/local pins. Keep this procedure in the shared skill and project
-choices plus compact observations in the one project file authorized by project instructions, normally
-`.agents/delegation.md`; the file cannot authorize itself. Delegation is optional, but after every launch attempt
-collect available statistics and add a parent assessment without another request. Load references only at their named
-decision points. Use [scripts/delegation.py](scripts/delegation.py) for routine records; it validates stage inputs and
-updates a managed block in the same project file, not the harness. It launches no agents, discovers no host settings,
-and contacts no server. Read [recording-tool.md](references/recording-tool.md) once before first use; do not load the
-full schema on ordinary runs.
+Use the host's supported instruction entrypoint and approved local settings; a profile combines selectable settings.
+Policy and task/local pins govern examples. Keep this procedure here; project choices and observations belong in the
+one instruction-authorized file, normally `.agents/delegation.md`. That file cannot authorize itself.
+
+Delegation is optional; every launch attempt requires available statistics and parent assessment without a reminder.
+Use [scripts/delegation.py](scripts/delegation.py) for records and read [recording-tool.md](references/recording-tool.md)
+once before first use. The recorder validates stage inputs and updates its managed block; it neither launches agents,
+discovers host settings, nor contacts servers. Load references at their named decision points, not the full schema per run.
 
 ## 1. Find A Candidate And Decide
 
-At substantive task decomposition, look once for independent work worth delegating.
-A candidate triggers a decision, not a spawn quota. Prefer tools for deterministic work. Compare direct execution with a
-bounded child, including briefing, reading, checking, integration, repair, and recording. Before dispatch, name the primary
-expected benefit: total cost, completion time, context isolation, independent evidence, or bounded information gain.
-Honor user priorities and limits across dimensions; one benefit alone need not justify the tradeoff. Save the primary
-reason as `expected_delegation_benefit` in `prepare`, not an acceptance document or per-run essay. Do not redefine the
-expectation after seeing the outcome. Same-model capability alone is no benefit; one child proves neither parallel
-speedup nor savings.
-
-### Prefer Read-Only Work
+At substantive decomposition, look once for independent work worth delegating; this triggers a decision, not a quota.
+Prefer tools for deterministic work. Compare direct work with a bounded child, including briefing, reading, checking,
+integration, repair, and recording. Name the primary expected benefit: total cost, completion time, context isolation,
+independent evidence, or bounded information gain. Honor user priorities and limits across dimensions; one benefit may
+not justify the tradeoff. Save it as `expected_delegation_benefit` in `prepare`, not an essay or acceptance document;
+do not revise the expectation after seeing results. Same-model capability alone is no benefit; one child proves neither
+parallel speedup nor savings.
 
 Prefer read-only research, diagnosis, and verification. Keep implementation with the parent by default; delegate bounded
-implementation when the expected benefit outweighs briefing, verification, integration, and likely rework.
+implementation only when its expected benefit outweighs handoff, verification, integration, and likely rework. Request
+concise, checkable evidence and uncertainty that spare parent exploration. Work directly when checking would repeat the
+work; keep coupled design and unresolved contracts with the parent.
 
-For read-only work, request concise, checkable evidence and uncertainty that spare parent exploration. Prefer direct
-execution when checking would repeat the work. Keep coupled design and unresolved contracts with the parent.
-
-If direct execution is preferable, use it. For a representative candidate seriously considered but not selected, call
-`record-direct` once with the existing task description/type and a short `direct_reason`. It needs no child model,
-attempt, or hypothetical cost and is included in export. Routine direct work needs no record. Do not run both
-alternatives merely to fill the dataset.
+For a representative candidate seriously considered but kept with the parent, call `record-direct` with the existing
+task description/type and short `direct_reason`. Export includes it; no child, attempt, or hypothetical cost is needed.
+Routine direct work needs no record. Do not execute both alternatives merely to fill the dataset.
 
 ## 2. Resolve The Execution Choice
 
-Inspect capabilities and local settings once per session and after material changes. Identify exposed result, status, or
-artifact sources for per-run statistics and attributable parent usage; reuse that lookup plan without inventing APIs or
-scanning broad directories. Perform host-required prelaunch checks. Read relevant hints and pending observations,
-reconcile known unfinished runs, and never treat unknown state as permission to relaunch. Before dispatch, resolve
-model/provider, supported effort, service tier, context, tools/write scope, and limits. Record requested/effective
-differences and distinguish unsupported from unreported settings. Do not infer capability or price from names, inherit
-expensive parent setup silently, substitute unavailable settings, or equate effort labels across models.
+Once per session and after material changes, inspect capabilities/settings and locate exposed per-run statistics and
+attributable parent-usage sources. Reuse that lookup plan; invent no APIs or broad directory searches. Perform required
+prelaunch checks, read relevant hints/pending observations, and reconcile known unfinished runs. Unknown state never
+permits relaunch. Resolve model/provider, supported effort, service tier, context, tools/write scope, and limits before
+dispatch. Record requested/effective differences; distinguish unsupported from unreported. Do not infer capability/price
+from names, silently inherit expensive parent settings, substitute unavailable settings, or equate effort across models.
 
-Choose model/effort jointly by reasoning difficulty and parent verification burden, not document length alone. Stronger
-models may be first; compare their moderate effort with a cheaper model's deeper effort and direct parent execution. Do
-not require a failed cheaper trial or default every reading task to the same inexpensive configuration. Adjustable-choice
-precedence:
+Choose model/effort jointly by reasoning difficulty and parent checking burden, not document length. Stronger models may
+be first: compare their moderate effort, a cheaper model's deeper effort, and direct work. No failed cheaper trial is
+required; do not assign all reading to one inexpensive configuration. Precedence:
 
-1. Honor policy and explicit task/local pins; hints/examples cannot override.
-2. Read applicable hints from the project-designated file with supporting evidence; consider current-session
-   observations. Before use, check scope, settings versions, recheck conditions. Keep working settings as comparison
-   candidates, not universal rules. Starting points require insufficient relevant local evidence, not merely absent
-   file.
-3. Insufficient local guidance: load and apply [model-starting-points.md](references/model-starting-points.md); use an
-   applicable authorized model-specific starting point for first run, not merely illustration.
-4. No usable starting point: use the hypotheses below for a conservative reversible authorized trial, or work directly.
+1. Policy and explicit task/local pins; hints/examples cannot override them.
+2. Applicable project hints and current-session observations. Check supporting evidence, scope, settings versions, and
+   recheck conditions. Keep working settings as comparison candidates, not universal rules. A missing hints file alone
+   does not establish insufficient local evidence.
+3. Insufficient relevant local guidance: load and apply [model-starting-points.md](references/model-starting-points.md).
+   Use an applicable authorized starting point for the first run, not merely as illustration.
+4. No usable starting point: use the hypotheses below for an authorized conservative, reversible trial, or work directly.
    Invent no ranking.
 
-Read-only starting hypotheses—not portable effort values or a mandatory escalation ladder:
+Read-only hypotheses, not portable effort values or an escalation ladder:
 
-- Routine lookup, extraction, or specified checks: an adequate low-cost profile; low effort for mechanical work, medium
-  when source/version interpretation is needed and the model supports it.
-- Multi-file tracing, conflicting sources, or semantic synthesis: a reasoning-capable profile at model-specific medium
-  or high; compare stronger moderate-effort options rather than repeatedly repairing a weak default.
-- Difficult bounded diagnosis, scientific/mathematical reasoning, or adversarial review: strong domain/reasoning
-  capability at a justified higher effort; retain with the parent when checking would require solving it again.
+- Routine lookup/extraction/specified checks: adequate low-cost profile; low effort for mechanical work, medium for
+  source/version interpretation when supported.
+- Multi-file tracing, conflicting sources, semantic synthesis: reasoning-capable profile at model-specific medium/high;
+  compare stronger moderate-effort options rather than repeatedly repairing a weak default.
+- Difficult bounded diagnosis, scientific/mathematical reasoning, adversarial review: strong domain/reasoning capability
+  at justified higher effort; keep with the parent when checking requires re-solving.
 
-Resolve effort per model/host; do not send `balanced` as an API value. Documented defaults/supported levels: starting
-points, not proof of task suitability or hard spending limits. Maximum effort/premium speed requires task-specific
-reason and budget. Required capability, permission boundaries, or hard limits unavailable: choose compliant alternative
-or return decision to governing workflow; never silently weaken them. Missing optional statistics alone do not block
-ordinary work.
+Resolve effort per model/host; `balanced` is not an API value. Documented defaults/levels prove neither suitability nor
+hard spending limits. Maximum effort/premium speed needs task-specific justification and budget. Unavailable required
+capabilities, permissions, or hard limits: choose a compliant alternative or return the decision to the governing
+workflow, never silently weaken them. Missing optional statistics alone do not block ordinary work.
 
 ## 3. Hand Off, Run, And Close
 
 ### Prepare The Handoff
 
-Before dispatch, call `prepare`: reuse the short task description and supply type, requested child model, and primary
-`expected_delegation_benefit`. Add known parent settings, native effort/context, task domains, estimated difficulty, and
-model-selection reason only when useful; invent no missing values or references. Keep the returned record ID. Each
-distinct child task gets a record; an optional shared group ID links a fanout. Retries stay in that task's attempts.
+Before dispatch, call `prepare` with the existing task description/type, requested child model, and primary
+`expected_delegation_benefit`. Add known parent settings, native effort/context, domains, estimated difficulty, and
+model-selection reason only when useful; invent no values or references. Retain the returned ID. Each distinct child
+task gets one record; an optional group ID links fanout, and retries remain attempts of that task.
 
-If persistence would violate a launch precondition, retain the same inputs in permitted session state and call `prepare`
-immediately after the launch attempt. Preparation timestamps are recording times, never measured execution times. The
-recorder handles routine persistence; load [tuning.md](references/tuning.md) when changing hints, not for each write.
+If persistence violates a launch precondition, retain inputs in permitted session state and call `prepare` immediately
+after the launch attempt. Its timestamps record writing, not execution. The recorder owns persistence; read
+[tuning.md](references/tuning.md) when changing hints, not per write.
 
 Default to fresh conversation context. Supply:
 
 - objective, accepted constraints/non-goals, allowed decisions/writes
 - applicable instructions/skills, authoritative sources and revision/state, relevant findings
-- expected evidence/artifact, acceptance checks, stopping conditions.
+- required evidence/artifact, acceptance checks, stopping conditions.
 
-Pass required instructions explicitly if inheritance/loading is unavailable; exclude irrelevant parent tuning history.
-Fork when needed decision history would be lost or costlier to hand off safely; record why. For independent review,
-prefer requirements/artifacts without parental speculation. Fresh context does not guarantee independent errors: models,
-sources, or checks can share blind spots. For independent verification, identify the separate source or reproducible
-check providing it; another agent/model alone is not corroboration. Verify conversation inheritance, instruction
-inheritance, filesystem isolation, and cache reuse separately. Keep context copies and fallbacks within authorized
-provider/storage boundaries.
+Pass instructions explicitly if inheritance/loading is unavailable; omit irrelevant parent tuning history. Fork when
+needed decision history would be lost or costlier to hand off safely, and record why. For independent review, prefer
+requirements/artifacts without parental speculation. Fresh context or another model alone does not ensure independent
+errors or corroboration; name the separate source or reproducible check supporting independent verification. Verify
+conversation/instruction inheritance, filesystem isolation, and cache reuse separately. Keep copies and fallbacks within
+authorized provider/storage boundaries.
 
 ### Bound Execution And Recovery
 
-Absent local settings, start with at most two independent read-only children and no nested delegation. For implementation,
-start with one writer; parallel writers need independent scopes, isolation, and shared-contract ownership. These are
-adjustable defaults. Use supported tool restrictions and budget controls for the assigned scope. Do not repeat assigned
-work while waiting without a justified independent comparison.
+Absent local settings, start with at most two independent read-only children and no nested delegation; implementation
+starts with one writer. Parallel writers need independent scopes, isolation, and shared-contract ownership. These defaults
+are adjustable. Use supported scope restrictions and budgets; do not repeat assigned work while waiting without a
+justified independent comparison.
 
-At a limit, blocker, or ambiguous decision, return partial evidence rather than silently widen scope. Default to one
-parent-requested correction round when new evidence constrains it; this does not cap a child's ordinary test/edit loop.
-Resume related work when supported, refreshing changed state. Diagnose repeated failure before retry/escalation; inspect
-interrupted-write state before resume/replay. Provider errors do not establish absence of effects. Count retries,
-fallbacks, and authorized descendants against the original task budget.
+At limits, blockers, or ambiguous decisions, return partial evidence, not expanded scope. Default to one parent-requested
+correction round constrained by new evidence; this does not cap the child's ordinary test/edit loop. Resume related work
+when supported after refreshing changed state. Diagnose repeated failures before retry/escalation and inspect interrupted
+writes before resume/replay; provider errors do not prove no effects. Retries, fallbacks, and authorized descendants
+consume the original task budget.
 
-Before closing, account for every child as completed, stopped, or explicitly handed off; unknown state stays unresolved.
-Parent cancellation does not establish child termination.
+Before closing, account for every child as completed, stopped, or explicitly handed off. Unknown state remains unresolved;
+parent cancellation does not prove child termination.
 
 ## 4. Record The Run, Then Assess Its Output
 
-The coordinating parent records its delegation tree; children do not run collection tools or edit the project record.
-Use the native harness to launch, wait, inspect status, and cancel. The recording script does none of those operations.
+The coordinating parent records its delegation tree; children neither collect statistics nor edit the project record.
+Use the native harness for launch, waiting, status, and cancellation. For known Pi async status JSON, use
+[the Pi status helper](references/pi-status.md) instead of retyping counters; other hosts keep manual input.
 
-- **After a result, failure, or observed cancellation:** call `record-run` with record ID, native run ID when known,
-  status, and available metrics/effective settings. Reuse returned numbers; for missing data, at most one bounded lookup
-  through a known exposed source. No host integration development, broad searches, repeated polling, or reconstruction
-  project to fill nulls. Explicitly mark skipped collection or lookup failure when applicable. Do not infer elapsed time
-  from preparation/reporting timestamps or fill effective settings from the request.
-- **After parent verification/repair:** call `assess` with original `output_quality` and actual `output_use`. When the
-  whole delegated task is ready to judge, include `delegation_usefulness` in that same call, accounting for all retries
-  and parent burden against the expected benefit. Keep it `unknown` when not observable; favorable output does not prove
-  useful delegation or measured savings. Add an exception note only if useful, at most 200 characters. No acceptance
-  reference, separate evidence document, numeric success score, or mandatory next-experiment prose. Correcting an
-  earlier assessment needs a short reason; the script retains its previous value. Late metrics update the same attempt
-  without removing its assessment.
-- **Before reporting/handoff:** use `show` summaries to reconcile known attempts, including failures and unassessed
-  results and whole-delegation reviews needing attention. A successful write reports `saved`; a missing destination or
-  failed write remains a disclosed gap, not an alternative file. Missing metrics do not block the task result. No lesson
-  or unchanged hints never excuses skipping the short run record and parent assessment.
+- After results, failures, or observed cancellations: `record-run` with record ID, known native run ID, status, available
+  metrics, and effective settings. Reuse reported numbers. Missing data permits at most one bounded lookup through a
+  known exposed source, not integration development, broad searches, polling, or reconstruction to fill nulls. Mark
+  skipped collection/failed lookups. Never infer elapsed time from recording timestamps or effective settings from requests.
+- After parent verification/repair: `assess` original `output_quality` and actual `output_use`. Once the whole delegation
+  can be judged, include `delegation_usefulness` in that call, comparing all retries and parent burden with the expected
+  benefit; otherwise keep it `unknown`. Favorable output proves neither useful delegation nor savings. An optional
+  exception note is at most 200 characters; no acceptance reference, evidence document, numeric success score, or
+  mandatory next-experiment prose. Assessment corrections need a short reason and retain the previous value. Late metrics
+  update the same attempt without removing assessment.
+- Before reporting/handoff: use `show` summaries to reconcile attempts, failures, unassessed results, and pending
+  whole-delegation reviews. Successful writes report `saved`; missing destinations/write failures are disclosed gaps,
+  not reasons to choose another file. Missing metrics do not block task results. No lesson or unchanged hints does not
+  excuse skipping records and assessments.
 
-Judge original output against the delegated request, not against the parent's repaired result. Validate behavior and
-sources, not child confidence, finding count, or silence; unknown review coverage stays unknown. Execution completion,
-output correctness, actual use, delegation usefulness, and final user-task acceptance are different. A correct answer
-used unchanged can still cost more effort than it saves; unused output can resolve important uncertainty. These parent
-judgments claim neither final task success nor measured counterfactual savings. Record useful partial failures too.
+Judge the original artifact against its request, not the parent's repaired result. Check behavior/sources, not confidence,
+finding count, or silence; unknown review coverage stays unknown. Execution, correctness, use, delegation usefulness,
+and final task acceptance differ: unchanged useful output may cost more than it saves, while unused output may resolve
+uncertainty. Preserve useful partial failures; parent judgments establish neither final task success nor measured
+counterfactual savings.
 
-Only the script edits its managed block; leave human hints and legacy prose intact. No automatic legacy migration or
-full-file rewriting by the agent. Optional metrics are unknown unless reported; use
-[measurement.md](references/measurement.md) for accounting questions, not to generate a repeated report. The tool
-neither guarantees host activation nor recovers unobserved work after session termination.
+Only the script edits its managed block; preserve human hints/legacy prose without automatic migration or full-file
+rewrites. Optional metrics stay unknown unless reported. Read [measurement.md](references/measurement.md) for accounting
+questions, not repeated reports. The tool guarantees neither activation nor recovery of unobserved work after termination.
 
-**Later, when authorized:** run `export` for a batch into an approved local directory. It writes validated staged JSON,
-including representative direct choices, not a narrative or the central repository's legacy Markdown format. It does not
-redact automatically, commit, push, call a database, or submit to an MCP server. Review sharing scope first; retain
-failures and pending records. Central submission remains a separate existing workflow.
+Later, when authorized, `export` validated staged JSON—including direct choices—to an approved local directory. This is
+neither a narrative nor the central repository's legacy Markdown format. Review sharing scope; retain failures/pending
+records. Export does not redact, commit, push, call a database, or submit to MCP. Central submission is a separate workflow.
 
 ## 5. Use The Evidence For The Next Choice
 
-Normally stop after recording the assessment; do not rewrite hints or derive a lesson per run. Repeated repair,
-rejection, or a surprising result can justify one scoped alternative within the approved budget. An incumbent is not
-proven optimal because a model-wide ranking is unknown. Mark intentional alternatives with
-`model_selection_reason: exploration`; do not require duplicate runs or artificial model diversity. Read
+Normally stop after assessment; no hint rewrite or lesson per run. Repeated repair, rejection, or surprise may justify
+one scoped alternative within budget. Lack of a model-wide ranking does not prove the incumbent optimal. Mark intentional
+alternatives `model_selection_reason: exploration`; require neither duplicate runs nor artificial diversity. Read
 [tuning.md](references/tuning.md) before changing hints or reviewing accumulated experience.
 
-The parent may revise approved local hints for direct-versus-delegated work, task partition, handoff, context, and
-supported execution settings within authorized models, pins, budgets, and experimentation scope. Record evidence,
-proposed change, previous choice, and recheck condition. Narrow provisional adjustments need no proof of universal
-superiority; do not present them as proven improvement. Recheck on the next applicable ordinary task; retain, revise, or
-revert on evidence. No extra run is required merely to evaluate a hint.
+The parent may revise authorized project hints for direct/delegated work, partition, handoff, context, and execution
+settings within model pins, budgets, and experiment scope. Record evidence, change, previous choice, and recheck condition.
+Narrow provisional changes need no universal proof but are not proven improvements. Recheck on the next applicable
+ordinary task and retain/revise/revert on evidence; no extra run is required solely to evaluate a hint.
 
-Hints are revisable evidence subordinate to policy. Do not automatically rewrite the shared skill/governing
-instructions, change acceptance, widen permissions, or deploy collectors. Recurring lessons may motivate a shared-skill
-change proposal for explicit review, not automatic promotion of project hints. Report material exceptions and
-uncertainty, not telemetry dumps.
-
-## First-Run Example
-
-For a bounded API lookup, use `prepare` with the existing question, chosen profile, and `reduce_context` as the expected
-benefit, then run the native child. Call `record-run` with its returned ID, status, seconds, and available usage. If the
-answer omits a needed version caveat, check the source, repair the answer, and call `assess` with `incomplete` and
-`used_after_local_fix`; one short note names the omission. In the same call, judge whole-delegation usefulness or mark
-it `unknown`; do not infer it from output quality. Keep the original quality rating and any unknown costs. Do not write
-an acceptance document or export a case report before responding. If a serious alternative was direct reading of an
-already-located answer, `record-direct` retains that short reason without a child run.
+Hints remain subordinate to policy. Do not automatically rewrite shared skills/governing instructions, change acceptance,
+widen permissions, or deploy collectors. Recurring lessons may justify a shared-skill proposal for explicit review, not
+automatic promotion. Report material exceptions and uncertainty, not telemetry dumps.
