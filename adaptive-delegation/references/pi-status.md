@@ -1,7 +1,7 @@
 # Pi Status Input
 
-Use the optional Node.js helper when a Pi async `status.json` is already available. It selects one exact child
-`steps[].runId` and emits the existing recorder's flat `record-run` input, avoiding manual transcription:
+For a known Pi async `status.json`, this optional Node.js helper selects one exact child `steps[].runId` and emits flat
+`record-run` input:
 
 ```bash
 node "$SKILL_DIR/scripts/pi-status.mjs" "$STATUS_JSON" --run-id "$CHILD_RUN_ID" |
@@ -9,28 +9,21 @@ node "$SKILL_DIR/scripts/pi-status.mjs" "$STATUS_JSON" --run-id "$CHILD_RUN_ID" 
     record-run "$RECORD_ID" --json -
 ```
 
-`CHILD_RUN_ID` is the native child ID, not the wrapper or record ID. Use known paths and the original record. Keep
-`prepare` and the parent's final `assess` unchanged. Other harnesses keep their existing manual input path.
+Use the native child ID, not the wrapper/record ID, and the original record. `prepare` and parent `assess` are unchanged;
+other hosts retain manual input. The helper reads only the supplied file: no Pi queries, artifact traversal, child
+launches, or output assessment.
 
-The helper copies per-step input/output counts, milliseconds converted to seconds, `totalCost.costUsd` as
-`host_estimate`, and reported model/thinking/context. Native `execution.status` takes precedence over an acceptance-derived
-step status. Requested settings, wrapper totals and report text are not imported. Missing fields stay omitted; cache
-counts and input inclusion semantics are not exposed by this supported status projection, so no cache ratio is derived.
+It copies per-step input/output tokens, duration converted from milliseconds to seconds, reported model/thinking/context,
+and `totalCost.costUsd` as `host_estimate`, not a verified bill. Native `execution.status` overrides acceptance-derived
+step status. Requested settings, wrapper totals, and report text are excluded. Missing fields stay omitted; this status
+projection provides neither cache counts nor input inclusion semantics, so no cache ratio is derived.
 
-Repeated snapshots update the same attempt without adding counters. For a continuation whose usage includes earlier
-work, use the recorder's existing manual attribution path instead of creating a new attempt with cumulative totals.
-Nested child accounting and ambiguous/missing run IDs are rejected. The helper reads only the supplied file; it does
-not query Pi, follow artifact paths, launch children, or assess output. It copies host estimates, not verified bills.
+Repeated snapshots update the same attempt without adding counters. Continuations with cumulative usage require manual
+attribution, not a new attempt carrying old totals. Nested accounting and missing/ambiguous run IDs are rejected.
 
-The supported input is the async status/summary `steps` projection documented in
-[pi-subagents observability](https://github.com/nicobailon/pi-subagents/blob/07bd09e0f93a19caee3c39e3cf4069c70ee8dbcd/docs/observability.md)
+Supported contract: [observability](https://github.com/nicobailon/pi-subagents/blob/07bd09e0f93a19caee3c39e3cf4069c70ee8dbcd/docs/observability.md)
 and [AsyncRunStepSummary](https://github.com/nicobailon/pi-subagents/blob/07bd09e0f93a19caee3c39e3cf4069c70ee8dbcd/src/runs/background/async-status.ts).
 Unknown optional fields are ignored; malformed supported fields fail. Other native formats remain manual inputs.
 
-Run the helper's synthetic fixture and CLI checks from this skill directory:
-
-```bash
-node --test tests/test_pi_status.mjs
-```
-
-These tests verify field mapping and identity, not live Pi invocation or reduced recording time.
+From this skill directory, `node --test tests/test_pi_status.mjs` checks synthetic mapping/identity and CLI behavior,
+not live Pi invocation or recording-time savings.
