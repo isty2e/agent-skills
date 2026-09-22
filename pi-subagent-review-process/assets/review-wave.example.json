@@ -1,7 +1,7 @@
 {
   "cwd": "/absolute/path/to/repository",
   "materialDir": "/absolute/path/to/review-artifacts/pr-123/wave-001",
-  "model": "openai-codex/gpt-5.6-luna",
+  "model": "openai-codex/gpt-6-luna",
   "target": {
     "repository": "owner/repository#123",
     "base": "0123456789abcdef0123456789abcdef01234567",
