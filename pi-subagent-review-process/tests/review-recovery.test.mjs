@@ -143,6 +143,32 @@ test("lane selection preserves model and original task while rejecting unknown/d
   assert.throws(() => buildSubagentRequest(packet(), ["a", "a"]));
 });
 
+test("every initial and recovery review lane forbids broad-root enumeration and scope expansion", () => {
+  const gitPacket = {
+    ...packet(),
+    target: {
+      repository: "example/repo",
+      base: "a".repeat(40),
+      head: "b".repeat(40),
+    },
+  };
+  delete gitPacket.reviewFiles;
+
+  for (const value of [packet(), gitPacket]) {
+    for (const laneKeys of [[], ["b"]]) {
+      const request = buildSubagentRequest(value, laneKeys);
+      const lanes = JSON.parse(request.workflowScript.match(/^const lanes = (.*);\n/)[1]);
+      for (const { task } of lanes) {
+        assert.match(task, /Never run recursive searches or enumerations from \/, \$HOME, ~, any home directory/);
+        assert.match(task, /broad parent directories, regardless of tool, depth, or output limit/);
+        assert.match(task, /Do not expand the reviewed target into unrelated audits/);
+        assert.match(task, /Inspect surrounding context as needed to find and validate in-scope findings/);
+        assert.match(task, /report incidental pre-existing issues as out-of-scope findings/);
+      }
+    }
+  }
+});
+
 async function withCapture(fn) {
   const cwd = await mkdtemp(join(tmpdir(), "review-recovery-test-"));
   try {
