@@ -125,6 +125,8 @@ function buildLaneTask({ target, reviewFiles, cwd, constraints, materials, requi
     "",
     "Hard constraints:",
     ...constraints.map((constraint) => `- ${constraint}`),
+    "- Never run recursive searches or enumerations from /, $HOME, ~, any home directory, or their broad parent directories, regardless of tool, depth, or output limit.",
+    "- Do not expand the reviewed target into unrelated audits. Inspect surrounding context as needed to find and validate in-scope findings; report incidental pre-existing issues as out-of-scope findings without chasing them.",
     "- Keep the parent as the only final adjudicator.",
     "- Use supervisor/intercom only for a blocking decision or a meaningful progress checkpoint.",
     "",
