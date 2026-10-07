@@ -16,6 +16,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
   hierarchy, initialize without unrelated repository changes, and close issues with verified evidence.
 - [`pi-subagent-review-process`](pi-subagent-review-process/) — Run gated Pi subagent code-review fanout with
   parent-captured diffs or files, structured receipts, scope-separated findings, and quiescence-checked closure.
+- [`public-repo-docs`](public-repo-docs/) — Draft or audit public package and repository documentation for reader value,
+  public support, practical setup, and coherent organization without prescribing headings or file layouts.
 - [`typst-author`](typst-author/) — Create, edit, troubleshoot, and validate Typst documents using authoritative
   upstream references and local compiler checks.
 - [`wedow-ticket`](wedow-ticket/) — Identify and operate wedow/ticket safely across shell quoting, ticket IDs,
