@@ -4,6 +4,7 @@ description: >-
   Draft or audit public package/repository docs: READMEs, installation, usage. Check each paragraph and sentence for
   reader value, public support, instruction accuracy, and coherent organization without imposing fixed headings or
   extra files.
+license: MIT
 ---
 
 # Public Repository Documentation
@@ -20,11 +21,13 @@ that affect real decisions or tasks. Cut repetition and development-only materia
 test reports, abandoned options, and agent bookkeeping. Preserve current constraints regardless of origin; put needed
 user-visible history in release notes or changelogs, not README diaries.
 
-Check behavior, availability, version, and installation claims against public code, published artifacts, or primary
-docs. New user-facing promises need maintainer authority, not inference from internal work. Never mention local-only
-paths, filenames/contents, non-public tracker IDs, unpublished evidence, or session details. Link public issues only to
-explain reader-relevant behavior or changes. Omit current-behavior claims supported only privately or obtain public
-support before publication; never disguise the gap with a citation.
+Check behavior, availability, version, and installation claims against public code, published artifacts, primary docs,
+or source/artifacts included in the same public change as the docs. New user-facing promises need maintainer authority,
+not inference from internal work. Never mention paths, names, or contents of local-only/private files or directories,
+non-public tracker IDs, unrelated private evidence, or session details. Reader-relevant public repository paths and
+shipped examples may be named. Link public issues only to explain reader-relevant behavior or changes. For current-behavior
+claims backed only by unrelated private evidence, omit them or obtain public support before publication; never disguise
+the gap with a citation.
 
 ## Organize By Reader Intent
 
@@ -42,8 +45,9 @@ warnings before affected commands.
 
 ## Check And Report
 
-Verify consequential commands, claims, and changed links against supported package/docs. Run examples when safe and
-practical; distinguish checked from unexercised examples. Add no prose-assertion tests or scripts solely to police
+Verify consequential commands and claims against supported package/docs. In audits, check consequential links in the
+requested document, including existing ones; for edits without an audit, check changed links. Run examples when safe
+and practical; distinguish checked from unexercised examples. Add no prose-assertion tests or scripts solely to police
 wording.
 
 In audits, report actionable issues with location, reader impact, and a proposed deletion, move, or rewrite, not
