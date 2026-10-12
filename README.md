@@ -13,7 +13,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
 - [`https-throttle`](https-throttle/) — Limit aggregate receive bandwidth for proxy-aware HTTPS commands with a
   rootless authenticated localhost proxy.
 - [`kata-task-management`](kata-task-management/) — Plan and track real work with Kata, maintain useful epic/task
-  hierarchy, initialize without unrelated repository changes, and close issues with verified evidence.
+  hierarchy, write issue updates readable without the originating session, initialize without unrelated repository
+  changes, and close issues with verified evidence.
 - [`pi-subagent-review-process`](pi-subagent-review-process/) — Run gated Pi subagent code-review fanout with
   parent-captured diffs or files, structured receipts, scope-separated findings, and quiescence-checked closure.
 - [`public-repo-docs`](public-repo-docs/) — Draft or audit public package and repository documentation for reader value,
