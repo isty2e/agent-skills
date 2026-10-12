@@ -6,7 +6,7 @@ This is a review and host-test protocol, not a compliance result or permission f
 
 Check the skill, project section, references, and template together:
 
-- Read-only work is preferred; model/effort follow reasoning difficulty and parent checking burden.
+- Read-only work is preferred; model/effort follow task role, reasoning difficulty, and parent checking burden.
 - Bounded implementation may be delegated when worthwhile; coupled work or costly re-solving stays with the parent.
 - Without active collection, work calls no recorder, locates no metrics, creates/reconciles no statistics file, and loads
   no collection reference. Direct choices, model trials, failures, and old record blocks do not activate collection.

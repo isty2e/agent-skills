@@ -12,8 +12,8 @@ legacy records; its absence is not a launch blocker.
   and acceptance; respect existing parent-only duties, permissions, and budgets.
 - Prefer read-only work. Keep implementation with the parent by default; delegate bounded implementation when its
   expected benefit outweighs verification, integration, and likely rework.
-- Choose model/effort by reasoning difficulty and parent verification burden, rather than using one cheap default for
-  all tasks.
+- Choose model/effort by task role, reasoning difficulty, and parent verification burden, rather than using one cheap
+  default for all tasks.
 - Reuse applicable approved profiles; do not repeat capability discovery before every launch. Respect explicit
   model/effort pins, tools/write scope, and supported limits.
 - Execute through the native harness. Check returned evidence and account for each child as completed, stopped, or

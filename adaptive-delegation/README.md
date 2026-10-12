@@ -13,8 +13,8 @@ or record-file setup are needed for ordinary delegation. This skill adds no laun
 
 Prefer read-only research, diagnosis, and verification. Keep implementation with the parent by default; delegate bounded
 work when its expected benefit outweighs briefing, verification, integration, and likely rework. Choose model/effort by
-task difficulty and parent checking burden. See [selection guidance](SKILL.md#1-find-a-candidate-and-decide) and
-[model starts](references/model-starting-points.md).
+task role, reasoning difficulty, and parent checking burden, not document length or a pooled model ranking. See
+[selection guidance](SKILL.md#1-find-a-candidate-and-decide) and [model starts](references/model-starting-points.md).
 
 ## Routine Use
 

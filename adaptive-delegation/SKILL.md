@@ -2,7 +2,7 @@
 name: adaptive-delegation
 description: >-
   Use when substantive work has an independent delegation candidate, before dispatch, on results, failures or
-  cancellations, or when reviewing experience. Prefer read-only work and choose model/effort by task difficulty.
+  cancellations, or when reviewing experience. Prefer read-only work and choose model/effort by task role and difficulty.
   Collect statistics only under an explicit collection instruction.
 ---
 
@@ -44,9 +44,10 @@ state never permits relaunch. Resolve model/provider, supported effort, service 
 limits before dispatch. Distinguish unsupported from unreported settings. Do not infer capability/price from names,
 silently inherit expensive parent settings, substitute unavailable settings, or equate effort across models.
 
-Choose model/effort jointly by reasoning difficulty and parent checking burden, not document length. Stronger models may
-be first: compare their moderate effort, a cheaper model's deeper effort, and direct work. No failed cheaper trial is
-required; do not assign all reading to one inexpensive configuration. Precedence:
+Choose model/effort by the task's role, reasoning difficulty, and parent checking burden, not document length. Fact
+extraction, causal/contract interpretation, specified reproduction checks, and open review are different work. Prefer
+experience from the relevant task family over pooled model/effort rates. Stronger models may be first; no failed cheaper
+trial is required. Precedence:
 
 1. Policy and explicit task/local pins; hints/examples cannot override them.
 2. Applicable project hints and current-session observations. Check supporting evidence, scope, settings versions, and
@@ -59,8 +60,8 @@ required; do not assign all reading to one inexpensive configuration. Precedence
 
 Read-only hypotheses, not portable effort values or an escalation ladder:
 
-- Routine lookup/extraction/specified checks: adequate low-cost profile; low effort for mechanical work, medium for
-  source/version interpretation when supported.
+- Mechanical extraction or already specified facts: tools/direct work first, otherwise an adequate low-cost profile.
+  A short source/version investigation may still require reasoning; do not classify it as mechanical by length.
 - Multi-file tracing, conflicting sources, semantic synthesis: reasoning-capable profile at model-specific medium/high;
   compare stronger moderate-effort options rather than repeatedly repairing a weak default.
 - Difficult bounded diagnosis, scientific/mathematical reasoning, adversarial review: strong domain/reasoning capability
