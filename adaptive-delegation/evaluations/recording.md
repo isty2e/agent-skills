@@ -19,6 +19,8 @@ Check the skill, project section, references, and template together:
   Useful does not mean accepted or cheap; unknown remains unknown.
 - During collection, preserve failures/cancellations, retries, late facts, corrections, and unused output. Only the
   recorder edits its managed block; write failures are disclosed without relocation or weaker acceptance.
+- Review comparison eligibility, exclusions, and task conditions against
+  [Measurement And Attribution](../references/measurement.md#later-comparisons).
 - Shared guidance changes require a separate authorized review; local records are not published automatically.
 
 ## Local Script Check

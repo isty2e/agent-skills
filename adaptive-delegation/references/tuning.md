@@ -44,12 +44,16 @@ cheaper/deeper-effort, existing settings, and direct work without requiring fail
 under unchanged acceptance/requirements. Duplicate runs need an information goal and experiment allowance. Alternative
 failure is not global disqualification.
 
-Compare within task families/shared episodes, not pooled effort-level success rates. Wave lanes are correlated, not
-independent replications; pinned profiles describe requested workflow, not autonomous routing/exploration. Account for
-context, difficulty, scope, verification, parent identity, and runtime changes; stronger profiles may receive harder
-work. Consequential changes may warrant explicitly authorized paired/comparable trials at the same revision without answer leakage.
-Include failures/cancellations and tail cost/time, not just successful means. Small samples may expose waste, not prove
-no quality loss. With insufficient evidence, retain the candidate and name an informative observation, not a ranking.
+### Interpret Comparable Observations
+
+Use [Measurement And Attribution](measurement.md#later-comparisons) for cohort eligibility, exclusion reporting, task
+conditions, observation units, and accounting. It owns comparison rules; this guide owns how to use observations for
+scoped routing changes.
+
+Consequential changes may warrant an explicitly authorized paired/comparable trial at the same revision without answer
+leakage. Do not create one merely to complete a table. Include failures and tail cost/time where reported, not just
+successful means. Small samples may expose waste, not prove no quality loss. Valid scoped observations may still support
+a reversible choice without proving universal superiority; identify applicability, counterevidence, and a recheck.
 
 ## 3. Retain Experience And Revise Hints Within Authority
 

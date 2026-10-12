@@ -71,7 +71,7 @@ node --test tests/test_pi_status.mjs
 - [SKILL.md](SKILL.md): ordinary delegation and explicit collection activation.
 - [references/recording-tool.md](references/recording-tool.md): optional recording workflow and CLI examples.
 - [schemas/record.schema.json](schemas/record.schema.json): canonical schema, stage fields, and validation enums.
-- [references/measurement.md](references/measurement.md): units, missingness, cache and cost semantics.
+- [references/measurement.md](references/measurement.md): units, missingness, cache/cost semantics, and comparison eligibility.
 - [references/model-starting-points.md](references/model-starting-points.md): optional model starts; not changed by the
   recorder.
 - [references/tuning.md](references/tuning.md): project evidence, hint ownership, and shared review.
