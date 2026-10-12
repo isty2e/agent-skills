@@ -1,5 +1,8 @@
 # Pi Status Input
 
+Use this helper during [explicitly requested collection or record maintenance](../SKILL.md#6-optional-statistics-collection).
+Ordinary child status/closeout uses the native harness and does not require this recording projection.
+
 For a known Pi async `status.json`, this optional Node.js helper selects one exact child `steps[].runId` and emits flat
 `record-run` input:
 

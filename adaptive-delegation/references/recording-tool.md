@@ -1,11 +1,48 @@
 # Staged Recording Tool
 
+This reference applies to [explicitly requested collection](../SKILL.md#6-optional-statistics-collection) or authorized
+maintenance/interpretation of old records, not ordinary delegation. Reading old records or trying a different model does
+not authorize new collection. The recorder and existing data remain available; collection is disabled by instruction,
+not by a new runtime switch.
+
+For old-record maintenance or analysis, use only the relevant reference sections. Do not prepare new tasks or collect
+from later work as part of that maintenance.
+
 One local recorder, not a runner or host adapter. Python 3.11+ with `jsonschema>=4.23,<5`; `uv run` can resolve the
 inline script dependency. Use the approved project root and one record path throughout the session. Never discover
 credentials, model catalogs, or telemetry by scanning directories. No acceptance document or local acceptance reference
 is required.
 
-## Normal Path
+## Requested Collection Workflow
+
+The coordinating parent records its delegation tree; children neither collect statistics nor edit the project record.
+Use the native harness for execution and actual child state. Activation sources, scope, and termination are owned by
+[the collection policy](../SKILL.md#6-optional-statistics-collection). Collection does not authorize extra model runs,
+changed permissions, or publication.
+
+1. Resolve the approved project root and one record path, normally `.agents/delegation.md`. The file is required only for
+   collection, never for an ordinary launch. Preserve human hints and legacy records; only the recorder edits its managed
+   JSONL block. Do not relocate after a write failure.
+2. Before dispatch, call `prepare` with the existing task text/type, requested settings, and expected benefit. Include
+   known pre-run difficulty and selection reason when relevant to the comparison; do not infer them from the result.
+   Retain the record ID. Distinct child tasks get separate records; retries stay in the same record. If writing would
+   violate a launch precondition, retain inputs in permitted session state and persist immediately after the attempt.
+   Recording timestamps are not execution durations.
+3. After results, failures, or observed cancellations, call `record-run` with known native identity/status, reported
+   effective settings, and available metrics. Locate exposed sources once and reuse that plan. Missing data permits at
+   most one bounded lookup of a known source, not broad searches, repeated polling, or reconstruction. For known Pi async
+   status JSON, use [the status helper](pi-status.md). Requested settings do not fill effective settings.
+4. After checking/repair, call `assess` with original output quality and actual use. Include whole-delegation usefulness
+   when all retries and parent burden can be judged against the original purpose; otherwise leave it unknown. No success
+   score, evidence document, or new lesson is required. Late metrics preserve assessments; corrections preserve history.
+5. At the measured task's closure, use `show` to reconcile the collected attempts and assessments. Confirm persistence or
+   disclose gaps. Missing metrics do not block task delivery, and recording state never replaces actual child closeout.
+
+Within the requested collection scope, keep failed/cancelled attempts, partial output, unused results, retries, and
+pending assessments. Read [measurement.md](measurement.md) for accounting questions. Export only to an approved local
+destination after sharing review; recording does not authorize Git synchronization or remote submission.
+
+## Example
 
 Set these to already-known paths. The shell function avoids repeating them; it creates no persistent configuration.
 
@@ -66,7 +103,7 @@ repeat shared parent work in every fanout record; leave attribution unknown unle
 
 ### Representative Direct Choices
 
-When delegation was seriously considered but direct work was preferable, record once:
+During requested collection, when delegation was seriously considered but direct work was preferable, record once:
 
 ```bash
 record record-direct --task-type lookup --task-description 'Read the already located option.' \

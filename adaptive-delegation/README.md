@@ -1,48 +1,47 @@
 # Adaptive Delegation
 
-Choose useful subagent work and retain project-specific experience with small, validated stage inputs.
+Choose useful subagent work, match model/effort to the task, and check returned evidence. Statistics collection is opt-in.
 
 ## Setup
 
 Keep this directory intact in your host's skill path. Merge [assets/AGENTS.section.md](assets/AGENTS.section.md) into
-the instructions that host actually reads; do not replace existing project policy. The adopted section authorizes local
-record updates within repository policy, not publication or changed permissions.
-
-The recorder needs Python 3.11+ and `jsonschema` 4.x. `uv run scripts/delegation.py ...` uses the inline dependency
-metadata; alternatively install `jsonschema>=4.23,<5` once and run with Python. Dependency installation may require
-network access; the recorder itself has no network operations. There is no server, hook, provider adapter, background
-collector, or subagent launcher.
+the instructions that host actually reads; do not replace existing project policy. When upgrading, replace the old
+adopted delegation section too: its per-run recording requirements otherwise remain in force. No recorder dependencies
+or record-file setup are needed for ordinary delegation. This skill adds no launcher, server, hook, or background collector.
 
 ## Delegation Policy
 
 Prefer read-only research, diagnosis, and verification. Keep implementation with the parent by default; delegate bounded
 work when its expected benefit outweighs briefing, verification, integration, and likely rework. Choose model/effort by
-task difficulty and parent checking burden. See [selection guidance](SKILL.md#1-find-a-candidate-and-decide) and
-[model starts](references/model-starting-points.md).
+task role, reasoning difficulty, and parent checking burden, not document length or a pooled model ranking. See
+[selection guidance](SKILL.md#1-find-a-candidate-and-decide) and [model starts](references/model-starting-points.md).
 
 ## Routine Use
 
-Use the project-root `.agents/delegation.md`, or one explicitly approved override. Pass the known root; the tool never
-searches upward or scans home directories. It updates one managed JSONL block and preserves surrounding hints and legacy
-records. Do not type or rewrite that block manually.
+1. Choose a useful independent task, or work directly when handoff/checking would repeat the work.
+2. Reuse an applicable approved profile. Check unresolved support or material changes, not every setting on every launch.
+3. Provide the objective, inputs, allowed actions, constraints, expected result, and completion criteria.
+4. Use the native harness, check returned evidence, and account for the child's actual completion, stop, or handoff.
 
-| Moment                         | Command         | Parent input                                                                      |
-| ------------------------------ | --------------- | --------------------------------------------------------------------------------- |
-| Before dispatch                | `prepare`       | Existing task/type/model and expected delegation benefit; optional known settings |
-| After native execution         | `record-run`    | Run/status and exposed scalar metrics; unknown values may be omitted              |
-| After checking/repair          | `assess`        | Output enums and whole-delegation usefulness; optional note up to 200 characters  |
-| Representative direct choice   | `record-direct` | Existing task/type and one short reason; no child or estimated alternative cost   |
-| Separate authorized collection | `export`        | Approved local destination; existing records are copied as JSON                   |
+When collection is inactive, do not call `prepare`, `record-run`, `assess`, or `record-direct`, look up telemetry, or
+create/reconcile a statistics file for routine work. Project hints may be used or revised when useful;
+`.agents/delegation.md` is not a launch prerequisite.
+Trying another model, a failed child, or an existing record block does not activate collection.
 
-`show` lists compact pending/assessment summaries, `validate` checks managed records, and `schema` prints the canonical
-record or stage-input schema. Commands return short JSON and exit nonzero on invalid input. They do not require complete
-telemetry. Requested configuration never fills effective configuration, and timestamps never fabricate elapsed time. The
-two output verdicts do not measure delegation value: record its purpose before running and judge usefulness across
-retries and parent burden afterward. `unknown` is valid; no measured savings or successful task is inferred.
+## Optional Statistics Collection
 
-See [recording-tool.md](references/recording-tool.md) for runnable examples and enum meanings. The parent uses existing
-harness tools to obtain metrics; child-side collection is not required. Script invocation still depends on the agent
-following the skill. Unit tests do not establish no-reminder behavior in Pi, Codex, or Claude.
+Activation sources, scope, and termination are defined in
+[the collection policy](SKILL.md#6-optional-statistics-collection). Existing records can be analyzed without starting new
+collection. The recorder, status helper, schemas, and tests are retained; no activation flag or runtime blocker is added.
+
+For requested collection, the recorder needs Python 3.11+ and `jsonschema` 4.x. `uv run scripts/delegation.py ...` uses
+the inline dependency metadata; alternatively install `jsonschema>=4.23,<5` once and run with Python. Dependency
+installation may require network access; the recorder itself has no network operations.
+
+Follow [recording-tool.md](references/recording-tool.md) for stage calls, examples, and preservation rules. Use the known
+project root and approved record path; the tool never searches upward or scans home directories. It updates one managed
+JSONL block while preserving hints and legacy records. Requested settings never fill effective settings, and unknown
+metrics or usefulness remain unknown rather than becoming zero or inferred savings.
 
 ## Storage And Export
 
@@ -56,25 +55,29 @@ convert or replace the legacy YAML-frontmatter Markdown format in `subagent-stat
 subdirectory; Git synchronization and any future format migration are separate. Local export is not remote submission or
 automatic redaction. Check task text and optional source labels before sharing.
 
-Routine recording needs no new hint or essay. Keep current choices in the same project file; review accumulated evidence
-and update hints only when useful. Shared-skill changes require separate authorized review. Recording-time reduction
-remains unverified: use the existing no-reminder check on one already-needed task before adding further machinery.
+Storage, correction, and export are optional measurement operations, not routine closeout requirements. Existing data
+needs no deletion or migration. Keep current hints in the approved project file and update them only when useful;
+shared-skill changes and publication require separate authority.
 
 ## Checks And References
 
-From this skill directory, with the dependency installed:
+When maintaining the recorder, from this skill directory with its dependency installed:
 
 ```bash
 python -m unittest discover -s tests -v
+node --test tests/test_pi_status.mjs
 ```
 
-- [SKILL.md](SKILL.md): activation and stage workflow.
+- [SKILL.md](SKILL.md): ordinary delegation and explicit collection activation.
+- [references/recording-tool.md](references/recording-tool.md): optional recording workflow and CLI examples.
 - [schemas/record.schema.json](schemas/record.schema.json): canonical schema, stage fields, and validation enums.
-- [references/measurement.md](references/measurement.md): units, missingness, cache and cost semantics.
+- [references/measurement.md](references/measurement.md): units, missingness, cache/cost semantics, and comparison eligibility.
 - [references/model-starting-points.md](references/model-starting-points.md): optional model starts; not changed by the
   recorder.
 - [references/tuning.md](references/tuning.md): project evidence, hint ownership, and shared review.
 - [templates/delegation.md](templates/delegation.md): human hint area, without a per-run report template.
-- [evaluations/recording.md](evaluations/recording.md): integration and no-reminder host checks.
+- [evaluations/recording.md](evaluations/recording.md): default non-collection and explicit collection host checks.
+
+Script tests do not establish host activation behavior. Static review does not prove that an agent follows the opt-in rule.
 
 [MIT](LICENSE).

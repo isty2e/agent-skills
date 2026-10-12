@@ -1,4 +1,4 @@
-# Recording And Learning Check
+# Delegation And Optional Recording Check
 
 This is a review and host-test protocol, not a compliance result or permission for paid comparison runs.
 
@@ -6,54 +6,69 @@ This is a review and host-test protocol, not a compliance result or permission f
 
 Check the skill, project section, references, and template together:
 
-- Read-only work is preferred; model/effort follow reasoning difficulty and parent checking burden.
+- Read-only work is preferred; model/effort follow task role, reasoning difficulty, and parent checking burden.
 - Bounded implementation may be delegated when worthwhile; coupled work or costly re-solving stays with the parent.
-- Direct work remains valid; record launch attempts and representative delegation decisions kept with the parent, not
-  routine direct work. `record-direct` keeps representative task/reason entries in export without child usage.
-- An attempt starts pending before dispatch, except when an enforced launch precondition requires immediate post-attempt
-  persistence from permitted session state.
-- Results, failures, cancellations, retries, fallbacks, and unused output retain their identities and known usage.
-- One bounded exposed lookup may fill missing fields; unknown, unavailable, failed, unattributable, and skipped
-  collection are not zero.
-- Parent review records `output_quality` for the original artifact and `output_use` for actual handling. Neither means
-  final task acceptance; finding count or silence does not establish quality, and unknown recall remains unknown.
-- Expected delegation benefit is stored before running. Whole-delegation usefulness covers retries and parent burden,
-  not just the last output; favorable output cannot fill it automatically. Unknown remains a legitimate judgment.
-- Missing authority or a failed write is disclosed without relocation or weaker acceptance.
-- Cooperating recorder writes serialize and preserve surrounding content; conflicts fail rather than overwrite. Do not
-  hand-edit the managed block. Consolidate human summaries without deleting attempt evidence.
+- Without active collection, work calls no recorder, locates no metrics, creates/reconciles no statistics file, and loads
+  no collection reference. Direct choices, model trials, failures, and old record blocks do not activate collection.
+- The parent still checks returned evidence and actual child closeout. Unfinished execution is not the same as an
+  unassessed statistics record; unknown run state does not authorize relaunch.
+- Explicit reviewer profiles and already-confirmed applicable settings are respected, not repeatedly rediscovered.
+- Collection requires the explicit instruction defined in [the skill](../SKILL.md#6-optional-statistics-collection).
+  Recording instructions and dependency setup apply only to requested collection or record maintenance.
+- During collection, original quality, actual use, expected benefit, and whole-delegation usefulness remain distinct.
+  Useful does not mean accepted or cheap; unknown remains unknown.
+- During collection, preserve failures/cancellations, retries, late facts, corrections, and unused output. Only the
+  recorder edits its managed block; write failures are disclosed without relocation or weaker acceptance.
+- Review comparison eligibility, exclusions, and task conditions against
+  [Measurement And Attribution](../references/measurement.md#later-comparisons).
 - Shared guidance changes require a separate authorized review; local records are not published automatically.
 
 ## Local Script Check
 
-Run `python -m unittest discover -s tests -v` from the skill directory. Tests use synthetic temporary records, not model
-calls or private telemetry. Check the stage-input schemas, retries, late metrics, corrections, missing values,
-preservation of surrounding Markdown, mixed direct/delegated JSON export, and independent output/usefulness judgments.
-This does not test network filesystems, every operating system, or concurrent non-cooperating editors.
+When maintaining the recording tools, run `python -m unittest discover -s tests -v` and
+`node --test tests/test_pi_status.mjs` from the skill directory. Tests use synthetic temporary inputs, not model calls or
+private telemetry. They cover staged records, retries, late metrics, corrections, missing values, preservation, export,
+and status projection. They do not prove instruction-driven activation, network-filesystem behavior, or every host.
 
-## No-Reminder Host Check
+## Host Check
 
-1. In an approved test project, adopt the skill and project section; record host and skill revisions.
-2. Give an ordinary substantive task without mentioning delegation, telemetry, or logging. Confirm that the skill is
-   considered; direct execution is allowed but does not test post-launch recording.
-3. Use an already-needed delegation, preferably read-only, with model/effort chosen for its reasoning difficulty. Check
-   that `prepare`, `record-run`, and `assess` were called without a reminder, and compare native run IDs and supplied
-   metrics to the staged record, including expected benefit and usefulness. No child-side collector is required. Reuse existing failures or cancellations rather than manufacturing costly ones.
-4. In a fresh session, check that hint applicability matches the actual settings or handoff, including a scoped reason
-   when a hint is not applied, and that the new outcome is recorded. Reconcile unfinished observations without
-   relaunching work to recreate metrics.
-5. Report activation, collection, persistence, application, and assessment separately as observed, not observed, or not
-   exercised. Also note whether the child stayed within its assigned scope and whether the parent avoided repeating
-   its exploration. Claim complete capture only when an authoritative runtime inventory supports it.
+Exercise these paths only in an approved host test, preferably using already-needed tasks. Do not manufacture failures
+or duplicate paid runs solely to check the instructions.
 
-For the next already-needed real delegation, use its existing transcript to note only: whether recording occurred
-without a reminder; whether flag corrections, ID mistakes, or recording retries repeated; and whether the saved purpose,
-usefulness, and output handling inform the next choice. Do not manufacture a paid run or add a batch API/adapter before
-observing this path. One run can reveal friction, not establish average time savings.
+### Default Non-Collection
 
-In a separate authorized batch, check that `export` includes failures, incomplete records, and representative direct
-choices, produces identical JSON fields, and does not invoke Git, a server, or a prose-generation step. Track recording
-overhead separately if observable; do not run a new timing investigation merely to complete a record.
+1. Adopt the current skill and instruction section; old mandatory-recording instructions must not remain active.
+2. Give an ordinary task with no active collection instruction. Direct execution is valid; use an already-needed
+   delegation if available to exercise the child path.
+3. Inspect the transcript for applicable model choice, bounded handoff, result checking, and native closeout. Recorder
+   calls, telemetry lookups, statistics-file setup, and collection-reference loading must not occur for routine work.
+4. Existing hints may be used without collecting or reconciling old records. Reuse available failure/cancellation
+   examples to check that those events do not start collection.
 
-Static review and token counts do not prove host behavior. The skill installs no hook and cannot guarantee capture after
-session termination.
+### Explicit Collection
+
+1. Exercise the activation sources and scope/end rules in
+   [the collection policy](../SKILL.md#6-optional-statistics-collection), using approved tasks and recording the host/skill
+   revisions for this host test. Cover both a conversation request and an applicable governing collection instruction.
+2. Check that the parent uses `prepare`, `record-run`, and `assess` within that scope. Compare native IDs and exposed
+   counters to the saved record; requested settings must not become reported effective settings. Unknown stays unknown.
+3. Inspect original quality, actual use, and whole-delegation usefulness separately, including retries and parent burden.
+   No child-side collector is required. Reconcile collected observations without relaunching work to recreate metrics.
+4. Check scope exit, expiry, and withdrawal against that policy using available host transcripts. A model change,
+   material failure, or hint update is not a new activation request.
+
+### Existing Record Maintenance
+
+An explicit correction/export request uses the existing record identity and approved source/destination. It does not
+prepare new tasks or start collecting from later work. Review available maintenance receipts to check that corrections
+preserve history and export preserves fields, without changing the ordinary delegation path.
+
+Report default non-collection, explicit activation, maintenance, persistence, assessment, hint applicability, and child scope/closeout
+as observed, not observed, or not exercised. Claim complete capture only with an authoritative runtime inventory.
+
+In a separate authorized export, check that failures, incomplete records, and representative direct choices retain their
+fields and identities, with no Git/server/prose-generation operation. Recording overhead may be noted when already
+observable; do not start a timing investigation merely to fill it.
+
+Static review and token counts do not prove host behavior. The opt-in rule is instruction-driven, not a runtime fence;
+the skill installs no hook and cannot guarantee capture after session termination.

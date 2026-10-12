@@ -2,11 +2,12 @@
 
 Improve the next choice, not universal rankings. Parent judgments are fallible: retain uncertainty and corrections.
 Distinguish measured outcomes from vendor guidance, operator reports, and proposed trials; none fills missing cost or
-success data.
+success data. Ordinary delegation requires neither structured records nor a hint update. A material exception may inform
+a scoped choice without starting collection; exception-only notes are not a sample for estimating rates.
 
 ## 1. Diagnose The Observed Result
 
-Compare the recorded expected benefit and acceptable burden with observed whole-delegation usefulness, including parent
+Compare the expected benefit and acceptable burden with observed whole-delegation usefulness, including parent
 repair. Use artifacts and observed work, not confidence, output quality, or final task success alone. Unknown usefulness
 is neither failure nor proof of savings. Consider handoff and partition before attributing outcomes to the model.
 
@@ -28,13 +29,14 @@ outcome supports a scoped observation, not universal superiority or incapacity.
 
 ## 2. Choose An Informative Next Observation
 
-Default to one ordinary execution and lightweight records, not shadow runs or evaluator agents. Include representative
-direct choices: they reveal checking burden and available context, but unperformed handoffs/integration remain estimates
-and unrun children supply no measured counterfactual. See [measurement.md](measurement.md) for attribution/comparability.
+Use the next applicable ordinary task, not shadow runs or evaluator agents, to reconsider a choice. Record new statistics
+only under [explicit collection](../SKILL.md#6-optional-statistics-collection). Within that scope, representative direct
+choices reveal checking burden and available context, but unperformed handoffs/integration remain estimates and unrun
+children supply no measured counterfactual.
 
 Lack of universal evidence for alternatives does not prove the incumbent optimal. Repeated major repair/rejection may
-justify a scoped alternative on the next ordinary task. Mark intentional trials `model_selection_reason: exploration`; no experiment per
-run or model-diversity quota.
+justify a scoped alternative on the next ordinary task. During requested collection, mark intentional trials
+`model_selection_reason: exploration`; ordinary model trials need no entry, experiment per run, or diversity quota.
 
 Default trials to eligible read-only work within budget; read-only does not mean easy. Routine lookup may warrant lower
 effort; shallow multi-source investigation may warrant a stronger model or higher effort. Compare stronger/moderate-effort,
@@ -42,35 +44,34 @@ cheaper/deeper-effort, existing settings, and direct work without requiring fail
 under unchanged acceptance/requirements. Duplicate runs need an information goal and experiment allowance. Alternative
 failure is not global disqualification.
 
-Compare within task families/shared episodes, not pooled effort-level success rates. Wave lanes are correlated, not
-independent replications; pinned profiles describe requested workflow, not autonomous routing/exploration. Account for
-context, difficulty, scope, verification, parent identity, and runtime changes; stronger profiles may receive harder
-work. Consequential changes warrant limited paired/comparable trials at the same revision without answer leakage.
-Include failures/cancellations and tail cost/time, not just successful means. Small samples may expose waste, not prove
-no quality loss. With insufficient evidence, retain the candidate and name an informative observation, not a ranking.
+### Interpret Comparable Observations
+
+Use [Measurement And Attribution](measurement.md#later-comparisons) for cohort eligibility, exclusion reporting, task
+conditions, observation units, and accounting. It owns comparison rules; this guide owns how to use observations for
+scoped routing changes.
+
+Consequential changes may warrant an explicitly authorized paired/comparable trial at the same revision without answer
+leakage. Do not create one merely to complete a table. Include failures and tail cost/time where reported, not just
+successful means. Small samples may expose waste, not prove no quality loss. Valid scoped observations may still support
+a reversible choice without proving universal superiority; identify applicability, counterevidence, and a recheck.
 
 ## 3. Retain Experience And Revise Hints Within Authority
 
-The coordinating parent owns delegation-tree records; descendants return evidence. Within authorized project scope,
-the parent may keep/adjust/revert direct work, partition, handoff, context, model/effort, or concurrency. Hints cannot
-override instructions, pins, budgets, permissions, or acceptance.
+The coordinating parent owns decisions and any requested delegation-tree records; descendants return evidence. Within
+authorized project scope, the parent may keep/adjust/revert direct work, partition, handoff, context, model/effort, or
+concurrency. Hints cannot override instructions, pins, budgets, permissions, or acceptance.
 
 ### Use One Project File
 
-Resolve the instruction-designated path once per session, normally project-root `.agents/delegation.md`; never relocate
-ad hoc. Honor the skill's launch preconditions. The recorder preserves surrounding text; the
-[template](../templates/delegation.md) is optional for human hints. Read before editing hints, preserve human content,
+When retaining a useful hint, use the instruction-designated path, normally project-root `.agents/delegation.md`; never
+relocate ad hoc. The [template](../templates/delegation.md) is optional. Read before editing, preserve human content,
 reconcile concurrent changes, and confirm writes. Without an approved writable path, retain permitted session evidence
-and disclose the gap.
+and disclose the gap. No file creation, record-block inspection, or persistence check is required before an ordinary launch.
 
-Keep hints and compact observations together, separating facts from interpretation. Preserve decision/run IDs, pending
-assessments, and essential context when links may expire. Store no credentials, full transcripts, or unnecessary private
-material. Local writing does not authorize commits, publication, tracking changes, or host configuration.
-
-Only the script edits managed JSONL. Change verdicts with `assess --correction-reason`; add late facts with `record-run`.
-Terminal attempts are not reopened: explicitly start a retry/continuation. For direct choices seriously considered
-against delegation, use `record-direct` with a short reason so export retains them; no child model/run/hypothetical
-metrics. Preserve legacy prose without automatic import. Do not add a second narrative per structured record.
+Keep hints and compact observations together, separating facts from interpretation and preserving essential context when
+links may expire. Store no credentials, full transcripts, or unnecessary private material. Local writing does not
+authorize commits, publication, tracking changes, or host configuration. Existing managed records stay intact; only the
+recorder edits them under [the optional workflow](recording-tool.md). Do not add a second narrative per structured record.
 
 ### Consolidate Without Erasing Evidence
 

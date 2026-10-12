@@ -11,13 +11,12 @@ level.
 
 ## Existing Observations
 
-Keep pre-existing prose here or in its existing location; no migration is required. It is not parsed or counted. Use
-`record-direct` for new representative non-delegation choices so the short reason is included in export.
+Keep pre-existing prose here or in its existing location; no migration is required. It is not parsed or counted.
+Material exceptions may inform hints, but selectively recorded exceptions are not a statistical sample.
 
-## Staged Records
+## Optional Staged Records
 
-The recorder appends its managed JSONL block on the first `prepare` or `record-direct`. Use `prepare`, `record-run`, and
-`assess` rather than manually filling a second template. Inspect with `show`; export later in batches when authorized.
-Each delegated task has one record with linked attempts, an expected benefit, and a separate whole-delegation usefulness
-judgment. Direct choices have a short reason and no child attempts; they are not pending launches. Sharing, correction,
-and consolidation follow the skill, not this file alone.
+Delegation without active collection does not create or update staged records. Existing blocks remain intact; their
+presence does not activate collection. Explicit collection or record maintenance uses
+[the recorder reference](../references/recording-tool.md). Sharing, correction, and consolidation follow the skill,
+not this file alone. This template is optional, not a launch prerequisite.

@@ -1,8 +1,9 @@
 # Measurement And Attribution
 
-Use the staged recorder for routine facts, not a hand-written audit report. Runtime values are supplied through existing
-harness tools; the recorder validates and stores them but does not discover or normalize provider APIs automatically.
-See [recording-tool.md](recording-tool.md) for calls, enums, and partial-record handling.
+Use these definitions when analyzing existing records or collecting explicitly requested statistics. Ordinary
+delegation does not require accounting or recorder calls. Runtime values come from existing harness tools; the recorder
+validates supplied facts but does not discover or normalize provider APIs automatically. See
+[recording-tool.md](recording-tool.md) for the opt-in workflow, calls, enums, and partial-record handling.
 
 ## Time And Missing Values
 
@@ -69,12 +70,46 @@ cases reveal conditions worth reviewing, not the denominator of all direct work.
 
 ## Later Comparisons
 
-Compare compatible task conditions, effort/context, usage scopes, and cost bases. Include failures, retries, discarded
-outputs, incomplete measurements, and recording overhead. Missing parent costs that could reverse a comparison prevent
-whole-task cost ranking; a component comparison must remain labeled as such. Report the denominator, direct/delegated
-choices, missing usefulness judgments, and unassessed or pending attempts separately. A direct choice is not an
-awaiting-run record. These sparse records support narrower questions before end-to-end savings claims.
+Retain raw records, including failures, retries, discarded outputs, and incomplete measurements; analytic eligibility
+does not authorize deleting them. Select a cohort for the question before calculating a rate. Report its denominator
+and exclusion counts alongside direct/delegated choices, missing usefulness judgments, and unassessed or pending
+attempts. A direct choice is not an awaiting-run record.
 
-Project hints remain separate from raw records even in the same file. Read [tuning.md](tuning.md) before combining
-observations or changing policy. Export is a mechanical, separately authorized local copy, not a requirement to write a
-standalone narrative. No statistic alone authorizes sharing private project information.
+### Usefulness Comparison Eligibility
+
+For a model-conditioned comparison, select records attributable to one reported actual model, with terminal attempts
+and a current definitive whole-delegation usefulness assessment covering those attempts. For an effort-conditioned
+comparison, additionally require one reported actual effort across those attempts. Missing effort does not invalidate a
+model-only comparison; missing parent-cost measurements do not invalidate observed usefulness. An empty eligible cell
+has no rate, not a zero rate.
+
+Exclude unrun records, unknown usefulness assessments, and missing/mixed attribution from both numerator and denominator.
+Keep exclusion reasons and counts separate from outcomes. A whole assessment contaminated by prelaunch host failures cannot
+be assigned to the model that eventually ran. Do not assign a retry/fallback's whole verdict to the initial requested
+configuration, or invent a model verdict by subtracting host overhead. Keep such records for workflow interpretation.
+Retain genuine post-launch failures, cancellations, incorrect output, repairs, and burden-exceeded results. Exclude
+invalid attribution, not bad outcomes.
+
+### Task Conditions And Observation Unit
+
+Compare within task families and roles, then recorded type/difficulty and project conditions where available. A specified
+reproduction check is not open review. Use recorded pre-run difficulty; do not infer missing difficulty from length or
+relabel it after failure. Missing difficulty excludes a record only from the difficulty-conditioned comparison, not
+type-only analysis. Same broad labels still do not establish matched tasks. Compare usefulness alongside original
+quality and categorical repair; none alone measures savings or final acceptance.
+
+Count a task's retries as one whole-delegation assessment. Parallel subtasks and resumed tasks may be correlated; do not
+assume independent replications. A reused native ID is not by itself proof of duplicate tasks. Preserve task/attempt
+identity and known continuation windows. Pinned profiles describe requested workflow, not autonomous routing. Account for
+context, scope, verification, parent identity, and runtime changes; stronger profiles may receive harder work.
+
+### Cost And Policy Interpretation
+
+Compare compatible effort/context, usage scopes, and cost bases, including failures, retries, discarded outputs, and
+recording overhead wherever attributable. Missing parent costs that could reverse a comparison prevent whole-task cost
+ranking; a component comparison must remain labeled as such. These sparse records support narrower questions before
+end-to-end savings claims.
+
+Project hints remain separate from raw records even in the same file. Read [tuning.md](tuning.md) before changing policy.
+Export is a mechanical, separately authorized local copy, not a requirement to write a standalone narrative. No
+statistic alone authorizes sharing private project information.
