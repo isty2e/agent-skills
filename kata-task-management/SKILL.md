@@ -18,14 +18,16 @@ permission to replace mandated trackers, install software/hooks, change bindings
   requests, or event streams), or when installed behavior contradicts this skill.
 - Missing CLI or workspace setup: load and apply [Initialization](references/initialization.md); reuse valid bindings.
 - Decide before acting or creating an issue: an approved single bounded action on an already verified result needs
-  no new issue/epic when original criteria are already met and no additional substantive work or changes to the result's
-  substance, scope, or criteria are needed. Multi-stage delivery or release work needs ordinary issue tracking, even
-  when wrapped in one command. Presentation-only edits, including formatting and incidental private-context redaction,
-  must preserve decision-relevant substance. Execute and verify the action, comparing final delivered content against
-  the verified result, then record a receipt on the owning issue, even if closed, without reopening it. If the action
-  fails or remains unverified, track remaining action work as a follow-up issue. If only receipt bookkeeping fails after
-  verified success, report pending steps to the requester and reconcile on the owning record when available; create
-  no issue solely for bookkeeping.
+  no new issue/epic only when an existing owning issue is identifiable, original criteria are already met, and no
+  additional substantive work or changes to the result's substance, scope, or criteria are needed. Otherwise use normal
+  tracking. Multi-stage delivery or release work needs ordinary issue tracking, even when wrapped in one command.
+  Presentation-only edits, including formatting and incidental private-context redaction, must preserve
+  decision-relevant substance. Before acting, confirm the actual content to deliver still preserves the verified
+  result's substance. Execute and verify the action, comparing delivered content against that checked content,
+  then record a receipt on the owning issue, even if closed, without reopening it. If the action fails or remains
+  unverified, track remaining action work as a follow-up issue. If only receipt bookkeeping fails after verified
+  success, report pending steps to the requester and reconcile on the owning record when available; create no issue
+  solely for bookkeeping.
 - Before substantive multi-step work, find and update the owning issue; create only if none fits, with an idempotency
   key. Keep work in its owning project even from another repository; no practice/tutorial/scratch issues unless
   requested. Check and claim shared-queue ownership before execution; claims do not authorize scope changes.
