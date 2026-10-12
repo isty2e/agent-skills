@@ -1,8 +1,9 @@
 # Measurement And Attribution
 
-Use the staged recorder for routine facts, not a hand-written audit report. Runtime values are supplied through existing
-harness tools; the recorder validates and stores them but does not discover or normalize provider APIs automatically.
-See [recording-tool.md](recording-tool.md) for calls, enums, and partial-record handling.
+Use these definitions when analyzing existing records or collecting explicitly requested statistics. Ordinary
+delegation does not require accounting or recorder calls. Runtime values come from existing harness tools; the recorder
+validates supplied facts but does not discover or normalize provider APIs automatically. See
+[recording-tool.md](recording-tool.md) for the opt-in workflow, calls, enums, and partial-record handling.
 
 ## Time And Missing Values
 

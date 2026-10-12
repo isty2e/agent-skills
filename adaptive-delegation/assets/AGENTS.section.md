@@ -4,9 +4,9 @@ At substantive task decomposition, consider useful independent subtasks. When a 
 on returned/failed/cancelled work, or during experience review, load and apply `adaptive-delegation` without another
 request. Direct execution remains valid; activation is not a spawn quota.
 
-Use project-root `.agents/delegation.md` unless these instructions name another file. The parent may create/update it
-within repository write policy without per-run reapproval. Preserve human hints and legacy records; never silently
-change destinations. Use the skill's recorder for its managed block, not agent-written JSON or a new report.
+Project hints, when useful, belong in project-root `.agents/delegation.md` unless these instructions name another file.
+The parent may create/update it within repository write policy without per-run reapproval. Preserve human hints and
+legacy records; its absence is not a launch blocker.
 
 - Compare delegation's whole-task burden with direct work. The parent retains scope, decisions, checking, integration,
   and acceptance; respect existing parent-only duties, permissions, and budgets.
@@ -14,17 +14,14 @@ change destinations. Use the skill's recorder for its managed block, not agent-w
   expected benefit outweighs verification, integration, and likely rework.
 - Choose model/effort by reasoning difficulty and parent verification burden, rather than using one cheap default for
   all tasks.
-- Before a selected launch, call `prepare` with existing task text, known requested settings, and the expected benefit.
-  If writing would break a launch precondition, retain inputs and persist immediately after the attempt instead.
-- Execute through the native harness. The parent calls `record-run` for outcomes and available statistics, then `assess`
-  after verification/repair. No child-side self-accounting, automatic host discovery, or repeated metric searches.
-- Keep output verdicts distinct from whole-delegation usefulness, including retries and parent burden. Add usefulness to
-  the final `assess` call; unknown is valid and no savings are inferred. Use only a useful short note. Keep
-  failed/cancelled attempts, late metrics, and pending assessments visible; recording needs neither a new lesson nor a
-  changed hint.
-- For seriously considered but rejected delegation, call `record-direct` with task/type and a short reason. Export
-  includes these representative choices; do not log routine direct work or invent alternative costs.
-- Before reporting, reconcile known attempts and confirm persistence or disclose the gap. Never let telemetry collection
-  grow into a separate investigation or block delivery of the work result.
-- Review hints later when evidence warrants it. Export selected records only to an approved local destination; commits,
-  remote publication, shared-skill updates, permission changes, and weaker acceptance need separate authority.
+- Reuse applicable approved profiles; do not repeat capability discovery before every launch. Respect explicit
+  model/effort pins, tools/write scope, and supported limits.
+- Execute through the native harness. Check returned evidence and account for each child as completed, stopped, or
+  explicitly handed off. Unknown execution state is unresolved; cancellation requests do not prove termination.
+- Keep execution status, original output quality, actual use, and delegation usefulness distinct. Favorable output alone
+  establishes neither final task acceptance nor savings.
+- Follow the skill's opt-in collection rule: by default, delegation needs no recorder calls, telemetry lookup, statistics
+  file setup, or recording-reference load. Existing tools and records remain available for explicitly requested
+  collection or record maintenance; only the recorder edits its managed block.
+- Review hints when evidence warrants it, not after every run. Publication, shared-skill updates, permission changes,
+  and weaker acceptance need separate authority.

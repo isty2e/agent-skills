@@ -5,7 +5,7 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
 ## Skills
 
 - [`adaptive-delegation`](adaptive-delegation/) — Choose bounded subagent work and improve project-local routing
-  through evidence-backed assessment, scoped adjustments, and rechecks.
+  through evidence-backed assessment, scoped adjustments, and rechecks; statistics collection is opt-in.
 - [`durable-knowledge`](durable-knowledge/) — Maintain a sparse, portable Markdown knowledge base
   with human review, optional Obsidian views, grounded paper notes, and bounded recall.
 - [`github-math-comment`](github-math-comment/) — Draft and verify GitHub comments with display math while checking
