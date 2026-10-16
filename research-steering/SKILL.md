@@ -1,9 +1,10 @@
 ---
 name: research-steering
 description: >-
-  Guidance for autonomous empirical research at research start, experiment-batch interpretation, and before
-  milestone/final reports or submissions. Choose informative next actions, preserve evaluation boundaries, and avoid
-  drift, local fixation or misleading progress claims. Not a routine coding checklist.
+  Guide autonomous empirical research at start, batch interpretation and before milestone/final reports or submissions.
+  Also use after context loss or handoff, when evidence challenges the plan, before material evaluation, baseline or
+  resource changes, or after unexpected coverage or failure-handling shifts. Choose informative actions, preserve
+  evaluation boundaries and avoid drift, local fixation or misleading progress claims. Not a routine coding checklist.
 ---
 
 # Research Steering
