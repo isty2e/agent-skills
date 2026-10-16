@@ -19,6 +19,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
   parent-captured diffs or files, structured receipts, scope-separated findings, and quiescence-checked closure.
 - [`public-repo-docs`](public-repo-docs/) — Draft or audit public package and repository documentation for reader value,
   public support, practical setup, and coherent organization without prescribing headings or file layouts.
+- [`research-steering`](research-steering/) — Guide autonomous research decisions, evaluation validity, and reporting.
+  Effectiveness has not been evaluated.
 - [`typst-author`](typst-author/) — Create, edit, troubleshoot, and validate Typst documents using authoritative
   upstream references and local compiler checks.
 - [`wedow-ticket`](wedow-ticket/) — Identify and operate wedow/ticket safely across shell quoting, ticket IDs,
