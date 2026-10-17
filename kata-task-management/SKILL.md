@@ -39,6 +39,9 @@ permission to replace mandated trackers, install software/hooks, change bindings
   reopening a child, also reopen its closed epic. Epics group one objective across independently assignable or
   verifiable tasks, not standalone-task ceremony; reparent rather than duplicate. Do not make issues for every command
   or routine check.
+- Within an unchanged owning task, design, implementation, review, and verification are phases, not separate new
+  deliverables. Reuse its issue; entering a phase alone does not require a child issue or progress comment. New
+  substantive deliverables or changed scope still follow the normal tracking rules above.
 - `parent` means scope membership, not order; siblings need not be serial. Before blocking links, check the affected
   blocking graph for cycles. Parent-cycle rejection or a ready queue is not proof of blocking-graph acyclicity.
 
