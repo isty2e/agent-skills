@@ -44,6 +44,10 @@ compatibility: Requires Pi with pi-subagents workflowScript, Node.js, subagent s
 
 ## Receipt Semantics
 
+A nonempty `outputReference` is the report authority even when `output` contains a notification or preview. The gate
+reads that file; missing/unreadable references or malformed reports fail rather than falling back to inline text or
+other artifacts. Without one, inline reports and existing artifact fallbacks remain supported.
+
 The generator owns the three-section report format:
 
 - In-scope findings: evidence-backed findings within the overall change boundary, or `NO FINDING`; may affect approval.

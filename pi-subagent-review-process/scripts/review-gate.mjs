@@ -54,12 +54,13 @@ export async function materializeWorkflowResults(status) {
       const workflowKey = resultKey(entry) ?? (matches.length === 1 ? stepKey(matches[0]) : undefined);
       let output = entry.output;
       let outputReadError;
-      const outputPath = nonempty(entry.outputReference)
+      const hasOutputReference = nonempty(entry.outputReference);
+      const outputPath = hasOutputReference
         ? entry.outputReference
         : Array.isArray(entry.artifactPaths)
           ? entry.artifactPaths[0]
           : entry.artifactPaths?.outputPath;
-      if (!nonempty(output) && nonempty(outputPath)) {
+      if ((hasOutputReference || !nonempty(output)) && nonempty(outputPath)) {
         try {
           output = await readFile(outputPath, "utf8");
         } catch (error) {
