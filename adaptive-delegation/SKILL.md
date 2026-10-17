@@ -82,6 +82,11 @@ Default to fresh conversation context. Supply:
 - applicable instructions/skills, authoritative sources and revision/state, relevant findings
 - required evidence/artifact, acceptance checks, stopping conditions.
 
+Identify which accepted design/review decisions and evidence remain reusable, and which work must be done anew. The
+child confirms applicability rather than restarting a valid parent design cycle; new implementation and affected
+interactions still need their own review and verification under governing gates. Use the existing handoff and evidence,
+not an additional receipt or process form.
+
 Pass instructions explicitly if inheritance/loading is unavailable; omit irrelevant parent tuning history. Fork when
 needed decision history would be lost or costlier to hand off safely. For independent review, prefer
 requirements/artifacts without parental speculation. Fresh context or another model alone does not ensure independent
