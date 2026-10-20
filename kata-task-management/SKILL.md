@@ -32,7 +32,9 @@ permission to replace mandated trackers, install software/hooks, change bindings
   key. Keep work in its owning project even from another repository; no practice/tutorial/scratch issues unless
   requested. Check and claim shared-queue ownership before execution; claims do not authorize scope changes.
 - Keep objective, scope, completion criteria, and actionable plan current in the body; reflect accepted changes there.
-  Record progress, history, and routine completion in status/comments rather than rewriting the body.
+  Correct factual errors in editable records in place, including existing comments, and reconcile affected current
+  summaries; do not stack correction notices. Record new events, progress and routine completion in status/comments
+  rather than rewriting the body. Preserve genuine history and immutable evidence.
 - At creation, search open and closed issues for the same objective and parent the new issue under its open epic. If
   none is open but the new issue continues earlier work, create an epic, parent the new issue and any unparented
   predecessor, and link a closed predecessor epic as `related`. Never leave open work under a closed epic; when
