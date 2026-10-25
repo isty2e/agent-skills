@@ -1,6 +1,6 @@
 # Initialize Without Unrelated Repository Changes
 
-Use only for a missing CLI or workspace setup, not simple questions or repository inspection.
+Use only when a required Kata operation lacks a CLI or valid workspace setup.
 
 ## Confirm The Target
 
@@ -54,5 +54,5 @@ than silently converting them. For a new local setup in Git:
   connection nor project selection.
 - Run `git check-ignore -v` on actual local config paths and inspect staged/unstaged diffs and untracked files. Confirm no
   unrelated changes, unwanted guidance/hooks, or shared ignore edits remain.
-- Run `kata quickstart` unless already read for this session/environment, then return to registration. No sample issue
-  for setup testing: the next issue must represent real work.
+- Run `kata quickstart` unless already read for this session/environment, then return to the pending Kata operation or
+  registration. No sample issue for setup testing: the next issue must represent real work.
