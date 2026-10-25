@@ -1,92 +1,97 @@
 ---
 name: kata-task-management
-description: Use Kata for substantive multi-step work, planning, epic/task hierarchy, follow-ups, blockers, and verified closure. Load before substantive work, workspace setup, issue reorganization, failed-mutation recovery, or closing/reopening work; brief scoping and simple questions/lookups need no registration.
+description: >-
+  Use for work needing resumption, coordination, dependency management, or follow-up; requests connected to tracked
+  work; and direct Kata operations, including workspace setup, issue or hierarchy changes, closure, reopening, and
+  failed-mutation recovery.
 license: MIT
 ---
 
 # Kata Task Management
 
-Use [Kata](https://www.katatracker.com/) as the shared task ledger, not alongside competing persistent TODOs or status
-plans. Link design, verification, documentation, and data artifacts from owning issues; preserve their designated
-authority, repeating at most headline numbers. Honor repository policy and approval boundaries: this skill grants no
-permission to replace mandated trackers, install software/hooks, change bindings, or publish.
+Use [Kata](https://www.katatracker.com/) as the shared task ledger for tracked work, without competing persistent TODOs
+or status plans. Honor repository policy and approval boundaries; this skill grants no permission to replace mandated
+trackers, install software/hooks, change bindings, or publish.
 
-## Start And Plan
+## When To Track
 
-- Before the first mutation in a session, confirm the resolved workspace/project and daemon. Read `kata quickstart`
-  during initialization, before using a Kata feature this skill does not cover (such as teammate attribution, attention
-  requests, or event streams), or when installed behavior contradicts this skill.
-- Missing CLI or workspace setup: load and apply [Initialization](references/initialization.md); reuse valid bindings.
-- Decide before acting or creating an issue: an approved single bounded action on an already verified result needs
-  no new issue/epic only when an existing owning issue is identifiable, original criteria are already met, and no
-  additional substantive work or changes to the result's substance, scope, or criteria are needed. Otherwise use normal
-  tracking. Multi-stage delivery or release work needs ordinary issue tracking, even when wrapped in one command.
-  Presentation-only edits, including formatting and incidental private-context redaction, must preserve
-  decision-relevant substance. Before acting, confirm the actual content to deliver still preserves the verified
-  result's substance. Execute and verify the action, comparing delivered content against that checked content,
-  then record a receipt on the owning issue, even if closed, without reopening it. If the action fails or remains
-  unverified, track remaining action work as a follow-up issue. If only receipt bookkeeping fails after verified
-  success, report pending steps to the requester and reconcile on the owning record when available; create no issue
-  solely for bookkeeping.
-- Before substantive multi-step work, find and update the owning issue; create only if none fits, with an idempotency
-  key. Keep work in its owning project even from another repository; no practice/tutorial/scratch issues unless
-  requested. Check and claim shared-queue ownership before execution; claims do not authorize scope changes.
-- Keep objective, scope, completion criteria, and actionable plan current in the body; reflect accepted changes there.
-  Correct factual errors in editable records in place, including existing comments, and reconcile affected current
-  summaries; do not stack correction notices. Record new events, progress and routine completion in status/comments
-  rather than rewriting the body. Preserve genuine history and immutable evidence.
-- At creation, search open and closed issues for the same objective and parent the new issue under its open epic. If
-  none is open but the new issue continues earlier work, create an epic, parent the new issue and any unparented
-  predecessor, and link a closed predecessor epic as `related`. Never leave open work under a closed epic; when
-  reopening a child, also reopen its closed epic. Epics group one objective across independently assignable or
-  verifiable tasks, not standalone-task ceremony; reparent rather than duplicate. Do not make issues for every command
-  or routine check.
-- Within an unchanged owning task, design, implementation, review, and verification are phases, not separate new
-  deliverables. Reuse its issue; entering a phase alone does not require a child issue or progress comment. New
-  substantive deliverables or changed scope still follow the normal tracking rules above.
-- `parent` means scope membership, not order; siblings need not be serial. Before blocking links, check the affected
-  blocking graph for cycles. Parent-cycle rejection or a ready queue is not proof of blocking-graph acyclicity.
+- If the request or current context provides concrete signs of an existing Kata owner (an issue reference, a known
+  continuation, or a link from the relevant branch/PR), reuse that owner or make a scoped lookup before treating the
+  work as untracked. A project binding alone does not require this search.
+- Without an identified owner, decide whether work needs resumption, coordination, dependency management, or follow-up
+  before further issue search or setup. Bounded, self-contained work needs no new issue. Size, step count, and duration
+  alone do not decide this; expected resumption or handoff does.
+- If a tracking need emerges, register it then. Before pausing or handing off, ensure known remaining commitments,
+  blockers, and partially applied changes that need management have an owning record. No per-turn checklist or report
+  is required; discarded possibilities and unaccepted suggestions are not follow-up commitments.
+- Continuing tracked work still requires keeping its owner current, even when the current action is small. A useful
+  summary may be added to an existing issue, including a closed one, without reopening it merely to record an event.
 
-## Write For A Cold Reader
+## Own And Organize Work
 
-- Write for a teammate or later agent reading `kata show` without this session. Use plain terms; define session-local
-  labels (requirement ids such as R1, audit rule codes, skill abbreviations) at first use, or avoid them.
-- Before closing, post a final comment with the outcome or disposition. Lead each progress comment with its result or
-  current blocker, then as applicable: changes; headline numbers, including regressions and null results; what
-  remains, was declined, or is deferred; residual risks; evidence location (commit, document section, receipt path).
-  Add detail only when it supports a decision or reopen condition.
-- Keep procedure traces (review-vector coverage, per-candidate audit dispositions, command logs) in task notes or
-  receipt files, not issue text.
+- For work needing an owning issue, reuse one already identified or search open and closed issues for the same
+  objective; create only if none fits, with an idempotency key. Keep work in its owning project even from another
+  repository. No practice, tutorial, or scratch issues unless requested. Check and claim shared-queue ownership before
+  execution; claims do not authorize scope changes.
+- An issue owns a coherent outcome and completion conditions. Design, implementation, review, and verification are
+  normally phases, not separate deliverables. When scope grows, split outcomes needing independent completion,
+  deferral, assignment, or prioritization rather than continually extending the body. Administrative decomposition
+  within authorized scope does not authorize additional work.
+- Use an epic when independently managed outcomes under one objective need coordination; reuse an applicable open
+  epic or create one if none fits. Continuation alone requires neither a new epic nor retrospective reparenting.
+  Reparent rather than duplicate; never leave open work under a closed epic, and reopen that epic when reopening its
+  child.
+- `parent` means scope membership, not execution order; siblings need not be serial. Before blocking links, check the
+  affected blocking graph for cycles. Parent-cycle rejection and ready queues do not establish blocking-graph safety.
+- Defer dated work with a future schedule, not merely a deadline. Park undated work with metadata `someday=true` and
+  unset it to resume. Duplicate, superseded, or declined dispositions do not mean the original implementation completed.
 
-## Execute And Recover
+## Keep Useful Records
 
-- Prefer `--agent`; use `--json` for scripted structured data. Get syntax from installed `kata --help` and command
-  `--help`, not memory. Check unfamiliar flags, evidence types, and output shapes against that version.
-- Pass titles/bodies literally: prefer documented file/stdin inputs for multiline text, otherwise literal-safe quoting
-  or argument arrays. Never put backticks or `$()` in expanding shell strings or assume literal `\n` becomes a newline.
-  Re-read meaningful body edits.
-- After mutation errors, inspect actual state and retry only missing steps: a mutation may succeed while its comment
-  fails. Reuse existing idempotency keys; check comments before reposting. Stop recovery when state cannot be
-  established or the sequence lacks an evidence-backed next step toward confirming state or completing missing tracking.
-  A different error alone is not progress. Report the error and pending tracking to the requester.
-  Tracking remains required. After relationship edits, re-read affected issues rather than trusting ready queues or
-  partial responses.
+- Keep the current objective, scope, completion conditions, and essential remaining work readable without the
+  conversation. Define session-local labels or avoid them; no fixed template is required. Update the body for accepted
+  scope or plan changes, rather than appending successive versions. Preserve genuine history and immutable evidence;
+  correct factual errors in editable records, including comments, and reconcile affected current summaries in place.
+- Record material events in status/comments, not phase transitions or routine checks alone. Lead with the result or
+  blocker. Include regressions, null results, declined/deferred work, residual risks, and evidence references when they
+  affect continuation, decisions, or reopening. Detail is justified by that use, not a word-count target.
+- Keep design, verification, documentation, and data evidence with its designated owner; link it rather than maintain
+  copies, repeating at most headline numbers. Do not require procedure logs merely for tracking. Where another
+  governing workflow requires detailed audit evidence, keep it in its owning notes/artifacts rather than issue prose.
+
+## Operate And Recover
+
+- Confirm the resolved workspace/project and daemon from current evidence before project-scoped reads or mutations;
+  reuse that evidence while valid and recheck changed context. For a missing CLI or setup, load and apply
+  [Initialization](references/initialization.md); reuse valid bindings. Read `kata quickstart` during initialization,
+  for features this skill does not cover, or when installed behavior contradicts it.
+- Prefer `--agent`; use `--json` for structured processing. Get syntax, unfamiliar flags, evidence types, and output
+  shapes from installed `kata --help` and command `--help`, not memory. Pass titles/bodies literally using documented
+  file/stdin inputs or literal-safe quoting/argument arrays; do not expand backticks or `$()` or assume literal `\n`
+  becomes a newline.
+- Use confirmed operation results without automatically repeating reads. Read back when the response lacks the
+  needed state, concurrent changes matter, or relationship invariants require it. For issue-body writes, confirm the
+  stored body from the response; if it is omitted, read back that body. Verify affected relationships from sufficient
+  state, not ready queues or partial responses.
+- After errors, inspect actual state and retry only missing steps. A mutation can succeed while its appended comment
+  fails, including `close --comment`: check closure and comments, then repair only what is missing. Reuse idempotency
+  keys and check comments before reposting. Stop if state cannot be established or no evidence-backed recovery step
+  remains; a different error alone is not progress. Report the error and required tracking still pending.
 - Diagnose from observed state; do not invent sleeps, serialize unrelated work, or weaken daemon checks to hide errors.
   `kata delete` and `kata purge` require explicit action-and-target approval.
 
 ## Verify And Close
 
-- Check current completion criteria, distinguishing scoped implementation, verification, publication, and tracker state.
-  Report verified external results promptly to the requester despite bookkeeping failures; claim tracker/workflow
-  completion only after required tracking is confirmed.
-  Close a parent only after every child is closed or moved out of its scope, required children are verified, and the
-  parent's own criteria are met.
-- Close verified work with a substantive reason and task-appropriate evidence in installed-help-supported forms.
-  A commit, passing test, evidence flag, or accepted close command alone does not prove completion. Re-read the intended
-  issue's state after closing.
-- Required work remains: keep open, label `needs-review`, and state what remains. Never close to clear a queue or end a
-  session. Reopen for unmet original criteria. New deliverables and actionable follow-ups need separate issues unless
-  the action exception in Start And Plan applies.
-  Defer dated work with a future schedule (a deadline does not defer it); park undated work by setting metadata
-  `someday` to true, and unset it to resume. Duplicate, superseded, or declined dispositions do not mean the original
-  implementation completed.
+- Verify current completion conditions, distinguishing implementation, verification, publication, and tracker state.
+  Verify the actual delivered result; earlier verification does not cover changed decision-relevant substance or
+  scope, including changes introduced during presentation edits. A commit, passing test, evidence flag, or successful
+  close command alone does not prove the work complete. Never close merely to clear a queue or end a session.
+- Close a parent only after every child is closed or moved out of its scope, required children are verified, and the
+  parent's own conditions are met. If required work remains, do not close; label `needs-review` and state the
+  gap. Reopen for unmet original criteria; organize new outcomes under Own And Organize Work.
+- Keep the outcome/disposition and useful evidence references visible in an issue comment; reuse an existing current
+  summary instead of repeating it. Use `--message` for a brief substantive closure reason identifying scope and
+  verification, with task-appropriate evidence in installed-help-supported forms. When adding an outcome comment,
+  combine it with closure using `--comment` where supported.
+- Report verified external results promptly despite bookkeeping failures. Claim tracker/workflow completion only when
+  required tracking is confirmed. Reconcile missing bookkeeping on the owning record; create no issue solely for it.

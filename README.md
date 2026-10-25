@@ -12,9 +12,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
   GFM heading corruption, macro compatibility, and rendered-structure parity.
 - [`https-throttle`](https-throttle/) — Limit aggregate receive bandwidth for proxy-aware HTTPS commands with a
   rootless authenticated localhost proxy.
-- [`kata-task-management`](kata-task-management/) — Plan and track real work with Kata, maintain useful epic/task
-  hierarchy, write issue updates readable without the originating session, initialize without unrelated repository
-  changes, and close issues with verified evidence.
+- [`kata-task-management`](kata-task-management/) — Track work that needs continued management with Kata; organize
+  independent outcomes, keep useful context, and handle issue completion and recovery.
 - [`pi-subagent-review-process`](pi-subagent-review-process/) — Run gated Pi subagent code-review fanout with
   parent-captured diffs or files, structured receipts, scope-separated findings, and quiescence-checked closure.
 - [`public-repo-docs`](public-repo-docs/) — Draft or audit public package and repository documentation for reader value,
