@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-security-scan/scan-state.schema.json",
+  "title": "Local security scan convergence state",
+  "type": "object",
+  "required": ["gaps", "history"],
+  "additionalProperties": false,
+  "properties": {
+    "status": {"enum": ["completed", "failed", "canceled", "interrupted"]},
+    "time_allowance_minutes": {"type": "number", "minimum": 0},
+    "next_lens": {"$ref": "#/$defs/lens"},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}},
+    "history": {"type": "array", "items": {"$ref": "#/$defs/pass"}}
+  },
+  "$defs": {
+    "lens": {"enum": ["forward", "backward", "authorization", "inverted-assumption",
+                      "data-representation", "lifecycle"]},
+    "gap": {
+      "type": "object",
+      "required": ["id", "kind", "what", "closes_when", "owner_pass"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^(q-[0-9]{3,}|surface:.+|recheck:.+)$"},
+        "kind": {"enum": ["question", "deferred", "surface", "rejection-recheck"]},
+        "what": {"type": "string", "minLength": 1},
+        "closes_when": {"type": "string", "minLength": 1},
+        "owner_pass": {"type": "integer", "minimum": 1}
+      }
+    },
+    "pass": {
+      "type": "object",
+      "required": ["pass", "lens", "new_findings", "new_rejections", "new_questions", "consumed_gaps", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "pass": {"type": "integer", "minimum": 1},
+        "lens": {"$ref": "#/$defs/lens"},
+        "new_findings": {"type": "integer", "minimum": 0},
+        "new_rejections": {"type": "integer", "minimum": 0},
+        "new_questions": {"type": "integer", "minimum": 0},
+        "consumed_gaps": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "note": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

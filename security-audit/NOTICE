@@ -1,0 +1,29 @@
+Security Audit
+
+This directory, including its documentation, scripts, schemas, tests, and
+examples, is distributed under the Apache License, Version 2.0. See LICENSE
+for the complete terms.
+
+This distribution adapts audit guidance and reference material from:
+
+  OpenAI Codex Security
+  https://github.com/openai/codex-security
+  Revision: 58433cd3683f48c2bfbfe4f5403e01145e560f32
+  Source subtree: plugins/codex-security
+  Copyright 2025 OpenAI
+
+The adapted reference sources at that revision include:
+
+  references/attack-path-facts.md:
+    plugins/codex-security/skills/attack-path-analysis/references/attack-path-facts.md
+  references/finding-details.md:
+    plugins/codex-security/references/finding-detail-fields.md
+  references/severity-policy.md:
+    plugins/codex-security/skills/attack-path-analysis/references/severity-policy.md
+
+Local modifications include a file-based audit workflow, local inventory
+and completion gates, evidence schemas and receipts, lens-based convergence,
+an optional OSV lookup helper, and regression tests. The guidance and
+reference documents have been modified for this local workflow.
+
+This adaptation is not an official OpenAI release.

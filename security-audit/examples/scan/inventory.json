@@ -1,0 +1,13 @@
+{
+ "root": "target",
+ "mode": "repository",
+ "scope": [],
+ "exclude": [],
+ "source": "filesystem",
+ "files": [
+  "README.md",
+  "app.py"
+ ],
+ "deleted": [],
+ "snapshot_digest": "sha256:20df7134eb69d22bffd8433196ef4da4ca2d6968f6c918342777bf41b011a119"
+}

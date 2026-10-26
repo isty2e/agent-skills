@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-security-scan/coverage.schema.json",
+  "title": "Local security scan coverage receipts",
+  "type": "object",
+  "required": ["snapshot_digest", "reviewed_files", "supporting_files", "unresolvable"],
+  "additionalProperties": false,
+  "properties": {
+    "snapshot_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "reviewed_files": {"type": "array", "items": {"$ref": "#/$defs/fileReceipt"}},
+    "supporting_files": {"type": "array", "items": {"$ref": "#/$defs/supportingFile"}},
+    "unresolvable": {"type": "array", "items": {"$ref": "#/$defs/unresolvable"}}
+  },
+  "$defs": {
+    "checklistItem": {"enum": ["injection", "authz", "egress", "path", "parsing", "render", "upload",
+                               "secrets", "dos", "model-io", "integrity", "config"]},
+    "fileReceipt": {
+      "type": "object",
+      "required": ["path", "disposition", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "disposition": {"enum": ["reviewed", "excluded", "deferred"]},
+        "read_full": {"type": "boolean"},
+        "items": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/checklistItem"}},
+        "reason": {"enum": ["generated", "vendored", "binary", "test-only", "documentation", "static-asset"]},
+        "note": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"disposition": {"const": "reviewed"}}},
+         "then": {"required": ["read_full", "items"],
+                  "properties": {"read_full": {"const": true}, "items": {"minItems": 1}}}},
+        {"if": {"properties": {"disposition": {"const": "excluded"}}},
+         "then": {"required": ["reason"]}}
+      ]
+    },
+    "supportingFile": {
+      "type": "object",
+      "required": ["path", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "note": {"type": "string", "minLength": 1}
+      }
+    },
+    "unresolvable": {
+      "type": "object",
+      "required": ["question", "status", "proof", "would_close"],
+      "additionalProperties": false,
+      "properties": {
+        "question": {"type": "string", "minLength": 1},
+        "status": {"enum": ["blocked-by-environment", "out-of-scope", "owner-decision"]},
+        "proof": {"type": "string", "minLength": 10},
+        "would_close": {"type": "string", "minLength": 10},
+        "candidate": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
