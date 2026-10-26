@@ -30,7 +30,9 @@ Use `property:set` only for an explicitly requested review transition; capture c
 
 ## Linux Headless
 
-Install Node.js 22+ and `obsidian-headless`, then create a separate replica:
+Use a currently supported Node.js LTS release with its latest security patches; `obsidian-headless` requires Node.js
+22 or later, but that minimum alone does not establish security support. Install the client and create a separate
+replica:
 
 ```bash
 npm install -g obsidian-headless
@@ -48,6 +50,11 @@ export DK_VAULT_PATH="$HOME/vaults/knowledge"
 ```
 
 `ob` transports changes; the agent owns file operations.
+
+For a supervised client, update the runtime selected by the service, including any service-local version pin.
+Prepare the client under the updated runtime and rebuild native dependencies if required, then restart the existing
+sync engine. Confirm the running executable/version and successful synchronization. A shell version check or global
+Node update alone does not establish that an already-running service uses the patched runtime.
 
 ## Safety
 
@@ -74,5 +81,6 @@ On desktop, confirm control state/policy/templates, candidate queue transitions,
 unresolved canonical conflicts, and artifact presence plus validation on every required replica. Use Git or another
 backup when rollback and diff review matter.
 
-Upstream: [CLI](https://obsidian.md/cli), [Headless](https://github.com/obsidianmd/obsidian-headless), and
+Upstream: [Node.js releases](https://nodejs.org/en/about/previous-releases),
+[CLI](https://obsidian.md/cli), [Headless](https://github.com/obsidianmd/obsidian-headless), and
 [Sync settings](https://obsidian.md/help/sync/settings).
