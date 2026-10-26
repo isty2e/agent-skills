@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Literal
 from unittest.mock import patch
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
@@ -240,7 +241,7 @@ class ScanGateTests(_ScanFixture):
 
 @unittest.skipUnless(shutil.which("git"), "requires the git CLI")
 class GitInventoryTests(_ScanFixture):
-    def _git(self, *arguments: str) -> str:
+    def _git(self, *arguments: str, accept: tuple[int, ...] = (0,)) -> str:
         environment = {
             key: value
             for key, value in os.environ.items()
@@ -268,7 +269,7 @@ class GitInventoryTests(_ScanFixture):
             check=False,
             env=environment,
         )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(result.returncode, accept, result.stdout + result.stderr)
         return result.stdout.strip()
 
     def _committed_change(self, *, delete: bool = False) -> tuple[str, str]:
@@ -284,6 +285,189 @@ class GitInventoryTests(_ScanFixture):
         self._git("add", ".")
         self._git("commit", "-qm", "test: change")
         return base, self._git("rev-parse", "HEAD")
+
+    def _create_child_repository(self, directory: Path) -> None:
+        directory.mkdir()
+        self._git("-C", str(directory), "init", "-q")
+        (directory / "child.py").write_text("child = True\n")
+        self._git("-C", str(directory), "add", ".")
+        self._git("-C", str(directory), "commit", "-qm", "test: child source")
+
+    def _add_submodule(self) -> Path:
+        source = self.root / "module-source"
+        self._create_child_repository(source)
+        self._git("-c", "protocol.file.allow=always", "submodule", "add", str(source), "module")
+        self._git("commit", "-qm", "test: registered submodule")
+        return self.target / "module"
+
+    def _assert_submodule_filter_confined(self, kind: Literal["clean", "process"]) -> None:
+        base, _ = self._committed_change()
+        module = self._add_submodule()
+        (module / ".gitattributes").write_text("*.py filter=child-only\n")
+        self._git("-C", str(module), "add", ".")
+        self._git("-C", str(module), "commit", "-qm", "test: child attributes")
+        self._git("add", "module")
+        self._git("commit", "-qm", "test: record child attributes")
+        head = self._git("rev-parse", "HEAD")
+        self._git("config", "diff.submodule", "diff")
+        self._git("config", "submodule.module.ignore", "none")
+
+        marker = self.root / "child-filter-ran"
+        command = f"printf touched > {shlex.quote(str(marker))}"
+        if kind == "clean":
+            command = "cat; " + command
+        self._git("-C", str(module), "config", f"filter.child-only.{kind}", command)
+        self._git("-C", str(module), "config", "filter.child-only.required", "true")
+        source = module / "child.py"
+        metadata = source.stat()
+        source.write_text("child = None\n")
+        os.utime(source, ns=(metadata.st_atime_ns, metadata.st_mtime_ns + 2_000_000_000))
+        self._git("-C", str(module), "diff", "--exit-code", "--no-ext-diff", "--no-textconv", "HEAD",
+                  "--", "child.py", accept=(1, 128))
+        self.assertTrue(marker.exists(), "the child filter canary must be active")
+        marker.unlink()
+
+        child_git = Path(self._git("-C", str(module), "rev-parse", "--absolute-git-dir"))
+        index = child_git / "index"
+        before = index.read_bytes()
+        original = (self.target / "app.py").read_bytes()
+        for arguments in ((), ("--working-tree",), ("--diff", base, head)):
+            with self.subTest(mode=arguments):
+                marker.unlink(missing_ok=True)
+                if arguments == ("--working-tree",):
+                    (self.target / "app.py").write_text("parent_dirty = True\n")
+                else:
+                    (self.target / "app.py").write_bytes(original)
+                self._inventory(*arguments, "--exclude", "module")
+                self.assertFalse(marker.exists(), "parent inventory must not execute child filters")
+                self.assertEqual(index.read_bytes(), before)
+
+        marker.unlink(missing_ok=True)
+        self._gate("inventory", str(module), str(self.root / "child-scan"), "--working-tree")
+        self.assertFalse(marker.exists(), "a separate child scan must neutralize its own filters")
+
+    def test_deleted_working_tree_paths_remain_valid_explicit_scopes(self) -> None:
+        self._committed_change()
+        directory = self.target / "removed[1]"
+        directory.mkdir()
+        (directory / "old.py").write_text("old = True\n")
+        self._git("add", ".")
+        self._git("commit", "-qm", "test: removable directory")
+        head = self._git("rev-parse", "HEAD")
+        for staged in (False, True):
+            for scope in ("app.py", "removed[1]"):
+                with self.subTest(staged=staged, scope=scope):
+                    self._git("reset", "--hard", head)
+                    if staged:
+                        self._git("rm", "-r", "--", scope)
+                    elif scope == "app.py":
+                        (self.target / scope).unlink()
+                    else:
+                        shutil.rmtree(self.target / scope)
+                    self._inventory("--working-tree", "--scope", scope)
+                    inventory = json.loads((self.scan / "inventory.json").read_text())
+                    deleted = "app.py" if scope == "app.py" else "removed[1]/old.py"
+                    self.assertEqual(inventory["files"], [deleted])
+                    self.assertEqual(inventory["deleted"], [deleted])
+
+    def test_unknown_missing_working_tree_scopes_are_rejected(self) -> None:
+        self._committed_change()
+        for arguments in ((), ("--working-tree",)):
+            with self.subTest(mode=arguments):
+                self._inventory(*arguments, "--scope", "never-existed.py", code=2)
+
+    def test_nested_repository_boundaries_require_separate_inventory(self) -> None:
+        self._committed_change()
+        nested = self.target / "nested"
+        self._create_child_repository(nested)
+        for arguments in ((), ("--working-tree",)):
+            for scope in ((), ("--scope", "nested"), ("--scope", "nested/child.py")):
+                with self.subTest(mode=arguments, scope=scope):
+                    self._inventory(*arguments, *scope, code=2)
+            self._inventory(*arguments, "--scope", "app.py")
+            self._inventory(*arguments, "--exclude", "nested")
+        self._gate("inventory", str(nested), str(self.root / "nested-scan"))
+        inventory = json.loads((self.root / "nested-scan" / "inventory.json").read_text())
+        self.assertEqual(inventory["files"], ["child.py"])
+
+    def test_new_nested_repository_invalidates_existing_inventory(self) -> None:
+        self._committed_change()
+        self._inventory()
+        self._attest()
+        self._gate("check", str(self.scan))
+        before = (self.scan / "inventory.json").read_bytes()
+        self._create_child_repository(self.target / "nested")
+        self._inventory(code=2)
+        self.assertEqual((self.scan / "inventory.json").read_bytes(), before)
+        self._gate("check", str(self.scan), code=1)
+
+    @unittest.skipUnless(os.name == "posix", "requires POSIX directory permissions")
+    def test_unreadable_untracked_source_never_becomes_coverage(self) -> None:
+        self._committed_change()
+        self._inventory()
+        self._attest()
+        self._gate("check", str(self.scan))
+        before = (self.scan / "inventory.json").read_bytes()
+        denied = self.target / "denied"
+        denied.mkdir()
+        (denied / "hidden.py").write_text("hidden = True\n")
+        denied.chmod(0)
+        try:
+            if os.access(denied, os.R_OK | os.X_OK):
+                self.skipTest("environment bypasses directory permissions")
+            self._inventory(code=2)
+            self.assertEqual((self.scan / "inventory.json").read_bytes(), before)
+            self._gate("check", str(self.scan), code=1)
+        finally:
+            denied.chmod(0o700)
+
+    def test_uninitialized_gitlink_source_is_not_silently_omitted(self) -> None:
+        self._committed_change()
+        module = self._add_submodule()
+        (module / ".git").unlink()
+        for scope in ((), ("--scope", "module"), ("--scope", "module/child.py")):
+            with self.subTest(scope=scope):
+                self._inventory(*scope, code=2)
+        self._gate("inventory", str(module), str(self.root / "module-scan"), code=2)
+        self._inventory("--exclude", "module")
+
+    def test_parent_inventory_never_executes_submodule_clean_filters(self) -> None:
+        self._assert_submodule_filter_confined("clean")
+
+    def test_parent_inventory_never_executes_submodule_process_filters(self) -> None:
+        self._assert_submodule_filter_confined("process")
+
+    def test_submodule_head_drift_prevents_committed_diff(self) -> None:
+        base, _ = self._committed_change()
+        module = self._add_submodule()
+        head = self._git("rev-parse", "HEAD")
+        (module / "child.py").write_text("child_changed = True\n")
+        self._git("-C", str(module), "add", ".")
+        self._git("-C", str(module), "commit", "-qm", "test: child HEAD drift")
+        self._inventory("--diff", base, head, "--exclude", "module", code=2)
+
+    def test_deleted_gitlink_remains_in_parent_working_tree_scope(self) -> None:
+        self._committed_change()
+        self._add_submodule()
+        self._git("rm", "-f", "module")
+        self._inventory("--working-tree", "--scope", "module")
+        inventory = json.loads((self.scan / "inventory.json").read_text())
+        self.assertEqual(inventory["files"], ["module"])
+        self.assertEqual(inventory["deleted"], ["module"])
+
+    @unittest.skipUnless(hasattr(os, "symlink"), "requires symlinks")
+    def test_scoped_symlink_to_nested_repository_is_not_followed(self) -> None:
+        self._committed_change()
+        self._create_child_repository(self.target / "nested")
+        (self.target / "link").symlink_to("nested", target_is_directory=True)
+        self._inventory("--scope", "link")
+        inventory = json.loads((self.scan / "inventory.json").read_text())
+        self.assertEqual(inventory["files"], ["link"])
+        before = inventory["snapshot_digest"]
+        (self.target / "nested" / "child.py").write_text("out_of_scope_change = True\n")
+        self._inventory("--scope", "link")
+        after = json.loads((self.scan / "inventory.json").read_text())
+        self.assertEqual(after["snapshot_digest"], before)
 
     def test_committed_diff_and_deleted_file_can_be_reviewed(self) -> None:
         base, head = self._committed_change(delete=True)

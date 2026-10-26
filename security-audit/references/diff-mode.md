@@ -15,6 +15,10 @@ In working-tree mode, a path removed from the index but still present on disk
 is current source: its bytes or symlink text enter the snapshot. Only actual
 filesystem absence counts as a working-tree deletion. Committed-diff
 deletions remain facts about the recorded revisions.
+An explicitly scoped deleted file or directory is valid when present in the
+recorded working-tree base or current index; an unknown missing scope is refused.
+Git repository-boundary limitations are defined in `references/scope.md`;
+parent revision checks do not certify child worktree contents.
 
 For a change under review (working tree, commit range, patch file). The changed
 code is the primary surface; supporting code only as far as the change reaches.

@@ -13,12 +13,21 @@ upstream attribution.
   substitute `rg --files`: it skips hidden files.
 - Git scope arguments are literal filesystem paths in every mode, including
   filenames containing brackets; they are not Git glob or magic expressions.
+- Git directory entries, including submodules and opaque nested repositories,
+  are unsupported as file coverage in a parent inventory. In-scope boundaries
+  fail closed, including scopes or targets below them. Inventory a complete
+  child checkout separately, copy its source outside the parent repository,
+  or explicitly exclude the boundary and record that scope limitation.
+- Git file/tree enumeration diagnostics fail the inventory even if Git exits
+  successfully; unreadable source must not silently become empty coverage.
 - Git runs offline: all transport protocols are denied, including external
   remote helpers, with lazy fetching also disabled where supported. Missing
   required objects cause the affected operation to fail; use an already
   complete checkout.
   Git also runs without filesystem-monitor hooks, executable content filters,
-  external diff drivers or textconv. A checkout relying on those filters may
+  external diff drivers, textconv or submodule dirty-worktree probing. Parent
+  gitlink references remain checked; child worktrees need their own inventories.
+  A checkout relying on those filters may
   no longer compare cleanly to a commit; do not re-enable them to pass the
   gate. If revision equivalence cannot be established without executing them,
   committed-diff review is unsupported for that checkout. Review the actual

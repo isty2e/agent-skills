@@ -447,7 +447,10 @@ def _git(root: Path, *args: str, accept: tuple[int, ...] = (0,)) -> tuple[int, l
     # The target is untrusted and read-only: never run its fsmonitor hook or refresh its index.
     # Caller GIT_* variables (GIT_DIR, GIT_WORK_TREE, ...) would point git at another repository.
     overrides: list[str] = []
+    safe_args = args
     if args and args[0] == "diff":
+        # Child dirty-state probes can run filters that are absent from the parent's configuration.
+        safe_args = ("diff", "--ignore-submodules=dirty", "--submodule=short", *args[1:])
         # Diff can invoke clean/process filters even with external diff and textconv disabled.
         _, keys = _git(root, "config", "--null", "--name-only", "--get-regexp",
                        r"^filter\..*\.(clean|smudge|process|required)$", accept=(0, 1))
@@ -456,9 +459,9 @@ def _git(root: Path, *args: str, accept: tuple[int, ...] = (0,)) -> tuple[int, l
             overrides.extend(("-c", f"{key}={value}"))
 
     # check-ignore takes plain paths and rejects pathspec magic, including the literal flag.
-    literal = ["--literal-pathspecs"] if args and args[0] in {"diff", "ls-files"} else []
+    literal = ["--literal-pathspecs"] if args and args[0] in {"diff", "ls-files", "ls-tree"} else []
     command = ["git", *literal, "--no-pager", "-c", "core.fsmonitor=false",
-               *overrides, "-C", str(root), *args]
+               *overrides, "-C", str(root), *safe_args]
     env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
     # Older Git ignores GIT_NO_LAZY_FETCH; deny all protocols to block its transports and helpers too.
     env.update(GIT_OPTIONAL_LOCKS="0", GIT_NO_LAZY_FETCH="1", GIT_ALLOW_PROTOCOL="")
@@ -467,9 +470,11 @@ def _git(root: Path, *args: str, accept: tuple[int, ...] = (0,)) -> tuple[int, l
         completed = subprocess.run(command, capture_output=True, check=False, env=env)
     except FileNotFoundError as error:
         raise GateError("git is not installed but the target is inside a git work tree") from error
+    detail = completed.stderr.decode("utf-8", "replace").strip()
     if completed.returncode not in accept:
-        detail = completed.stderr.decode("utf-8", "replace").strip()
         raise GateError(f"git {' '.join(args)} in {root} failed: {detail}")
+    if args and args[0] in {"ls-files", "ls-tree"} and detail:
+        raise GateError(f"Git enumeration cannot establish complete coverage in {root}: {detail}")
     entries = completed.stdout.decode("utf-8", "surrogateescape").split("\0")
     return completed.returncode, [entry for entry in entries if entry]
 
@@ -513,10 +518,20 @@ def _is_excluded(path: str, exclude: tuple[str, ...]) -> bool:
     return any(path == prefix or path.startswith(prefix + "/") for prefix in exclude)
 
 
+def _source_metadata(path: Path) -> os.stat_result | None:
+    try:
+        return path.lstat()
+    except (FileNotFoundError, NotADirectoryError):
+        return None
+    except OSError as error:
+        raise GateError(f"cannot inspect {path}: {error}") from error
+
+
 def _inventory_path(root: Path, relative: str) -> Path:
     normalized = _relative_path(relative, "inventory path")
-    for parent in PurePosixPath(normalized).parents:
-        if (root / parent).is_symlink():
+    for parent in reversed(PurePosixPath(normalized).parents):
+        metadata = _source_metadata(root / parent)
+        if metadata is not None and stat.S_ISLNK(metadata.st_mode):
             raise GateError(f"cannot snapshot {relative}: a parent is a symlink; scope the link itself")
     return root / normalized
 
@@ -525,9 +540,14 @@ def _source_identity(root: Path, relative: str) -> tuple[str, str, int]:
     path = _inventory_path(root, relative)
 
     try:
-        metadata = path.lstat()
+        metadata = _source_metadata(path)
+        if metadata is None:
+            raise GateError(f"cannot snapshot {relative}: source is absent")
         if stat.S_ISLNK(metadata.st_mode):
             return "symlink", os.readlink(path), 0
+        if stat.S_ISDIR(metadata.st_mode):
+            raise GateError(f"cannot snapshot directory entry {relative}: use an independent "
+                            "checkout/source copy or explicitly exclude it")
         if not stat.S_ISREG(metadata.st_mode):
             raise GateError(f"cannot snapshot {relative}: only regular files and symlinks are supported")
 
@@ -565,6 +585,37 @@ def _require_checked_index(root: Path, scope: tuple[str, ...] = ()) -> None:
                         "repository mode without either diff option")
 
 
+def _require_git_file_scope(root: Path, scope: tuple[str, ...], exclude: tuple[str, ...]) -> None:
+    active = tuple(path for path in scope if not _is_excluded(path, exclude))
+    if scope and not active:
+        return
+
+    git_root = Path(_git_files(root, "rev-parse", "--show-toplevel")[0].removesuffix("\n")).resolve()
+    # A gitlink may own an ancestor of the target; untracked entries are target-relative.
+    staged = _git_files(git_root, "ls-files", "--stage", "-z", "--cached", "--", ".")
+    opaque = {git_root / _relative_path(entry.partition("\t")[2], "Git repository boundary")
+              for entry in staged
+              if entry.startswith(("160000 ", "040000 "))}
+    untracked = _git_files(root, "ls-files", "-z", "--others", "--exclude-standard", "--", ".")
+    opaque.update(root / _relative_path(path.removesuffix("/"), "Git directory entry")
+                  for path in untracked if path.endswith("/"))
+
+    blocked: list[str] = []
+    for boundary in opaque:
+        if root.is_relative_to(boundary):
+            blocked.append(".")
+        elif boundary.is_relative_to(root):
+            relative = boundary.relative_to(root).as_posix()
+            overlaps = not active or any(relative == item or relative.startswith(item + "/")
+                                         or item.startswith(relative + "/") for item in active)
+            if overlaps and not _is_excluded(relative, exclude):
+                blocked.append(relative)
+    if blocked:
+        raise GateError(f"opaque Git directory entries are not file coverage: {_examples(sorted(set(blocked)))}; "
+                        "use a child checkout with its own Git metadata, a source copy outside "
+                        "the parent repository, or explicitly exclude the boundary")
+
+
 def _check_diff_checkout(spec: InventorySpec) -> None:
     head = _git_files(spec.root, "rev-parse", "--verify", "HEAD")[0].strip()
     if head != spec.head:
@@ -585,24 +636,26 @@ def derive_inventory(spec: InventorySpec) -> InventoryListing:
         raise GateError(f"target {spec.root} is not a directory")
     for path in spec.scope:
         _inventory_path(spec.root, path)
-    if spec.mode != "diff":
-        missing = [path for path in spec.scope if not os.path.lexists(spec.root / path)]
-        if missing:
-            raise GateError(f"--scope paths do not exist under {spec.root}: {_examples(missing)}")
+    missing = [path for path in spec.scope if _source_metadata(_inventory_path(spec.root, path)) is None]
+    if spec.mode == "repository" and missing:
+        raise GateError(f"--scope paths do not exist under {spec.root}: {_examples(missing)}")
     pathspec = ["--", *(spec.scope or (".",))]
     deleted: list[str] = []
     revision = None
 
-    if not _is_git_work_tree(spec.root):
+    git_work_tree = _is_git_work_tree(spec.root)
+    if git_work_tree:
+        _require_git_file_scope(spec.root, spec.scope, spec.exclude)
+
+    if not git_work_tree:
         if spec.mode != "repository":
             raise GateError(f"{spec.mode} mode needs a git work tree; {spec.root} is not one")
         source, files = "filesystem", _walk_files(spec.root, spec.scope)
     elif spec.mode == "repository":
         source = "git"
         listed = _git_files(spec.root, "ls-files", "-z", "--cached", "--others", "--exclude-standard", *pathspec)
-        # Drop worktree-deleted entries and submodule directories; keep symlinks as entries.
-        files = [path for path in listed if os.path.lexists(spec.root / path)
-                 and not ((spec.root / path).is_dir() and not (spec.root / path).is_symlink())]
+        files = [path for path in listed if not _is_excluded(path, spec.exclude)
+                 and _source_metadata(_inventory_path(spec.root, path)) is not None]
     else:
         source = "git"
         if spec.mode == "diff":
@@ -610,6 +663,11 @@ def derive_inventory(spec: InventorySpec) -> InventoryListing:
         else:
             _require_checked_index(spec.root, spec.scope)
             revision = _git_files(spec.root, "rev-parse", "--verify", "HEAD")[0].strip()
+            unknown = [path for path in missing
+                       if not _git_files(spec.root, "ls-tree", "-r", "--name-only", "-z", revision, "--", path)
+                       and not _git_files(spec.root, "ls-files", "-z", "--cached", "--", path)]
+            if unknown:
+                raise GateError(f"--scope paths do not exist in the worktree, index or HEAD: {_examples(unknown)}")
         diff = ["diff", "--name-only", "-z", "--no-renames", "--relative", "--no-ext-diff", "--no-textconv"]
         revisions = [f"{spec.base}...{spec.head}"] if spec.mode == "diff" else [revision or "HEAD"]
         files = _git_files(spec.root, *diff, *revisions, *pathspec)
@@ -620,7 +678,7 @@ def derive_inventory(spec: InventorySpec) -> InventoryListing:
     kept = sorted({path for path in files if not _is_excluded(path, spec.exclude)})
     removed = set(deleted) & set(kept)
     if spec.mode == "working-tree":
-        removed = {path for path in removed if not os.path.lexists(_inventory_path(spec.root, path))}
+        removed = {path for path in removed if _source_metadata(_inventory_path(spec.root, path)) is None}
     return InventoryListing(source=source, files=kept, deleted=sorted(removed),
                             snapshot_digest=_snapshot_digest(spec, kept, removed, revision))
 
