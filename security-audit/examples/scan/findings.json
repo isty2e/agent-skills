@@ -1,0 +1,126 @@
+{
+ "target": "examples/scan/target",
+ "passes": 3,
+ "findings": [
+  {
+   "id": "pillow-decode-bmp-amplification",
+   "title": "Pillow BMP RLE delta escape amplifies ~1 KB uploads into ~1 GB RSS as the service account",
+   "cwe": "CWE-400",
+   "severity": "low",
+   "severity_rationale": "Impact medium (availability of a shared service; bounds-safe decode, no code execution) x likelihood medium (unauthenticated local-network caller) gives low under the matrix. Counterexample: proof of internet exposure raises likelihood to high and the severity to medium.",
+   "confidence": "high",
+   "attacker": "Local-network caller, no credentials (handle_upload has no auth). Lacks: any account, firewall bypass.",
+   "entry": "app.py:10 (handle_upload raw bytes)",
+   "sink": "PIL BMP RLE decoder, pinned pillow==12.3.0 (CVE-2026-96638)",
+   "dataflow": "upload bytes -> size check -> Image.open().convert() -> PNG re-encode",
+   "control": "100 MiB size cap (a size gate, not a content gate)",
+   "impact": "Per-request ~800,000x memory amplification as the service UID; concurrent uploads exhaust host RAM",
+   "prerequisites": "Crafted BI_RLE8 file (~1 KB); Pillow 12.3.0 as pinned",
+   "counterevidence": "No image-type or dimension gate precedes decode; the size cap does not bound decode memory.",
+   "codeEvidence": [
+    {
+     "id": "upload-bytes",
+     "label": "Raw upload bytes enter the handler",
+     "path": "app.py",
+     "startLine": 10,
+     "language": "python",
+     "role": "user_input",
+     "code": "def handle_upload(body: bytes) -> bytes:",
+     "explanation": "Attacker-chosen bytes arrive as body; nothing upstream inspects their format."
+    },
+    {
+     "id": "size-cap",
+     "label": "Only a size cap guards decode",
+     "path": "app.py",
+     "startLine": 11,
+     "endLine": 12,
+     "language": "python",
+     "role": "root_control",
+     "code": "if len(body) > UPLOAD_LIMIT:\n    raise ValueError(\"upload too large\")",
+     "explanation": "The cap bounds input bytes, not decoded pixels, so a 1 KB RLE stream passes it."
+    },
+    {
+     "id": "pillow-decode",
+     "label": "Pillow fully decodes attacker bytes",
+     "path": "app.py",
+     "startLine": 14,
+     "language": "python",
+     "role": "sink",
+     "code": "Image.open(io.BytesIO(body)).convert(\"RGB\").save(buffer, \"PNG\")",
+     "explanation": "convert() forces a full decode of the crafted BMP, where the delta-escape bug amplifies memory."
+    }
+   ],
+   "rootCause": {
+    "summary": "Upload bytes pass a size-only check and reach a full Pillow decode in the service process, where the pinned decoder's RLE delta escape turns a kilobyte into hundreds of megabytes.",
+    "evidenceRefs": [
+     "upload-bytes",
+     "size-cap",
+     "pillow-decode"
+    ]
+   },
+   "validation": {
+    "method": "local PoC in the pinned interpreter (scratch dir, 4 GB address cap, 60 s timeout)",
+    "summary": "Crafted 1084-byte BI_RLE8 BMP per the advisory peaked at 878 MB RSS through the exact office.picture decode pattern.",
+    "evidenceRefs": [
+     "pillow-decode"
+    ],
+    "assertions": [
+     "Pinned Pillow 12.3.0 contains the RLE delta-escape amplification.",
+     "handle_upload decodes attacker bytes with the same call pattern as the PoC."
+    ],
+    "limitations": [
+     "Peak measured on one host; other allocators may differ."
+    ]
+   },
+   "attackPath": {
+    "summary": "LAN caller posts a ~1 KB crafted BMP; the decode balloons service memory.",
+    "dataflow": {
+     "source": "crafted BMP bytes in upload",
+     "sink": "Pillow BMP RLE decoder",
+     "outcome": "hundreds of MB RSS per request",
+     "evidenceRefs": [
+      "upload-bytes",
+      "pillow-decode"
+     ]
+    },
+    "reachability": {
+     "attacker": "unauthenticated LAN caller",
+     "entrypoint": "handle_upload",
+     "outcome": "service memory exhaustion"
+    },
+    "impact": {
+     "level": "medium",
+     "why": "Availability loss of a shared service; no code execution (bounds-safe sinks)."
+    },
+    "likelihood": {
+     "level": "medium",
+     "why": "Public advisory with exact reproduction; unauthenticated local-network trigger."
+    },
+    "vector": "local_network",
+    "authScope": "public",
+    "crossBoundary": "Verified to service-account RAM exhaustion; no privilege or data boundary crossed.",
+    "blindspots": [
+     "Listener exposure beyond the local network (see coverage.unresolvable)."
+    ],
+    "policyDecision": "report"
+   },
+   "remediation": "Upgrade Pillow past the fixed release and bound decoded pixels (Image.MAX_IMAGE_PIXELS, worker memory limits).",
+   "remediationTests": [
+    "The 1084-byte PoC peaks under 50 MB RSS after the fix.",
+    "A 100 MB crafted BMP is rejected before full decode."
+   ],
+   "preventiveControls": [
+    "Pin Pillow with OSV monitoring on every engine rebuild.",
+    "Gate all image decodes on dimensions before pixels."
+   ],
+   "status": "validated"
+  }
+ ],
+ "non_findings": [
+  {
+   "id": "upload-size-cap-bypass",
+   "title": "Oversized upload bypasses the 100 MiB cap",
+   "reason": "Control verified: the size check runs on the full body before decode on the only path."
+  }
+ ]
+}

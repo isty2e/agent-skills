@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-security-scan/candidates.schema.json",
+  "title": "Local security scan candidate receipts",
+  "type": "array",
+  "items": {"$ref": "#/$defs/candidate"},
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "required": ["id", "title", "locations", "discovery", "validation", "attack_path"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)+$"},
+        "title": {"type": "string", "minLength": 1},
+        "locations": {"$ref": "#/$defs/locations"},
+        "discovery": {"$ref": "#/$defs/discovery"},
+        "validation": {"$ref": "#/$defs/validation"},
+        "attack_path": {"$ref": "#/$defs/attackPath"},
+        "history": {"type": "array", "items": {"$ref": "#/$defs/superseded"}}
+      }
+    },
+    "locations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entrypoint": {"type": "string", "minLength": 1},
+        "root_control": {"type": "string", "minLength": 1},
+        "sink": {"type": "string", "minLength": 1},
+        "concrete_implementation": {"type": "string", "minLength": 1}
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "required": ["method", "evidence", "survives"],
+      "properties": {
+        "method": {"type": "string", "minLength": 1},
+        "evidence": {"type": "string", "minLength": 1},
+        "survives": {"type": "boolean"}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["disposition", "method", "confidence", "confidence_rationale", "evidence",
+                   "counterevidence_or_proof_gap", "survives"],
+      "properties": {
+        "disposition": {"enum": ["reportable", "suppressed", "not_applicable", "deferred"]},
+        "method": {"enum": ["crash", "sanitizer", "debugger", "test", "interface", "static"]},
+        "confidence": {"enum": ["high", "medium", "low"]},
+        "confidence_rationale": {"type": "string", "minLength": 1},
+        "evidence": {"type": "string", "minLength": 1},
+        "counterevidence_or_proof_gap": {"type": "string", "minLength": 1},
+        "survives": {"enum": ["yes", "no", "uncertain"]}
+      }
+    },
+    "attackPath": {
+      "type": "object",
+      "required": ["decision", "severity_rationale", "change_conditions"],
+      "properties": {
+        "decision": {"enum": ["reportable", "ignore", "deferred"]},
+        "severity": {"enum": ["critical", "high", "medium", "low"]},
+        "severity_rationale": {"type": "string", "minLength": 1},
+        "change_conditions": {"type": "string", "minLength": 1},
+        "proof_gap": {"type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"decision": {"const": "reportable"}}},
+         "then": {"required": ["severity"]}}
+      ]
+    },
+    "superseded": {
+      "type": "object",
+      "required": ["pass", "phase", "receipt", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "pass": {"type": "integer", "minimum": 1},
+        "phase": {"enum": ["discovery", "validation", "attack_path"]},
+        "receipt": {"type": "object"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+ "status": "completed",
+ "gaps": [],
+ "history": [
+  {"pass": 1, "lens": "forward", "new_findings": 1, "new_rejections": 0, "new_questions": 1,
+   "consumed_gaps": [], "note": "baseline over app.py"},
+  {"pass": 2, "lens": "inverted-assumption", "new_findings": 0, "new_rejections": 1, "new_questions": 0,
+   "consumed_gaps": ["q-001"], "note": "assumed the size cap broken; it is the only gate and holds"},
+  {"pass": 3, "lens": "data-representation", "new_findings": 0, "new_rejections": 0, "new_questions": 0,
+   "consumed_gaps": [], "note": "image container variants (BMP, TIFF, ICO) reach the same decode"}
+ ]
+}

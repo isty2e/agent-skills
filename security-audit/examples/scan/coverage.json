@@ -1,0 +1,17 @@
+{
+ "snapshot_digest": "sha256:20df7134eb69d22bffd8433196ef4da4ca2d6968f6c918342777bf41b011a119",
+ "reviewed_files": [
+  {"path": "app.py", "disposition": "reviewed", "read_full": true,
+   "items": ["upload", "parsing", "dos"],
+   "note": "single upload handler; size cap at :11, Pillow decode at :14"},
+  {"path": "README.md", "disposition": "excluded", "reason": "documentation",
+   "note": "deployment notes only; exposure claim cross-checked against app.py, no secrets"}
+ ],
+ "supporting_files": [],
+ "unresolvable": [
+  {"question": "Which hosts can reach handle_upload on the local network",
+   "status": "out-of-scope",
+   "proof": "The target contains no listener, ingress, or firewall configuration; README.md states LAN exposure only.",
+   "would_close": "Deployment inventory of the service host's listeners and firewall rules."}
+ ]
+}

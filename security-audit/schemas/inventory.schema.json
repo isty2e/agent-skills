@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-security-scan/inventory.schema.json",
+  "title": "Local security scan file inventory",
+  "description": "Written only by `scan-gate.py inventory`; `scan-gate.py check` re-derives it from these parameters.",
+  "type": "object",
+  "required": ["root", "mode", "source", "scope", "exclude", "files", "deleted", "snapshot_digest"],
+  "additionalProperties": false,
+  "properties": {
+    "root": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["repository", "diff", "working-tree"]},
+    "source": {"enum": ["git", "filesystem"]},
+    "base": {"type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "head": {"type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "snapshot_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "scope": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "exclude": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "files": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "deleted": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "allOf": [
+    {"if": {"properties": {"mode": {"const": "diff"}}},
+     "then": {"required": ["base", "head"]}},
+    {"if": {"properties": {"mode": {"const": "repository"}}},
+     "then": {"properties": {"deleted": {"maxItems": 0}}}}
+  ]
+}

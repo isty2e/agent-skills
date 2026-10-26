@@ -20,6 +20,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
   public support, practical setup, and coherent organization without prescribing headings or file layouts.
 - [`research-steering`](research-steering/) — Guide autonomous research decisions, evaluation validity, and reporting.
   Effectiveness has not been evaluated.
+- [`security-audit`](security-audit/) — Run an explicitly requested, read-only source security audit with
+  evidence validation, coverage receipts, and convergence checks. Adapted from OpenAI Codex Security.
 - [`typst-author`](typst-author/) — Create, edit, troubleshoot, and validate Typst documents using authoritative
   upstream references and local compiler checks.
 - [`wedow-ticket`](wedow-ticket/) — Identify and operate wedow/ticket safely across shell quoting, ticket IDs,

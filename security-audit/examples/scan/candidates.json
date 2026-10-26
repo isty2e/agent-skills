@@ -1,0 +1,28 @@
+[
+ {
+  "id": "pillow-decode-bmp-amplification",
+  "title": "Crafted BMP upload amplifies into hundreds of MB of decode memory",
+  "locations": {"entrypoint": "app.py:10", "root_control": "app.py:11", "sink": "app.py:14"},
+  "discovery": {"method": "forward trace", "evidence": "upload bytes reach Image.open().convert() after a size-only check", "survives": true},
+  "validation": {"disposition": "reportable", "method": "crash", "confidence": "high",
+                 "confidence_rationale": "PoC reproduced the advisory's memory peak through the exact call pattern",
+                 "evidence": "1084-byte BI_RLE8 file peaked at 878 MB RSS under a 4 GB address cap",
+                 "counterevidence_or_proof_gap": "No content-type gate before decode; none found", "survives": "yes"},
+  "attack_path": {"decision": "reportable", "severity": "low",
+                  "severity_rationale": "impact medium (availability, bounds-safe) x likelihood medium (local_network) gives low",
+                  "change_conditions": "Proof of internet exposure would raise likelihood to high and severity to medium"}
+ },
+ {
+  "id": "upload-size-cap-bypass",
+  "title": "Oversized upload bypasses the 100 MiB cap",
+  "locations": {"entrypoint": "app.py:10", "root_control": "app.py:11"},
+  "discovery": {"method": "authorization lens", "evidence": "only one size check guards the handler", "survives": true},
+  "validation": {"disposition": "suppressed", "method": "static", "confidence": "high",
+                 "confidence_rationale": "the check runs on the full body before any other use",
+                 "evidence": "len(body) > UPLOAD_LIMIT raises before decode (app.py:11-12)",
+                 "counterevidence_or_proof_gap": "The cap is enforced on every path into the decode", "survives": "no"},
+  "attack_path": {"decision": "ignore",
+                  "severity_rationale": "control verified; no path skips it",
+                  "change_conditions": "A second entry point that decodes without the check"}
+ }
+]
