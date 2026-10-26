@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
 GATE = SKILL_DIR / "scripts" / "scan-gate.py"
@@ -329,6 +330,147 @@ class GitInventoryTests(_ScanFixture):
         self._git("commit", "--allow-empty", "-qm", "test: new diff base")
         self._gate("check", str(self.scan), code=1)
 
+    def test_working_tree_removal_hashes_reintroduced_source(self) -> None:
+        _, head = self._committed_change()
+        source = self.target / "app.py"
+        for removal in ("index-only", "removed-and-recreated"):
+            with self.subTest(removal=removal):
+                self._git("reset", "--hard", head)
+                self._git("rm", *(["--cached"] if removal == "index-only" else []), "app.py")
+                source.write_text("changed = 1\n")
+                self._inventory("--working-tree")
+                inventory = json.loads((self.scan / "inventory.json").read_text())
+                self.assertEqual(inventory["files"], ["app.py"])
+                self.assertEqual(inventory["deleted"], [])
+                self._attest()
+                self._gate("check", str(self.scan))
+
+                source.write_text("changed = 2\n")
+                self._gate("check", str(self.scan), code=1)
+
+    @unittest.skipUnless(hasattr(os, "symlink"), "requires symlinks")
+    def test_working_tree_removal_hashes_reintroduced_dangling_link(self) -> None:
+        self._committed_change()
+        self._git("rm", "app.py")
+        source = self.target / "app.py"
+        source.symlink_to("missing-a.py")
+        self._inventory("--working-tree")
+        inventory = json.loads((self.scan / "inventory.json").read_text())
+        self.assertEqual(inventory["deleted"], [])
+        self._attest()
+        self._gate("check", str(self.scan))
+
+        source.unlink()
+        source.symlink_to("missing-b.py")
+        self._gate("check", str(self.scan), code=1)
+
+    def test_working_tree_absent_source_is_recorded_as_deleted(self) -> None:
+        self._committed_change()
+        self._git("rm", "app.py")
+        self._inventory("--working-tree")
+        inventory = json.loads((self.scan / "inventory.json").read_text())
+        self.assertEqual(inventory["files"], ["app.py"])
+        self.assertEqual(inventory["deleted"], ["app.py"])
+        self._attest()
+        self._gate("check", str(self.scan))
+
+    def test_committed_diff_refuses_unchecked_index_entries(self) -> None:
+        base, head = self._committed_change()
+        self._inventory("--diff", base, head, "--scope", "app.py")
+        for flag in ("assume-unchanged", "skip-worktree"):
+            for name in ("app.py", "README.md"):
+                with self.subTest(flag=flag, path=name):
+                    source = self.target / name
+                    original = source.read_bytes()
+                    self._git("update-index", f"--{flag}", "--", name)
+                    try:
+                        source.write_text("unchecked source\n")
+                        index = self.target / ".git" / "index"
+                        before = index.read_bytes()
+                        self._inventory("--diff", base, head, "--scope", "app.py", code=2)
+                        self.assertEqual(index.read_bytes(), before)
+                    finally:
+                        source.write_bytes(original)
+                        self._git("update-index", f"--no-{flag}", "--", name)
+
+    def test_git_scope_is_a_literal_filename_in_every_inventory_mode(self) -> None:
+        base, _ = self._committed_change()
+        names = ("data[1].py", "data1.py")
+        for name in names:
+            (self.target / name).write_text("value = 1\n")
+        self._git("add", ".")
+        self._git("commit", "-qm", "test: literal filenames")
+        head = self._git("rev-parse", "HEAD")
+        for arguments in ((), ("--working-tree",), ("--diff", base, head)):
+            with self.subTest(mode=arguments):
+                self._git("reset", "--hard", head)
+                if arguments == ("--working-tree",):
+                    for name in names:
+                        (self.target / name).write_text("value = 2\n")
+                self._inventory(*arguments, "--scope", "data[1].py")
+                inventory = json.loads((self.scan / "inventory.json").read_text())
+                self.assertEqual(inventory["files"], ["data[1].py"])
+
+    def test_working_tree_refuses_unchecked_index_entries(self) -> None:
+        self._committed_change()
+        source = self.target / "app.py"
+        original = source.read_bytes()
+        source.write_text("changed = 1\n")
+        self._inventory("--working-tree", "--scope", "app.py")
+        for flag in ("assume-unchanged", "skip-worktree"):
+            with self.subTest(flag=flag):
+                self._git("update-index", f"--{flag}", "--", "app.py")
+                try:
+                    source.write_text("changed = 1\n")
+                    self._inventory("--working-tree", "--scope", "app.py", code=2)
+                    self._inventory("--scope", "app.py")
+                    self._attest()
+                    self._gate("check", str(self.scan))
+
+                    source.write_text("changed = 2\n")
+                    self._gate("check", str(self.scan), code=1)
+                finally:
+                    source.write_bytes(original)
+                    self._git("update-index", f"--no-{flag}", "--", "app.py")
+
+    @unittest.skipUnless(os.name == "posix", "requires POSIX transport canaries")
+    def test_git_inventory_never_starts_a_lazy_fetch_transport(self) -> None:
+        base, head = self._committed_change()
+        remote = self.root / "origin.git"
+        self._git("clone", "--bare", "--no-hardlinks", str(self.target), str(remote))
+        tree = self._git("rev-parse", "HEAD^{tree}")
+        self._git("config", "core.repositoryformatversion", "1")
+        self._git("config", "extensions.partialclone", "origin")
+        self._git("config", "remote.origin.promisor", "true")
+
+        marker = self.root / "transport-ran"
+        binary = self.root / "bin"
+        binary.mkdir()
+        upload_pack = binary / "upload-pack"
+        remote_helper = binary / "git-remote-audit-fixture"
+        for executable in (upload_pack, remote_helper):
+            executable.write_text(f"#!/bin/sh\nprintf touched > {shlex.quote(str(marker))}\nexit 1\n")
+            executable.chmod(0o700)
+        self._git("config", "remote.origin.uploadpack", str(upload_pack))
+        objects = self.target / ".git" / "objects"
+        (objects / tree[:2] / tree[2:]).unlink()
+
+        path = str(binary) + os.pathsep + os.environ.get("PATH", "")
+        for protocol, url in (("file", str(remote)), ("audit-fixture", "audit-fixture::opaque")):
+            with self.subTest(protocol=protocol), patch.dict(os.environ, {"PATH": path}):
+                marker.unlink(missing_ok=True)
+                self._git("config", "remote.origin.url", url)
+                self._git("config", f"protocol.{protocol}.allow", "always")
+                self._inventory()
+                for arguments in (("--working-tree",), ("--diff", base, head)):
+                    git_directory = self.target / ".git"
+                    before = {path.relative_to(git_directory): path.read_bytes()
+                              for path in git_directory.rglob("*") if path.is_file()}
+                    self._inventory(*arguments, code=2)
+                    self.assertFalse(marker.exists(), "inventory must not launch a Git transport")
+                    self.assertEqual({path.relative_to(git_directory): path.read_bytes()
+                                      for path in git_directory.rglob("*") if path.is_file()}, before)
+
     def test_git_scope_is_a_literal_path_not_a_glob(self) -> None:
         self._committed_change()
         for name in ("[id]", "i"):
@@ -352,6 +494,7 @@ class GitInventoryTests(_ScanFixture):
             f"cat; printf touched > {shlex.quote(str(marker))}",
         )
         self._git("config", "filter.scan-fixture.required", "true")
+        (self.target / "app.py").write_text("filter_fixture = True\n")
         self._git("add", ".")
         self._git("commit", "-qm", "test: configured filter")
         marker.unlink()

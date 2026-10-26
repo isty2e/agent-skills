@@ -3,6 +3,19 @@
 Modified for security-audit. See [NOTICE](../NOTICE) for licensing and
 upstream attribution.
 
+Git diff modes refuse index entries marked `assume-unchanged` or
+`skip-worktree`: they prevent Git from establishing source cleanliness or
+reliably enumerating current changes. Committed-diff mode checks the entire
+target, including supporting files; working-tree mode checks its requested
+scope. Do not clear flags or refresh the read-only target's index. Use a clean
+disposable checkout, or snapshot the actual source in repository mode without
+either diff option, retaining the requested scope.
+
+In working-tree mode, a path removed from the index but still present on disk
+is current source: its bytes or symlink text enter the snapshot. Only actual
+filesystem absence counts as a working-tree deletion. Committed-diff
+deletions remain facts about the recorded revisions.
+
 For a change under review (working tree, commit range, patch file). The changed
 code is the primary surface; supporting code only as far as the change reaches.
 

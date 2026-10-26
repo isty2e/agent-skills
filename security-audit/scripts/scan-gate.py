@@ -454,9 +454,15 @@ def _git(root: Path, *args: str, accept: tuple[int, ...] = (0,)) -> tuple[int, l
         for key in sorted(set(keys)):
             value = "false" if key.endswith(".required") else ""
             overrides.extend(("-c", f"{key}={value}"))
-    command = ["git", "--no-pager", "-c", "core.fsmonitor=false", *overrides, "-C", str(root), *args]
+
+    # check-ignore takes plain paths and rejects pathspec magic, including the literal flag.
+    literal = ["--literal-pathspecs"] if args and args[0] in {"diff", "ls-files"} else []
+    command = ["git", *literal, "--no-pager", "-c", "core.fsmonitor=false",
+               *overrides, "-C", str(root), *args]
     env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
-    env["GIT_OPTIONAL_LOCKS"] = "0"
+    # Older Git ignores GIT_NO_LAZY_FETCH; deny all protocols to block its transports and helpers too.
+    env.update(GIT_OPTIONAL_LOCKS="0", GIT_NO_LAZY_FETCH="1", GIT_ALLOW_PROTOCOL="")
+
     try:
         completed = subprocess.run(command, capture_output=True, check=False, env=env)
     except FileNotFoundError as error:
@@ -549,10 +555,22 @@ def _snapshot_digest(spec: InventorySpec, files: list[str], deleted: set[str], r
     return "sha256:" + digest.hexdigest()
 
 
+def _require_checked_index(root: Path, scope: tuple[str, ...] = ()) -> None:
+    unchecked = [entry[2:] for entry in _git_files(root, "ls-files", "-v", "-z", "--cached",
+                                                "--", *(scope or (".",)))
+                 if entry[0].islower() or entry.startswith("S ")]
+    if unchecked:
+        raise GateError("Git diff modes cannot verify assume-unchanged or skip-worktree entries: "
+                        f"{_examples(unchecked)}; use a clean disposable checkout or "
+                        "repository mode without either diff option")
+
+
 def _check_diff_checkout(spec: InventorySpec) -> None:
     head = _git_files(spec.root, "rev-parse", "--verify", "HEAD")[0].strip()
     if head != spec.head:
         raise GateError("committed diff needs a checkout of its recorded head; use a disposable checkout")
+
+    _require_checked_index(spec.root)
     dirty, _ = _git(spec.root, "diff", "--quiet", "--no-ext-diff", "--no-textconv", "HEAD", "--", ".",
                     accept=(0, 1))
     untracked = _git_files(spec.root, "ls-files", "-z", "--others", "--exclude-standard", "--", ".")
@@ -590,6 +608,7 @@ def derive_inventory(spec: InventorySpec) -> InventoryListing:
         if spec.mode == "diff":
             _check_diff_checkout(spec)
         else:
+            _require_checked_index(spec.root, spec.scope)
             revision = _git_files(spec.root, "rev-parse", "--verify", "HEAD")[0].strip()
         diff = ["diff", "--name-only", "-z", "--no-renames", "--relative", "--no-ext-diff", "--no-textconv"]
         revisions = [f"{spec.base}...{spec.head}"] if spec.mode == "diff" else [revision or "HEAD"]
@@ -600,6 +619,8 @@ def derive_inventory(spec: InventorySpec) -> InventoryListing:
 
     kept = sorted({path for path in files if not _is_excluded(path, spec.exclude)})
     removed = set(deleted) & set(kept)
+    if spec.mode == "working-tree":
+        removed = {path for path in removed if not os.path.lexists(_inventory_path(spec.root, path))}
     return InventoryListing(source=source, files=kept, deleted=sorted(removed),
                             snapshot_digest=_snapshot_digest(spec, kept, removed, revision))
 

@@ -11,7 +11,13 @@ upstream attribution.
   ignored; elsewhere it lists every file and symlink except `.git/`, ignoring
   `.ignore`/`.rgignore` files the target could use to hide content. Do not
   substitute `rg --files`: it skips hidden files.
-- Git runs without filesystem-monitor hooks, executable content filters,
+- Git scope arguments are literal filesystem paths in every mode, including
+  filenames containing brackets; they are not Git glob or magic expressions.
+- Git runs offline: all transport protocols are denied, including external
+  remote helpers, with lazy fetching also disabled where supported. Missing
+  required objects cause the affected operation to fail; use an already
+  complete checkout.
+  Git also runs without filesystem-monitor hooks, executable content filters,
   external diff drivers or textconv. A checkout relying on those filters may
   no longer compare cleanly to a commit; do not re-enable them to pass the
   gate. If revision equivalence cannot be established without executing them,
