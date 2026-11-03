@@ -29,9 +29,12 @@ the question/comparison, when evidence challenges the plan, or when:
 - Plans proceed despite acknowledged unresolved scope/selection-validity concerns.
 - Context loss/handoff disconnects the local TODO from the objective.
 
-Keep the pass decision-sized: no timers, per-command ritual, new essay, hypothesis inventory or review campaign. Reuse
-unchanged decisions/checks, but check the actual action or submitted claim. Long implementation/verification is not
-itself drift. Once supported and required gates satisfied, act or report.
+Anchor each pass in the accepted question and the pending action or claim, using the owning task and relevant evidence.
+When choosing an action, use [Choose The Next Action](#3-choose-the-next-action) to select the evidence form and justify
+it. Check consequential constraints through [Restore The Question](#1-restore-the-question). Focus steering checks on
+what could change the pending action or claim; reuse unchanged decisions/checks, but check the actual action or submitted
+claim. No timers, per-command ritual, mandatory form, new essay, hypothesis inventory or review campaign. Long
+implementation/verification is not itself drift. Once supported and required gates satisfied, act or report.
 
 ## 1. Restore The Question
 
@@ -41,6 +44,8 @@ itself drift. Once supported and required gates satisfied, act or report.
     restrictions.
 - Do not import another benchmark's restrictions.
 - Correct stale derived plans from their owner, never vice versa.
+- Trace consequential constraints to the brief, governing rules, authorized decisions or actual resource limits. If
+  their authority or factual basis is unclear, say so rather than silently enforce or discard them.
 - Distinguish:
   - The overarching question from the current subquestion, active method or unfinished work.
   - Accepted objectives/constraints from diagnostic proxies, implementation defaults and temporary conditions.
@@ -67,12 +72,20 @@ itself drift. Once supported and required gates satisfied, act or report.
     history dimensions separate, not one N.
   - A best run is not expected method performance; repeatedly consulted scores are development-conditioned, not
     independent confirmation alone.
-- **Comparison:** check conditions required by the question/claim, evaluated identities/weights and the
-  failure/missingness contract. Report coverage/failures; do not silently drop cases.
+- **Comparison:** where they affect the question/claim, check the actual evaluated task, system and scorer, target
+  quantity (including relevant units, normalization and transforms), analysis unit, eligible cohort, denominator and
+  aggregation against the accepted brief/evaluation contract, including authorized changes.
+  - A mismatched evaluation may inform another question but does not establish the requested result. State what a
+    conditional evaluation conditions on; do not substitute it for end-to-end evaluation or vice versa.
+  - Check conditions required by the question/claim, evaluated identities/weights and contractual failure/missingness
+    handling within that accepted cohort. Report coverage/failures; do not silently drop cases.
 - **Reuse:** reuse relevant existing evidence, not only baselines, while inputs and evaluation semantics remain
   applicable. Distinguish broader method evidence from current-implementation measurements.
 - **Interpretation:** separate observations from explanations; make unresolved attribution/confounding explicit rather
   than invent causes.
+  - When a claim extends beyond recorded observations or proxy scores, check how measurement, recording and selection
+    support the link to the claimed target or population; substantiate that link or limit the claim. Numerical agreement
+    or acceptance of a metric for evaluation does not itself establish that link.
   - Distinguish retrospective/oracle explanation, prediction with eligible information and an operational procedure;
     none automatically establishes the next.
   - A useful conditional relation need not win universally or deploy, but cannot replace an accepted operational
@@ -149,6 +162,10 @@ Pause an action with an acknowledged unresolved scope/selection concern.
     Report unresolved questions.
 - **Critique:** a reviewer's accept/reject score is neither scientific evidence nor permission to change
   goals/cohort/criteria/budget.
+  - Check criticism about past actions, reports or decisions against the actual record; if it is missing or ambiguous,
+    say so rather than concede or deny. Where criticism holds, correct the specific claim, recommendation or priority
+    it defeats; keep supported findings and worthwhile diagnostics. The record establishes past facts; authorized
+    current decisions govern what applies next.
   - For question/design adequacy criticism, revisit the question and pending action, not only robustness within the
     design or limitation wording.
   - Retain justified action; criticism does not force a pivot. A narrower claim does not complete an unmet broader
@@ -160,9 +177,17 @@ Pause an action with an acknowledged unresolved scope/selection concern.
 
 ## Reporting And Limits
 
-Lead with **learned / not established / next decision**. Put conclusion-changing qualifiers in the headline; group other
-limits without obscuring it. State decision-relevant unknowns and limit claims, never conceal or invent. Link evidence;
-distinguish utility, novelty, uncertainty and resource constraints when relevant.
+Lead with **what, if anything, changed relative to prior evidence / what remains unestablished / next decision**. Identify
+updates to the answer, uncertainty, live alternatives or verification/replication confidence. Preserve what informative
+scoped results, including negatives, establish even when the overarching answer is unchanged or unresolved; neither
+inflate their significance nor dismiss their diagnostic, engineering or verification value.
+
+When magnitude affects the decision, relate effects to the target or workload scale. Distinguish measured effects from
+extrapolations that depend on assumed workload or target values.
+
+Put conclusion-changing qualifiers in the headline; group other limits without obscuring it. State decision-relevant
+unknowns and limit claims, never conceal or invent. Link evidence; distinguish utility, novelty, uncertainty and resource
+constraints when relevant.
 
 For actual performance/novelty/causal claims, disclose relevant:
 

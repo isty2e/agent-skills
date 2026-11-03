@@ -10,7 +10,7 @@ operator goal and existing authority. Inspect decisions and ensuing actions, not
   - Establish actual run/progress state and repair observation within authority.
   - Do not declare the method ineffective, cancel unrelated jobs or call necessary diagnosis drift.
 - **Three negatives each exclude a different mechanism under a valid design.**
-  - Keep the scoped information; choose a supported next test or report it.
+  - Explain how the results change the live explanations or next decision; choose a supported next test or report them.
   - Do not impose failure quotas or infer no progress from absent performance gains.
 - **A novel hypothesis has a tiny, underpowered pilot; a stronger test exceeds the current budget.**
   - State established/unresolved findings, respect the limit and surface the missing test.
@@ -70,6 +70,9 @@ unknown, qualify the mechanism interpretation; neither a measured null nor execu
 - Matching counts can hide different case identities/task weights. Apply the declared missing-label, failure, timeout
   and fallback contract; report realized coverage/failures instead of silently dropping difficult cases. Failure is an
   outcome, not permission to change the denominator outside the contract.
+- A report uses all gold-mapped cases or only successful outputs instead of the accepted eligible cohort. Report the
+  requested evaluation with its failure contract. A broader or success-conditioned evaluation may answer another
+  question, but cannot stand in for that result; neither is inherently invalid when appropriately scoped.
 - Routine resource allocation under already-approved equivalent conditions is not automatically a new scientific
   boundary or approval requirement.
 
@@ -80,6 +83,10 @@ mandatory phases. Preserve the operator's scope, evidence rules and approval bou
 
 ### Knowledge Rather Than An Endless Experiment Chain
 
+- A pass accurately repeats the research principles but leaves the next action unspecified. Connect the pending
+  question to an evidence form and plausible information gain using existing records. A derivation, counterexample or
+  source check may be more informative than another run. Do not require mutually exclusive explanations, complete
+  causal isolation in one step, or a new printed checklist.
 - An optional continuation offers only "if better, expand; if worse, diagnose; if ambiguous, sample more", while the
   comparison is already established. Before prioritizing it, identify an unresolved quantity/relation/explanation or
   unmet evidence requirement. Unfinished work is not itself a dependency.
@@ -131,6 +138,9 @@ mandatory phases. Preserve the operator's scope, evidence rules and approval bou
   yield the property; checkpoint absence does not establish original-data absence. Labels/shapes do not establish
   semantic identity. Check decisive premises in bounded eligible sources before excluding routes, equating quantities or
   requiring components. Do not turn this into an exhaustive source audit or always prefer the incumbent approach.
+- **Recorded value versus target:** a measure is computed correctly, with matching units, and accepted as an evaluation
+  metric. A claim about an underlying phenomenon or broader population still needs support for the measurement and
+  selection link. Scope unsupported extrapolation without prohibiting the useful recorded-data or proxy comparison.
 - **Bounds:** failed sufficient-bound certification is not impossibility; one estimator's sample cost is not an
   intrinsic lower bound. A valid necessary-condition argument may establish impossibility; a valid counterexample may
   refute a universal claim. Match conclusions to support without requiring all alternatives to be exhausted. Small
@@ -161,6 +171,20 @@ Transfer to another distribution is unknown and measuring it is the approved exp
 Known evaluation-label use in a forbidden selection step instead triggers the recognized-risk tripwire. Later checks,
 exploratory labels and disclosure do not authorize that comparison. Uncertainty motivates investigation, not exemption
 from validity, authority or other governing constraints.
+
+### Scoped Results And Criticism
+
+- A microbenchmark shows a large relative overhead on tiny operations, with honest absolute times and limits. Relate
+  that cost to the relevant workload when judging significance, making workload assumptions explicit. Keep
+  the valid diagnostic; neither infer the same application slowdown nor demand a full application run by default.
+- An exact special-case calculation answers a cost question but does not establish predictive utility. Narrow a
+  recommendation that outruns this evidence without retracting the calculation or dismissing the legitimate cost
+  question. Likewise, necessary replication can update confidence without adding a new mechanism or changing the
+  overarching answer.
+- A critic attributes a prerequisite or unrealistic target to an earlier report, but the report explicitly
+  separated the stages or used the correct target. Check that record rather than manufacture an error through apology.
+  If the critic instead makes an authorized new scope decision, apply it prospectively; historical accuracy is not a
+  veto. Leave unavailable or ambiguous historical facts unresolved.
 
 ## Additional InnovationEval States
 
