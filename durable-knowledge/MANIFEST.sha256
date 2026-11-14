@@ -1,6 +1,6 @@
 1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685  ./LICENSE
 f540ccbba2ebf7f393a39d557d5a6fb75c5a363294bc9b90462a3c1be02cca2f  ./README.md
-31ed23fc1044e43f214ab44cb6dc6d9adb64d526e6173f4b9f09721388023d20  ./SKILL.md
+0598dc01a1db7078abef4fe7cbe99a5aac298b834cdb57c63a26e6e3a15b3b31  ./SKILL.md
 5a0c8dfb5ecd9b545205294d352e95110b6a6d8b549ceb9314e849a6ca9a1881  ./VERSION
 255dbfa2d720e05bb4338a778e25e8dfc51cdaa9d1a9a1b28e04e0fcb847cdf6  ./assets/AGENTS-snippet.md
 05c0c3bca67f3f221dfefede47adc559dd48e6694c7412ab810bfe22b99ad8dc  ./assets/candidate-review.base
@@ -15,15 +15,15 @@ e59681cc174e557c62b51e2cecede96f929f8a2b8254a5c23adb927c4b1176c6  ./assets/templ
 dc51bbe049f85f8cca8411a0ec8e18c397b2156e14be68ed33577523716abefd  ./evaluations/fixtures/research-forward/03-conjecture.md
 a281b75c3fc0fe5f324b65d677ae48ecb2a34ec09ffd1e869bcdcb10d914f771  ./evaluations/fixtures/research-forward/04-status-and-method.md
 4b5efa124dcc43c167de080604bcfd78811238c272f98b4d35b7c5d0ed7e12be  ./evaluations/research-forward-baseline.md
-6b2fb708d05fafa133e03a81e3f938b9adad2c1edce27b0a00cb9b674e847601  ./references/explanation/knowledge-boundary.md
-b91f911e409958a84a9963b538cca8a6a13f5095fc7f2949561f1e5c3ff23f8d  ./references/explanation/routing-examples.md
+fed74a4c2344cac354ce1091fc97f1f1af66e20fc7a225fe7506af767f3bbbe9  ./references/explanation/knowledge-boundary.md
+56cc62bfecef8349e0f41dff34e2cc47119132289ed40bbbaa6d109f451eae24  ./references/explanation/routing-examples.md
 4efac21db25e90f7c6d8f2608c9236da9090288304476d874b28d405588f367b  ./references/how-to/attach-evidence-artifact.md
-bd435d87c8b03049be63774b5d70d76d7c691a7844ac331a52bf5747e95261a3  ./references/how-to/capture-knowledge.md
+1eebf791620d9a00d60e3ffa0b08d001cc1defdd35f1b648206cf7d34806859e  ./references/how-to/capture-knowledge.md
 2fd8d14b7c69dbb9d792d64d9ebd2027856314f2246793f07d088f6f23542c3d  ./references/how-to/capture-research-knowledge.md
 15e3d7d63f0533bfa9afb8b3f237a8166cf44eef6b8e480896b498943dda26f6  ./references/how-to/curate-candidates.md
 3bd9c129eb7e4dc3ec5d35a9660fae7f66921270708bdc3d5847b6201860273c  ./references/how-to/evaluate-skill.md
 4d583883629e380c09e5af0aa5afc4dadd2ea939e2b7ff7f9047a10376092e07  ./references/how-to/ingest-paper.md
-885a0aae5eb1acbf471a9956dd77117b7b009dfe201e50c970735981a811c243  ./references/how-to/recall-knowledge.md
+12c7ca6237a3589cbe1db7d066561e1182e29a4b2365b46879252e1042ef86e9  ./references/how-to/recall-knowledge.md
 b33b3b37674f1f7f74fcaf9dee6370e1bcf018ae39f650cfb3379b4b513a2146  ./references/how-to/set-up-vault.md
 190f22fe71a804c8cf3c939676c8563d3c0b7a1df0893782f68fc276c0b64370  ./references/how-to/sync-clients.md
 f91df54432b58707b584072e1d0cb089005a36d6493de0a433850321ae3501a2  ./references/reference/admission-policy.md
