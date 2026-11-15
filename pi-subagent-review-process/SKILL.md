@@ -8,18 +8,21 @@ compatibility: Requires Pi with pi-subagents workflowScript, Node.js, subagent s
 
 ## Procedure
 
-1. Fix the target in `assets/review-ledger.md`: absolute `cwd`, review kind, worktree state, constraints, and Git
-   `base`/`head`, `reviewFiles`, or both. Git IDs must be distinct full commits; ancestry is irrelevant. Files may be
-   plans, specs, RFCs, saved full tool output, or other non-diff material.
-2. Define lanes from `assets/review-wave.example.json`: one correctness decision per stable key, not one lane per
-   checklist item. Include `code-review-vector` in `reviewSkills`, apply its routing, and list each lane's `routedSkills`.
-   The parent covers remaining vectors; follow-ups target changed decisions or unresolved uncertainty.
+Resolve `<skill-dir>` to the directory containing this `SKILL.md`, independently of the current working directory.
+
+1. Create a per-review ledger from `<skill-dir>/assets/review-ledger.md` and fix the target there: absolute `cwd`,
+   review kind, worktree state, constraints, and Git `base`/`head`, `reviewFiles`, or both. Git IDs must be distinct
+   full commits; ancestry is irrelevant. Files may be plans, specs, RFCs, saved full tool output, or other non-diff
+   material.
+2. Define lanes from `<skill-dir>/assets/review-wave.example.json`: one correctness decision per stable key, not one
+   lane per checklist item. Include `code-review-vector` in `reviewSkills`, apply its routing, and list each lane's
+   `routedSkills`. The parent covers remaining vectors; follow-ups target changed decisions or unresolved uncertainty.
 3. Verify reviewers with `subagent({ action: "list", capabilities: true })`: executable, enabled, with required effective
    model/thinking. External CLI runners must be available.
 4. Choose an unused absolute `materialDir` and generate the request:
 
    ```bash
-   node scripts/review-wave.mjs review-packet.json > review-request.json
+   node "<skill-dir>/scripts/review-wave.mjs" review-packet.json > review-request.json
    ```
 
    `reviewFiles` are regular-file paths, absolute or relative to `cwd`; omit `target` for file-only reviews. Snapshots
@@ -33,7 +36,7 @@ compatibility: Requires Pi with pi-subagents workflowScript, Node.js, subagent s
 7. Inspect status, including failed waves:
 
    ```bash
-   node scripts/review-gate.mjs review-packet.json status.json
+   node "<skill-dir>/scripts/review-gate.mjs" review-packet.json status.json
    ```
 
    Failure emits per-lane diagnostics and usable receipts with a nonzero exit. `machineGatePassed` covers the selected
@@ -68,11 +71,11 @@ closure. Follow governing stop, approval, and retry rules; this skill authorizes
 For the same packet, generate an affected-lane request without recapturing live files:
 
 ```bash
-node scripts/review-wave.mjs review-packet.json --reuse-material --lane affected > recovery-request.json
+node "<skill-dir>/scripts/review-wave.mjs" review-packet.json --reuse-material --lane affected > recovery-request.json
 ```
 
 After its native-harness launch completes, inspect with
-`node scripts/review-gate.mjs review-packet.json recovery-status.json --lane affected`.
+`node "<skill-dir>/scripts/review-gate.mjs" review-packet.json recovery-status.json --lane affected`.
 Repeat `--lane` for multiple gaps. Reuse verifies the original packet and captured hashes; changed targets or legacy
 manifests without hashes need a fresh directory. Failed initial capture also needs a fresh directory, not overwrite.
 
