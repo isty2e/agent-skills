@@ -21,8 +21,11 @@ Resolve, in order:
 2. `DK_VAULT_PATH`;
 3. the nearest ancestor containing both `_durable-knowledge/ROOT.md` and `Knowledge/`.
 
-Otherwise stop; do not guess. Tell the user to initialize a vault with `scripts/bootstrap.py --vault <path>`. Treat
-`.llm-wiki/` or extensionless `_durable-knowledge/ROOT` as legacy state that bootstrap must migrate.
+Otherwise do not guess. For an explicit vault request, stop that operation and tell the user to initialize a vault with
+`<skill>/scripts/bootstrap.py --vault <path>`. For opportunistic recall or capture, skip it and continue the primary
+task. Treat `.llm-wiki/` or extensionless `_durable-knowledge/ROOT` as legacy state that bootstrap must migrate.
+
+Resolve `<skill>` to the directory containing this `SKILL.md`, independently of the current working directory.
 
 Before writing, read and apply:
 
@@ -179,7 +182,7 @@ Before claiming a write complete, confirm:
 6. evidence is self-contained and every source reference is replica-resolvable;
 7. each artifact reference resolves to immutable, hash-valid bytes on every required replica;
 8. no modified record relies on machine- or session-local identifiers;
-9. `scripts/validate.py --vault <vault>` passes for new or modified records when Python is available;
+9. `<skill>/scripts/validate.py --vault <vault>` passes for new or modified records when Python is available;
 10. the report distinguishes created, integrated, proposed, skipped, routed, and uncertain results.
 
 Never claim integration for a candidate, review transition, or unapplied proposal.

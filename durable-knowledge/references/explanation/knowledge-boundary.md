@@ -5,10 +5,12 @@ their owner and buries reusable claims in local history.
 
 ## Context Owns Contextual Facts
 
-A user preference is authoritative because that user stated it; a repository convention because that codebase relies
-on it; a machine path only within one environment. Keep these facts with their owners:
+A user preference is authoritative because that user stated it; a repository convention because governing instructions
+or authorized project decisions establish it; a machine path only within one environment. Keep these facts with their
+owners:
 
-- user preferences and standing instructions in user memory;
+- user preferences and standing instructions with the preference owner that governing instructions designate (for
+  example the instruction source or a memory system);
 - session intent in session state or a task plan;
 - repository invariants in tests, ADRs, or architecture docs;
 - organization policy in organization-owned docs;

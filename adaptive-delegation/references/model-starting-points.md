@@ -57,21 +57,23 @@ Sources: [OpenAI subagent guide](https://learn.chatgpt.com/docs/agent-configurat
 
 ### Anthropic
 
-- **Claude Haiku 4.5** (`claude-haiku-4-5-20251001`): simple extraction/short bounded tasks. Cited docs do not support
-  native `effort`; preserve supported local thinking settings without inventing a mapping.
-- **Claude Sonnet 5** (`claude-sonnet-5`): bounded source investigation, semantic synthesis, focused review. Trial `medium`
-  for moderate reasoning; documented `high` default for complex paths/conflicting evidence. Compare without weakening acceptance.
-- **Claude Opus 5** (`claude-opus-5`): difficult bounded diagnosis, hypothesis checks, adversarial review. Start at the
-  documented `high` default; compare `medium` where verification supports it. Diagnose evidence, scope, and capability
-  before treating failure as a reason for maximum effort.
-- **Claude Fable 5.1** (`claude-fable-5-1`): complex read-only research, source synthesis, domain reasoning with a clear
-  question. Start `high`; compare `medium`/`low` only where quality holds. Verify deployed-version effort support; keep
-  Fable 5 observations separate. Reserve `xhigh`/`max` for justified, budgeted needs.
+- **Claude Haiku 5.5** (`claude-haiku-5-5`): simple extraction/short bounded tasks. Native `effort` is supported; start
+  at the documented `medium` default. At `low` in long agent prompts it is more likely to skip a search, stop early, or
+  skip a check.
+- **Claude Sonnet 5.5** (`claude-sonnet-5-5`): bounded source investigation, semantic synthesis, focused review.
+  Documented `high` default; trial `medium` for well-specified multistep work. Its effort levels are recalibrated, so do
+  not transfer Sonnet 5 settings or results. Compare without weakening acceptance.
+- **Claude Opus 5.5** (`claude-opus-5-5`): difficult bounded diagnosis, hypothesis checks, adversarial review. Start at
+  the documented `medium` default; compare `high` where verification shows a gain. Diagnose evidence, scope, and
+  capability before treating failure as a reason for maximum effort.
+- **Claude Fable 5.2** (`claude-fable-5-2`): complex read-only research, source synthesis, domain reasoning with a clear
+  question. Start `high`; compare `medium`/`low` only where quality holds. Keep observations from earlier Fable versions
+  separate. Reserve `xhigh`/`max` for justified, budgeted needs.
 
 Sources: [Claude model roles](https://code.claude.com/docs/en/model-config),
 [model IDs](https://platform.claude.com/docs/en/about-claude/models/overview),
 [model-specific effort](https://platform.claude.com/docs/en/build-with-claude/effort),
-[Fable 5.1 identity and scope](https://platform.claude.com/docs/en/release-notes/overview#september-1-2026).
+[Fable 5.2 identity and scope](https://platform.claude.com/docs/en/models/fable-5-2/overview).
 
 ## Resolve And Refresh
 

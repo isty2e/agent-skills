@@ -71,7 +71,8 @@ cross-source synthesis.
 
 > Do not use scaffold split as the default evaluation split in my projects.
 
-Native user memory owns this instruction. Central capture would misstate personal authority as general methodology.
+Route this instruction to the preference owner that governing instructions designate. Central capture would misstate
+personal authority as general methodology.
 
 ## Version-Scoped Knowledge
 
