@@ -85,6 +85,20 @@ paper `source_uri`/`source_sha256` are optional; URI is null or resolvable HTTPS
 are open-vocabulary `topic/<lowercase-kebab-case>`; new/modified values normalize and deduplicate, while legacy issues
 warn. Rich extra YAML is allowed but cannot satisfy managed invariants.
 
+## Markdown Body
+
+When writing or revising a record body:
+
+- Let the reader wrap prose instead of inserting source line breaks at a fixed width. This applies to prose in list
+  items too. Preserve intentional line breaks and the structure of paragraphs, lists, quotations, tables, code blocks,
+  and display math.
+- Use ordinary spacing in prose, as in `for 65 images`, `10 ms`, and `Python 3.12`. Leave code, identifiers, and
+  quotations intact.
+- Use `$...$` for inline math and put `$$` on separate lines around display math. If generating Markdown through a
+  string literal or template, make sure TeX commands such as `\frac` survive escaping.
+
+Read back the saved body to check wrapping, spacing, and math. `validate.py` checks structure, not presentation.
+
 ## Source References
 
 Refs are replica-resolvable audit/retrieval pointers; the body still owns a self-contained evidence summary.
