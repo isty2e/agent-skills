@@ -182,7 +182,8 @@ Before claiming a write complete, confirm:
 6. evidence is self-contained and every source reference is replica-resolvable;
 7. each artifact reference resolves to immutable, hash-valid bytes on every required replica;
 8. no modified record relies on machine- or session-local identifiers;
-9. `<skill>/scripts/validate.py --vault <vault>` passes for new or modified records when Python is available;
-10. the report distinguishes created, integrated, proposed, skipped, routed, and uncertain results.
+9. newly written or revised bodies follow the [Markdown body guidance](references/reference/vault-contract.md#markdown-body);
+10. `<skill>/scripts/validate.py --vault <vault>` passes for new or modified records when Python is available;
+11. the report distinguishes created, integrated, proposed, skipped, routed, and uncertain results.
 
 Never claim integration for a candidate, review transition, or unapplied proposal.

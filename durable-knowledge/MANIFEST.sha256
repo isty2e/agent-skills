@@ -1,6 +1,6 @@
 1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685  ./LICENSE
 f540ccbba2ebf7f393a39d557d5a6fb75c5a363294bc9b90462a3c1be02cca2f  ./README.md
-0598dc01a1db7078abef4fe7cbe99a5aac298b834cdb57c63a26e6e3a15b3b31  ./SKILL.md
+ed2ae3ca06e0bbca3bdab66d089a47c595343a0e714fea109e516544a119c059  ./SKILL.md
 5a0c8dfb5ecd9b545205294d352e95110b6a6d8b549ceb9314e849a6ca9a1881  ./VERSION
 255dbfa2d720e05bb4338a778e25e8dfc51cdaa9d1a9a1b28e04e0fcb847cdf6  ./assets/AGENTS-snippet.md
 05c0c3bca67f3f221dfefede47adc559dd48e6694c7412ab810bfe22b99ad8dc  ./assets/candidate-review.base
@@ -28,7 +28,7 @@ b33b3b37674f1f7f74fcaf9dee6370e1bcf018ae39f650cfb3379b4b513a2146  ./references/h
 190f22fe71a804c8cf3c939676c8563d3c0b7a1df0893782f68fc276c0b64370  ./references/how-to/sync-clients.md
 f91df54432b58707b584072e1d0cb089005a36d6493de0a433850321ae3501a2  ./references/reference/admission-policy.md
 7b6fae18a2d100a379acefa16255807dd5abc4f1e2c8ea6b9b3dd613ff49d25e  ./references/reference/record-model.md
-1eee862dc9ae233b57792a083932c5f035464805bc7ad20a7372e6d4bc44adb7  ./references/reference/vault-contract.md
+a0f0deff9b0070f6ed5bf3c5c80fbb29a6c8b39c537d66920b71d20cab11fbca  ./references/reference/vault-contract.md
 d9bc42472bc81e0b6f4690d2b8af82bde85af573d6a7d2b54f27fae4a8a21b22  ./references/tutorials/first-vault.md
 962c6b053eeb25f3707b5f55aa5f0ec5c1c2c5222a199f24cb907c86687fbc23  ./scripts/attach_artifact.py
 e88a7bca97d69e0dc2a3fac461c4adfd65079c82b57cdc03aa154b6be189cf09  ./scripts/bootstrap.py
