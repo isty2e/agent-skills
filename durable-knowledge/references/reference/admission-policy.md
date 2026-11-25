@@ -41,7 +41,7 @@ value ~= reuse probability * rediscovery cost * decision impact * stability
 | Material                                                 | Owner                                           |
 | -------------------------------------------------------- | ----------------------------------------------- |
 | Cross-context mechanism, method, constraint, distinction | Central knowledge                               |
-| User preference/instruction/personal context             | User memory or instructions                     |
+| User preference/instruction/personal context             | Designated user-context owner                   |
 | Session intent/state/decision                            | Session state, plan, or issue                   |
 | Project semantic invariant                               | Repository docs, ADR, tests, or `AGENTS.md`     |
 | Self-contained project theorem                           | Candidate; repository owns exact proof          |

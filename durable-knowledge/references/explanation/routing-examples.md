@@ -71,8 +71,8 @@ cross-source synthesis.
 
 > Do not use scaffold split as the default evaluation split in my projects.
 
-Route this instruction to the preference owner that governing instructions designate. Central capture would misstate
-personal authority as general methodology.
+Route this instruction to the designated preference owner. Use memory only in its policy-assigned role, such as
+permitted temporary retention or a pointer. Central capture would misstate personal authority as general methodology.
 
 ## Version-Scoped Knowledge
 
