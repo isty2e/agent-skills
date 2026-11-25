@@ -14,8 +14,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
   rootless authenticated localhost proxy.
 - [`jujutsu`](jujutsu/) — Use jj in jj-managed repositories, track new files explicitly, maintain change stacks,
   and run existing pre-commit hooks against the current change.
-- [`kata-task-management`](kata-task-management/) — Track work that needs continued management with Kata; organize
-  independent outcomes, keep useful context, and handle issue completion and recovery.
+- [`kata-task-management`](kata-task-management/) — Track work that needs continued management with Kata; split growing
+  work into bounded units, hand off plans, and handle issue completion and recovery.
 - [`likec4-modeling`](likec4-modeling/) — Organize, edit, and validate LikeC4 models, preview diagrams in a browser, and
   export Mermaid for review.
 - [`pi-subagent-review-process`](pi-subagent-review-process/) — Run gated Pi subagent code-review fanout with

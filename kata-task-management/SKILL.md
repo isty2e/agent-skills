@@ -33,25 +33,38 @@ trackers, install software/hooks, change bindings, or publish.
   objective; create only if none fits, with an idempotency key. Keep work in its owning project even from another
   repository. No practice, tutorial, or scratch issues unless requested. Check and claim shared-queue ownership before
   execution; claims do not authorize scope changes.
-- An issue owns a coherent outcome and completion conditions. Design, implementation, review, and verification are
-  normally phases, not separate deliverables. When scope grows, split outcomes needing independent completion,
-  deferral, assignment, or prioritization rather than continually extending the body. Administrative decomposition
-  within authorized scope does not authorize additional work.
-- Use an epic when independently managed outcomes under one objective need coordination; reuse an applicable open
-  epic or create one if none fits. Continuation alone requires neither a new epic nor retrospective reparenting.
-  Reparent rather than duplicate; never leave open work under a closed epic, and reopen that epic when reopening its
-  child.
+- An issue owns a bounded outcome or execution unit with explicit completion conditions. Units need not have separate
+  releases, assignees, or user-facing results. Splitting work does not authorize more work or weaken its original
+  completion conditions.
+- Use an epic when related units under one objective need coordination; reuse an applicable open epic or create one
+  if none fits. Continuation alone requires neither a new epic nor retrospective reparenting. Reparent rather than
+  duplicate; never leave open work under a closed epic, and reopen that epic when reopening its child.
 - `parent` means scope membership, not execution order; siblings need not be serial. Before blocking links, check the
   affected blocking graph for cycles. Parent-cycle rejection and ready queues do not establish blocking-graph safety.
 - Defer dated work with a future schedule, not merely a deadline. Park undated work with metadata `someday=true` and
   unset it to resume. Duplicate, superseded, or declined dispositions do not mean the original implementation completed.
 
+## Split Growing Work
+
+- Identify bounded units during planning. Reassess before continuing when accepted changes add a work stream, completed
+  increments coexist with substantial remaining work, or identifying the next unit requires reconstructing long history.
+  Split units that need separate completion, resumption, deferral, assignment, scheduling, or prioritization.
+- For coordinated work, keep the shared objective, constraints, open child links, and integration and delivery conditions
+  on the parent. Give each unit its own scope, completion checks, and remaining work or next action. Link child results
+  rather than copying their progress or evidence into the parent plan. A contract prerequisite and its dependent feature
+  can be separate units even in one PR. Splitting does not require serial execution or waive integration checks.
+- Before removing commitments from the original issue, verify that their receiving issues record them and that required
+  links exist. If restructuring fails, retain the affected commitments on the original issue and follow the recovery rules.
+- Do not split by time, size, file, phase, step count, PR, or review round alone. Repeated repairs of the same unmet check
+  within a bounded unit stay there. If only one unit remains, update its issue. Do not create issues for completed history
+  or routine plan steps alone.
+
 ## Local Execution Plans
 
-- Local plans, such as OpenSpec's `tasks.md`, may own change-local steps and progress. Kata owns tracked outcomes,
-  delivery conditions, assignment, priority, scheduling, dependencies, and remaining commitments. Link useful plans
-  from their issues; do not mirror checkboxes or let both records control the same outcome. A plan may track integration
-  with an independently tracked outcome, not its implementation progress.
+- Local plans, such as OpenSpec's `tasks.md`, may own change-local steps and progress. Kata owns tracked outcomes and
+  units, delivery conditions, assignment, priority, scheduling, dependencies, and remaining commitments. Link useful
+  plans from their issues; do not mirror checkboxes or let both records control the same work. A plan may track
+  integration with a tracked unit, not its implementation progress.
 - Plan readiness, checked-off steps, spec sync, and change archival do not by themselves authorize implementation or
   satisfy tracked dependencies or completion conditions. Apply the usual tracking and closure rules; change folders or
   unchecked steps alone do not warrant issues. Mark design-only scope in the proposal, design, or an equally reachable
@@ -104,6 +117,8 @@ trackers, install software/hooks, change bindings, or publish.
   Verify the actual delivered result; earlier verification does not cover changed decision-relevant substance or
   scope, including changes introduced during presentation edits. A commit, passing test, evidence flag, or successful
   close command alone does not prove the work complete. Never close merely to clear a queue or end a session.
+- Close each child when its declared conditions are verified, even if the wider feature remains open. Do not relax or
+  reclassify unmet conditions to close a unit.
 - Close a parent only after every child is closed or moved out of its scope, required children are verified, and the
   parent's own conditions are met. If required work remains, do not close; label `needs-review` and state the
   gap. Reopen for unmet original criteria; organize new outcomes under Own And Organize Work.
