@@ -12,9 +12,14 @@ owners:
 - user preferences and standing instructions with the preference owner that governing instructions designate (for
   example the instruction source or a memory system);
 - session intent in session state or a task plan;
+- managed commitments and status in the task tracker;
 - repository invariants in tests, ADRs, or architecture docs;
 - organization policy in organization-owned docs;
 - machine facts in environment-scoped memory or configuration.
+
+Use memory only in its policy-assigned role, which may include pointers or temporary retention. Honor its retirement
+conditions. A decision to adopt a method belongs to the project; evidence about the method may support a separate
+knowledge proposition.
 
 Durable propositions remain intelligible after incidental coordinates such as working tree, file layout, ticket,
 current task, and machine disappear. Semantically essential scientific scope remains.

@@ -5,8 +5,9 @@ Return a bounded, status-aware knowledge slice. Recall is read-only.
 ## Decide And Search
 
 Recall for substantial overlap with prior research/method decisions, known mechanisms/constraints/failure regimes, or a
-paper cluster/synthesis. Route preferences, session intent, repository/project decisions, organization policy, and
-machine facts to the owners that governing instructions designate. Never query the vault mechanically for every task.
+paper cluster/synthesis. Consult designated owners for preferences, session intent, repository/project decisions,
+organization policy, and machine facts. Use memory only in its policy-assigned role. Never query the vault mechanically
+for every task.
 
 1. State query, target quantity, and scope.
 2. Search titles, IDs, aliases, tags, summaries, then body text.

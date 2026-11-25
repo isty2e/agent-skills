@@ -58,10 +58,10 @@ Keep one proposition per candidate; split when scope, evidence, owner, or invali
 such as “Flexible post-hoc calibration is variance-limited in small residual samples,” not “experiment notes from
 Tuesday.”
 
-An explicit preservation request does not require central capture. Keep preferences with the owner that governing
-instructions designate; implementation, proof/run status, and project administration with the project; admitted
-self-contained science in candidates; and unsupported science as scoped unverified hypotheses. Never use a candidate
-when the correct contextual owner exists.
+An explicit preservation request does not require central capture. Keep preferences with the designated owner (use
+memory only as its policy allows); implementation, proof/run status, and project administration with the project;
+admitted self-contained science in candidates; and unsupported science as scoped unverified hypotheses. Never use a
+candidate when the correct contextual owner exists.
 
 ## Preserve Evidence
 
