@@ -46,6 +46,24 @@ trackers, install software/hooks, change bindings, or publish.
 - Defer dated work with a future schedule, not merely a deadline. Park undated work with metadata `someday=true` and
   unset it to resume. Duplicate, superseded, or declined dispositions do not mean the original implementation completed.
 
+## Local Execution Plans
+
+- Local plans, such as OpenSpec's `tasks.md`, may own change-local steps and progress. Kata owns tracked outcomes,
+  delivery conditions, assignment, priority, scheduling, dependencies, and remaining commitments. Link useful plans
+  from their issues; do not mirror checkboxes or let both records control the same outcome. A plan may track integration
+  with an independently tracked outcome, not its implementation progress.
+- Plan readiness, checked-off steps, spec sync, and change archival do not by themselves authorize implementation or
+  satisfy tracked dependencies or completion conditions. Apply the usual tracking and closure rules; change folders or
+  unchecked steps alone do not warrant issues. Mark design-only scope in the proposal, design, or an equally reachable
+  surface so readers know it does not promise implementation. Track any separate promise to implement later under the
+  existing deferral rules.
+- Before pause, handoff, plan retirement, or issue closure, record surviving commitments and material blockers on
+  their live owning issues. Include agreed delivery steps (such as PR merge or deployment), conditions, and pending
+  approvals. Keep issues with unmet completion conditions open.
+- Link plans or evidence the next worker can still reach. If a needed plan will be inaccessible, share it where
+  permitted or summarize essential remaining work on its issue. Before retiring a local plan, preserve specs and
+  design decisions that future work must honor at their canonical owners and link to them from the issue.
+
 ## Keep Useful Records
 
 - Keep the current objective, scope, completion conditions, and essential remaining work readable without the
