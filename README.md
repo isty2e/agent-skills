@@ -16,6 +16,8 @@ Agent Skills maintained by [isty2e](https://github.com/isty2e).
   and run existing pre-commit hooks against the current change.
 - [`kata-task-management`](kata-task-management/) — Track work that needs continued management with Kata; organize
   independent outcomes, keep useful context, and handle issue completion and recovery.
+- [`likec4-modeling`](likec4-modeling/) — Organize, edit, and validate LikeC4 models, preview diagrams in a browser, and
+  export Mermaid for review.
 - [`pi-subagent-review-process`](pi-subagent-review-process/) — Run gated Pi subagent code-review fanout with
   parent-captured diffs or files, structured receipts, scope-separated findings, and quiescence-checked closure.
 - [`public-repo-docs`](public-repo-docs/) — Draft or audit public package and repository documentation for reader value,
